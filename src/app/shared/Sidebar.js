@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { Collapse } from "react-bootstrap";
-import { Trans } from "react-i18next";
 
 class Sidebar extends Component {
   state = {};
@@ -33,7 +32,7 @@ class Sidebar extends Component {
 
     const dropdownPaths = [
       { path: "/apps", state: "appsMenuOpen" },
-      { path: "/basic-ui", state: "basicUiMenuOpen" },
+      { path: "/registration", state: "registerMenuOpen" },
       { path: "/form-elements", state: "formElementsMenuOpen" },
       { path: "/tables", state: "tablesMenuOpen" },
       { path: "/icons", state: "iconsMenuOpen" },
@@ -77,10 +76,10 @@ class Sidebar extends Component {
                 </div>
                 <div className="profile-name">
                   <h5 className="mb-0 font-weight-normal">
-                    <Trans>Henry Klein</Trans>
+                    <div>Henry Klein</div>
                   </h5>
                   <span>
-                    <Trans>Gold Member</Trans>
+                    <div>Gold Member</div>
                   </span>
                 </div>
               </div>
@@ -88,7 +87,7 @@ class Sidebar extends Component {
           </li>
           <li className="nav-item nav-category">
             <span className="nav-link">
-              <Trans>Navigation</Trans>
+              <div>Navigation</div>
             </span>
           </li>
           <li
@@ -103,74 +102,84 @@ class Sidebar extends Component {
                 <i className="mdi mdi-speedometer"></i>
               </span>
               <span className="menu-title">
-                <Trans>Dashboard</Trans>
+                <div>Dashboard</div>
               </span>
             </Link>
           </li>
           <li
             className={
-              this.isPathActive("/basic-ui")
+              this.isPathActive("/cadastros")
                 ? "nav-item menu-items active"
                 : "nav-item menu-items"
             }
           >
             <div
               className={
-                this.state.basicUiMenuOpen
+                this.state.registerMenuOpen
                   ? "nav-link menu-expanded"
                   : "nav-link"
               }
-              onClick={() => this.toggleMenuState("basicUiMenuOpen")}
+              onClick={() => this.toggleMenuState("registerMenuOpen")}
               data-toggle="collapse"
             >
               <span className="menu-icon">
-                <i className="mdi mdi-laptop"></i>
+                <i className="mdi mdi-database-plus"></i>
               </span>
               <span className="menu-title">
-                <Trans>Basic UI Elements</Trans>
+                <div>Cadastrar</div>
               </span>
               <i className="menu-arrow"></i>
             </div>
-            <Collapse in={this.state.basicUiMenuOpen}>
+            <Collapse in={this.state.registerMenuOpen}>
               <div>
                 <ul className="nav flex-column sub-menu">
                   <li className="nav-item">
                     {" "}
                     <Link
                       className={
-                        this.isPathActive("/basic-ui/buttons")
+                        this.isPathActive("/registration/output")
                           ? "nav-link active"
                           : "nav-link"
                       }
-                      to="/basic-ui/buttons"
+                      to="/registration/output"
                     >
-                      <Trans>Buttons</Trans>
+                      <div>Retirada</div>
+                    </Link>
+                    <Link
+                      className={
+                        this.isPathActive("/registration/buttons")
+                          ? "nav-link active"
+                          : "nav-link"
+                      }
+                      to="/registration/buttons"
+                    >
+                      <div>Buttons</div>
                     </Link>
                   </li>
                   <li className="nav-item">
                     {" "}
                     <Link
                       className={
-                        this.isPathActive("/basic-ui/dropdowns")
+                        this.isPathActive("/registration/dropdowns")
                           ? "nav-link active"
                           : "nav-link"
                       }
-                      to="/basic-ui/dropdowns"
+                      to="/registration/dropdowns"
                     >
-                      <Trans>Dropdowns</Trans>
+                      <div>Dropdowns</div>
                     </Link>
                   </li>
                   <li className="nav-item">
                     {" "}
                     <Link
                       className={
-                        this.isPathActive("/basic-ui/typography")
+                        this.isPathActive("/registration/typography")
                           ? "nav-link active"
                           : "nav-link"
                       }
-                      to="/basic-ui/typography"
+                      to="/registration/typography"
                     >
-                      <Trans>Typography</Trans>
+                      <div>Typography</div>
                     </Link>
                   </li>
                 </ul>
@@ -197,7 +206,7 @@ class Sidebar extends Component {
                 <i className="mdi mdi-playlist-play"></i>
               </span>
               <span className="menu-title">
-                <Trans>Form Elements</Trans>
+                <div>Form Elements</div>
               </span>
               <i className="menu-arrow"></i>
             </div>
@@ -214,7 +223,7 @@ class Sidebar extends Component {
                       }
                       to="/form-elements/basic-elements"
                     >
-                      <Trans>Basic Elements</Trans>
+                      <div>Basic Elements</div>
                     </Link>
                   </li>
                 </ul>
@@ -241,7 +250,7 @@ class Sidebar extends Component {
                 <i className="mdi mdi-table-large"></i>
               </span>
               <span className="menu-title">
-                <Trans>Tables</Trans>
+                <div>Tables</div>
               </span>
               <i className="menu-arrow"></i>
             </div>
@@ -258,7 +267,7 @@ class Sidebar extends Component {
                       }
                       to="/tables/basic-table"
                     >
-                      <Trans>Basic Table</Trans>
+                      <div>Basic Table</div>
                     </Link>
                   </li>
                 </ul>
@@ -285,7 +294,7 @@ class Sidebar extends Component {
                 <i className="mdi mdi-chart-bar"></i>
               </span>
               <span className="menu-title">
-                <Trans>Charts</Trans>
+                <div>Charts</div>
               </span>
               <i className="menu-arrow"></i>
             </div>
@@ -302,7 +311,7 @@ class Sidebar extends Component {
                       }
                       to="/charts/chart-js"
                     >
-                      <Trans>Chart Js</Trans>
+                      <div>Chart Js</div>
                     </Link>
                   </li>
                 </ul>
@@ -327,7 +336,7 @@ class Sidebar extends Component {
                 <i className="mdi mdi-contacts"></i>
               </span>
               <span className="menu-title">
-                <Trans>Icons</Trans>
+                <div>Icons</div>
               </span>
               <i className="menu-arrow"></i>
             </div>
@@ -344,7 +353,7 @@ class Sidebar extends Component {
                       }
                       to="/icons/mdi"
                     >
-                      <Trans>Material</Trans>
+                      <div>Material</div>
                     </Link>
                   </li>
                 </ul>
@@ -371,7 +380,7 @@ class Sidebar extends Component {
                 <i className="mdi mdi-security"></i>
               </span>
               <span className="menu-title">
-                <Trans>User Pages</Trans>
+                <div>User Pages</div>
               </span>
               <i className="menu-arrow"></i>
             </div>
@@ -388,7 +397,7 @@ class Sidebar extends Component {
                       }
                       to="/user-pages/login-1"
                     >
-                      <Trans>Login</Trans>
+                      <div>Login</div>
                     </Link>
                   </li>
                   <li className="nav-item">
@@ -401,7 +410,7 @@ class Sidebar extends Component {
                       }
                       to="/user-pages/register-1"
                     >
-                      <Trans>Register</Trans>
+                      <div>Register</div>
                     </Link>
                   </li>
                 </ul>
@@ -410,7 +419,7 @@ class Sidebar extends Component {
           </li>
           <li className="nav-item nav-category">
             <span className="nav-link">
-              <Trans>More</Trans>
+              <div>More</div>
             </span>
           </li>
           <li
@@ -433,7 +442,7 @@ class Sidebar extends Component {
                 <i className="mdi mdi-lock"></i>
               </span>
               <span className="menu-title">
-                <Trans>Error Pages</Trans>
+                <div>Error Pages</div>
               </span>
               <i className="menu-arrow"></i>
             </div>
@@ -481,7 +490,7 @@ class Sidebar extends Component {
                 <i className="mdi mdi-file-document-box"></i>
               </span>
               <span className="menu-title">
-                <Trans>Documentation</Trans>
+                <div>Documentation</div>
               </span>
             </a>
           </li>

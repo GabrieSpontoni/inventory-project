@@ -5,9 +5,10 @@ import Spinner from "../app/shared/Spinner";
 
 const Dashboard = lazy(() => import("./dashboard/Dashboard"));
 
-const Buttons = lazy(() => import("./basic-ui/Buttons"));
-const Dropdowns = lazy(() => import("./basic-ui/Dropdowns"));
-const Typography = lazy(() => import("./basic-ui/Typography"));
+const Output = lazy(() => import("./registration/Output"));
+const Buttons = lazy(() => import("./registration/Buttons"));
+const Dropdowns = lazy(() => import("./registration/Dropdowns"));
+const Typography = lazy(() => import("./registration/Typography"));
 
 const BasicElements = lazy(() => import("./form-elements/BasicElements"));
 
@@ -30,9 +31,10 @@ class AppRoutes extends Component {
         <Switch>
           <Route exact path="/dashboard" component={Dashboard} />
 
-          <Route path="/basic-ui/buttons" component={Buttons} />
-          <Route path="/basic-ui/dropdowns" component={Dropdowns} />
-          <Route path="/basic-ui/typography" component={Typography} />
+          <Route path="/registration/output" component={Output} />
+          <Route path="/registration/buttons" component={Buttons} />
+          <Route path="/registration/dropdowns" component={Dropdowns} />
+          <Route path="/registration/typography" component={Typography} />
 
           <Route
             path="/form-Elements/basic-elements"

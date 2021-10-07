@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-// import { Trans } from 'react-i18next';
+
 class Footer extends Component {
   render() {
     return (
@@ -9,11 +9,11 @@ class Footer extends Component {
             <span className="text-muted text-center text-sm-left d-block d-sm-inline-block">
               Copyright ©{" "}
               <a
-                href="https://github.com/GabrieSpontoni"
+                href="https://www.bootstrapdash.com/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Gabriel Spontoni{" "}
+                BootstrapDash{" "}
               </a>
               2021
             </span>

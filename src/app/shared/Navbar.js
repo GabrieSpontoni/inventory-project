@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Dropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { Trans } from "react-i18next";
 
 class Navbar extends Component {
   toggleOffcanvas() {
@@ -53,7 +52,7 @@ class Navbar extends Component {
                     alt="profile"
                   />
                   <p className="mb-0 d-none d-sm-block navbar-profile-name">
-                    <Trans>Henry Klein</Trans>
+                    <span>Henry Klein</span>
                   </p>
                   <i className="mdi mdi-menu-down d-none d-sm-block"></i>
                 </div>
@@ -61,7 +60,7 @@ class Navbar extends Component {
 
               <Dropdown.Menu className="navbar-dropdown preview-list navbar-profile-dropdown-menu">
                 <h6 className="p-3 mb-0">
-                  <Trans>Profile</Trans>
+                  <span>Profile</span>
                 </h6>
                 <Dropdown.Divider />
                 <Dropdown.Item
@@ -76,7 +75,7 @@ class Navbar extends Component {
                   </div>
                   <div className="preview-item-content">
                     <p className="preview-subject mb-1">
-                      <Trans>Settings</Trans>
+                      <span>Settings</span>
                     </p>
                   </div>
                 </Dropdown.Item>
@@ -93,13 +92,13 @@ class Navbar extends Component {
                   </div>
                   <div className="preview-item-content">
                     <p className="preview-subject mb-1">
-                      <Trans>Log Out</Trans>
+                      <span>Log Out</span>
                     </p>
                   </div>
                 </Dropdown.Item>
                 <Dropdown.Divider />
                 <p className="p-3 mb-0 text-center">
-                  <Trans>Advanced settings</Trans>
+                  <span>Advanced settings</span>
                 </p>
               </Dropdown.Menu>
             </Dropdown>
