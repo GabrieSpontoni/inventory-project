@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { getDatabase, ref, get, child } from "firebase/database";
+import firebase from "firebase";
 
 function CardsContent() {
   const [data, setData] = useState({});
 
   useEffect(() => {
-    const dbRef = ref(getDatabase());
-    get(child(dbRef, `/Produtos`))
+    const dbRef = firebase.database().ref();
+    dbRef
+      .child(`/Produtos`)
+      .get()
       .then((snapshot) => {
         if (snapshot.exists()) {
           // console.log(snapshot.val());

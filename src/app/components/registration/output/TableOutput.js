@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import firebase from "firebase";
 
-function TableDashboard() {
+import "../../../../firebase/config";
+
+function TableOutput() {
   const [data, setData] = useState({});
   useEffect(() => {
     const dbRef = firebase.database().ref();
@@ -31,7 +33,7 @@ function TableDashboard() {
       <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
-            <h4 className="card-title">Últimas ações</h4>
+            <h4 className="card-title">Suas últimas ações</h4>
             <div className="table-responsive">
               <table className="table">
                 <thead>
@@ -82,4 +84,4 @@ function TableDashboard() {
   );
 }
 
-export default TableDashboard;
+export default TableOutput;

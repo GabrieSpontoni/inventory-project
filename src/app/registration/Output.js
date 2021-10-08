@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 
 import bsCustomFileInput from "bs-custom-file-input";
-import { OutputForm } from "../components/registration/OutputForm";
+import { OutputForm } from "../components/registration/output/OutputForm";
+import TableOutput from "../components/registration/output/TableOutput";
 
 class Output extends Component {
   state = {
@@ -22,6 +23,7 @@ class Output extends Component {
     return (
       <div>
         <OutputForm />
+        <TableOutput />
       </div>
     );
   }

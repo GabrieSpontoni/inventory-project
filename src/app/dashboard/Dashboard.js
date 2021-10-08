@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { pushProduct } from "../../services/realTimeDb";
+import "../../firebase/config";
 import TableDashboard from "../components/dashboard/TableDashboard";
 import CardsContent from "../components/dashboard/CardsContent";
 
@@ -46,7 +46,7 @@ export class Dashboard extends Component {
   render() {
     function handleClick() {
       // console.log(data);
-      pushProduct();
+      // pushProduct();
     }
     return (
       <div>
