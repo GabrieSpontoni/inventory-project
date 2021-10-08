@@ -3,7 +3,7 @@ import { Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import firebase from "firebase";
+import firebase from "firebase/app";
 
 export function OutputForm() {
   const { register, handleSubmit } = useForm();
