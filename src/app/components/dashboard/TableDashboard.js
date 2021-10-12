@@ -26,6 +26,11 @@ function TableDashboard() {
     };
   }, []);
 
+  const colorBadge = (action) => {
+    if (action === "devolução") return "success";
+    else return "danger";
+  };
+
   return (
     <div className="row ">
       <div className="col-12 grid-margin">
@@ -53,22 +58,20 @@ function TableDashboard() {
                       return (
                         <tr key={id}>
                           <td> {data[id].nome} </td>
-                          <td> {data[id].produto} </td>
-                          <td> {data[id].quantidade} </td>
+                          <td> {data[id].nome} </td>
+                          {/* <td> {data[id].quantidade} </td> */}
                           <td> {data[id].data} </td>
                           <td> {data[id].hora}</td>
                           <td> {data[id].obs}</td>
-                          <td>
+                          {/* <td>
                             <div
-                              className={`badge badge-${
-                                data[id].acao === "devolução"
-                                  ? "success"
-                                  : "danger"
-                              }`}
+                              className={`badge badge-${colorBadge(
+                                data[id].acao
+                              )}`}
                             >
                               {data[id].acao}
                             </div>
-                          </td>
+                          </td> */}
                         </tr>
                       );
                     })}

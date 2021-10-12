@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-
 import "../../firebase/config";
 import TableDashboard from "../components/dashboard/TableDashboard";
 import CardsContent from "../components/dashboard/CardsContent";

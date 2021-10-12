@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import bsCustomFileInput from "bs-custom-file-input";
 import { OutputForm } from "../components/registration/output/OutputForm";
 import TableOutput from "../components/registration/output/TableOutput";
+import "../../firebase/config";
 
 class Output extends Component {
   state = {

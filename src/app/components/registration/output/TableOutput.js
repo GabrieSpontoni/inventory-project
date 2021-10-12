@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import firebase from "firebase/app";
 import "firebase/database";
-import "../../../../firebase/config";
 
 function TableOutput() {
   const [data, setData] = useState({});
@@ -28,9 +27,14 @@ function TableOutput() {
     };
   }, []);
 
+  const colorBadge = (action) => {
+    if (action === "devolução") return "success";
+    else return "danger";
+  };
+
   return (
     <div className="row ">
-      <div className="col-12 grid-margin">
+      {/* <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
             <h4 className="card-title">Suas últimas ações</h4>
@@ -62,11 +66,9 @@ function TableOutput() {
                           <td> {data[id].obs}</td>
                           <td>
                             <div
-                              className={`badge badge-${
-                                data[id].acao === "devolução"
-                                  ? "success"
-                                  : "danger"
-                              }`}
+                              className={`badge badge-${colorBadge(
+                                data[id].acao
+                              )}`}
                             >
                               {data[id].acao}
                             </div>
@@ -79,7 +81,7 @@ function TableOutput() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

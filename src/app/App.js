@@ -5,16 +5,46 @@ import AppRoutes from "./AppRoutes";
 import Navbar from "./shared/Navbar";
 import Sidebar from "./shared/Sidebar";
 import Footer from "./shared/Footer";
+import Login from "./user-pages/Login";
+import firebase from "firebase/app";
+import "../firebase/config";
+import Register from "./user-pages/Register";
 
 class App extends Component {
   state = {};
+  //Auth
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: null,
+    };
+  }
+  //
   componentDidMount() {
     this.onRouteChanged();
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // console.log(user);
+        this.setState({
+          user: user,
+        });
+      }
+    });
   }
+
   render() {
     let navbarComponent = !this.state.isFullPageLayout ? <Navbar /> : "";
     let sidebarComponent = !this.state.isFullPageLayout ? <Sidebar /> : "";
     let footerComponent = !this.state.isFullPageLayout ? <Footer /> : "";
+
+    // if (this.state.user === null) {
+    //   return (
+    //     <div style={{ marginTop: "30px" }}>
+    //       <Login />
+    //       <div className="container-fluid page-body-wrapper" />
+    //     </div>
+    //   );
+    // }
     return (
       <div className="container-scroller">
         {sidebarComponent}

@@ -1,13 +1,39 @@
 import React, { Component } from "react";
 import { Dropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import firebase from "firebase/app";
+import "firebase/auth";
 
 class Navbar extends Component {
+  state = {
+    userPhoto:
+      "https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg",
+    userName: "Defalut",
+  };
+
   toggleOffcanvas() {
     document.querySelector(".sidebar-offcanvas").classList.toggle("active");
   }
   toggleRightSidebar() {
     document.querySelector(".right-sidebar").classList.toggle("open");
+  }
+
+  componentDidMount() {
+    var isMounted = true;
+    const user = firebase.auth().currentUser;
+    // console.log(user);
+    if (isMounted) {
+      if (user) {
+        console.log("entrou");
+        this.setState({
+          userPhoto: user.photoURL,
+          userName: user.displayName,
+        });
+      }
+    }
+    return () => {
+      isMounted = false;
+    };
   }
   render() {
     return (
@@ -48,11 +74,11 @@ class Navbar extends Component {
                 <div className="navbar-profile">
                   <img
                     className="img-xs rounded-circle"
-                    src={require("../../assets/images/faces/face15.jpg")}
+                    src={this.state.userPhoto}
                     alt="profile"
                   />
                   <p className="mb-0 d-none d-sm-block navbar-profile-name">
-                    <span>Henry Klein</span>
+                    <span>{this.state.userName}</span>
                   </p>
                   <i className="mdi mdi-menu-down d-none d-sm-block"></i>
                 </div>

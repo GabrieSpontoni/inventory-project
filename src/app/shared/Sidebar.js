@@ -4,6 +4,11 @@ import { Collapse } from "react-bootstrap";
 
 class Sidebar extends Component {
   state = {};
+  userState = {
+    userPhoto:
+      "https://static.vecteezy.com/ti/vetor-gratis/p1/2318271-icone-do-perfil-do-usuario-gr%C3%A1tis-vetor.jpg",
+    userName: "Defalut",
+  };
 
   toggleMenuState(menuState) {
     if (this.state[menuState]) {
@@ -37,7 +42,6 @@ class Sidebar extends Component {
       { path: "/tables", state: "tablesMenuOpen" },
       { path: "/icons", state: "iconsMenuOpen" },
       { path: "/charts", state: "chartsMenuOpen" },
-      { path: "/user-pages", state: "userPagesMenuOpen" },
       { path: "/error-pages", state: "errorPagesMenuOpen" },
     ];
 
@@ -63,28 +67,6 @@ class Sidebar extends Component {
           </a>
         </div>
         <ul className="nav">
-          <li className="nav-item profile">
-            <div className="profile-desc">
-              <div className="profile-pic">
-                <div className="count-indicator">
-                  <img
-                    className="img-xs rounded-circle "
-                    src={require("../../assets/images/faces/face15.jpg")}
-                    alt="profile"
-                  />
-                  <span className="count bg-success"></span>
-                </div>
-                <div className="profile-name">
-                  <h5 className="mb-0 font-weight-normal">
-                    <div>Henry Klein</div>
-                  </h5>
-                  <span>
-                    <div>Gold Member</div>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </li>
           <li className="nav-item nav-category">
             <span className="nav-link">
               <div>Navigation</div>
@@ -135,6 +117,26 @@ class Sidebar extends Component {
                 <ul className="nav flex-column sub-menu">
                   <li className="nav-item">
                     {" "}
+                    <Link
+                      className={
+                        this.isPathActive("/registration/new-product")
+                          ? "nav-link active"
+                          : "nav-link"
+                      }
+                      to="/registration/new-product"
+                    >
+                      <div>Novo Produto</div>
+                    </Link>
+                    <Link
+                      className={
+                        this.isPathActive("/registration/new-branch")
+                          ? "nav-link active"
+                          : "nav-link"
+                      }
+                      to="/registration/new-branch"
+                    >
+                      <div>Nova Filial</div>
+                    </Link>
                     <Link
                       className={
                         this.isPathActive("/registration/output")
@@ -354,63 +356,6 @@ class Sidebar extends Component {
                       to="/icons/mdi"
                     >
                       <div>Material</div>
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </Collapse>
-          </li>
-          <li
-            className={
-              this.isPathActive("/user-pages")
-                ? "nav-item menu-items active"
-                : "nav-item menu-items"
-            }
-          >
-            <div
-              className={
-                this.state.userPagesMenuOpen
-                  ? "nav-link menu-expanded"
-                  : "nav-link"
-              }
-              onClick={() => this.toggleMenuState("userPagesMenuOpen")}
-              data-toggle="collapse"
-            >
-              <span className="menu-icon">
-                <i className="mdi mdi-security"></i>
-              </span>
-              <span className="menu-title">
-                <div>User Pages</div>
-              </span>
-              <i className="menu-arrow"></i>
-            </div>
-            <Collapse in={this.state.userPagesMenuOpen}>
-              <div>
-                <ul className="nav flex-column sub-menu">
-                  <li className="nav-item">
-                    {" "}
-                    <Link
-                      className={
-                        this.isPathActive("/user-pages/login-1")
-                          ? "nav-link active"
-                          : "nav-link"
-                      }
-                      to="/user-pages/login-1"
-                    >
-                      <div>Login</div>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    {" "}
-                    <Link
-                      className={
-                        this.isPathActive("/user-pages/register-1")
-                          ? "nav-link active"
-                          : "nav-link"
-                      }
-                      to="/user-pages/register-1"
-                    >
-                      <div>Register</div>
                     </Link>
                   </li>
                 </ul>

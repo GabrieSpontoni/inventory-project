@@ -4,13 +4,14 @@ import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import firebase from "firebase/app";
-import "firebase/storage";
+import "firebase/database";
 
-export function OutputForm() {
+export function BranchForm() {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
-    toast.info("Cadastrando Retirada do Estoque", {
+    console.log(data);
+    toast.info("Cadastrando Nova Filial", {
       icon: "⌛",
       theme: "dark",
     });
@@ -23,59 +24,30 @@ export function OutputForm() {
     const minutes = date.getMinutes();
     const hour = date.getHours();
     const time = `${hour}:${minutes}:${seconds}`;
-    const productRef = firebase.database().ref("Produtos/");
-    const newProductRef = productRef.push();
+    const branchRef = firebase.database().ref("filiais/");
+    const newBranchRef = branchRef.push();
 
-    newProductRef
-      // .set({
-      //   nome: "Gabriel Spontoni",
-      //   produto: data.produto,
-      //   quantidade: data.quantidade,
-      //   data: today,
-      //   hora: time,
-      //   acao: "retirada",
-      //   obs: data.obs,
-      // })
+    newBranchRef
       .set({
         cadastrado_por: "Gabriel",
-        nome: "martelo",
-        quantidade_inicial: 20,
-        quantidade_atual: 12,
-        acoes: {
-          retiradas: {
-            cadastrado_por: "Amauri",
-            data: today,
-            hora: time,
-            quantidade: 10,
-          },
-          devolucoes: {
-            cadastrado_por: "Amauri",
-            data: today,
-            hora: time,
-            quantidade: 2,
-          },
+        cnpj: data.cnpj,
+        responsavel_filial: data.responsible,
+        localizacao: {
+          cidade: data.city,
+          estado: data.state,
+          pais: data.country,
+        },
+        estoque: {
+          produtos: "null",
         },
 
         data: today,
         hora: time,
-        obs: data.obs,
       })
       .then(() => {
-        const file = data.arquivo[0];
-        const storageRef = firebase.storage().ref();
-        const fileRef = storageRef.child(
-          `/${newProductRef.key}/${data.arquivo[0].name}`
-        );
-        fileRef
-          .put(file)
-          .then(() => {
-            toast.success("Cadastro realizado com sucesso", {
-              theme: "dark",
-            });
-          })
-          .catch(() => {
-            toast.error("Algo deu errado tente novamente");
-          });
+        toast.success("Cadastro realizado com sucesso", {
+          theme: "dark",
+        });
       })
       .catch(() => {
         toast.error("Algo deu errado tente novamente", {
@@ -88,16 +60,16 @@ export function OutputForm() {
   return (
     <div>
       <div className="page-header">
-        <h3 className="page-title"> Form elements </h3>
+        <h3 className="page-title"> Filiais Nexsolar </h3>
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">
               <a href="!#" onClick={(event) => event.preventDefault()}>
-                Forms
+                Cadastrar
               </a>
             </li>
             <li className="breadcrumb-item active" aria-current="page">
-              Form elements
+              Nova Filial
             </li>
           </ol>
         </nav>
@@ -106,54 +78,53 @@ export function OutputForm() {
         <div className="col-12 grid-margin stretch-card">
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Retirada do Estoque</h4>
+              <h4 className="card-title">Nova Filial</h4>
               <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group>
                   <Form.Control
                     type="text"
                     className="form-control"
-                    placeholder="Produto"
-                    {...register("produto")}
+                    placeholder="cnpj (XX.XXX.XXX/0001-XX) "
+                    {...register("cnpj")}
                     // required
                   />
                 </Form.Group>
                 <Form.Group>
                   <Form.Control
-                    type="number"
+                    type="text"
                     className="form-control"
-                    id="exampleInputEmail3"
-                    placeholder="Quantidade"
-                    {...register("quantidade")}
+                    placeholder="Reponsável (nome completo)"
+                    {...register("responsible")}
+                    // required
+                  />
+                </Form.Group>
+
+                <Form.Group>
+                  <Form.Control
+                    type="text"
+                    className="form-control"
+                    placeholder="Cidade"
+                    {...register("city")}
                     // required
                   />
                 </Form.Group>
                 <Form.Group>
-                  <div className="custom-file">
-                    <Form.Control
-                      type="file"
-                      className="form-control visibility-hidden"
-                      id="customFileLang"
-                      lang="pt-br"
-                      {...register("arquivo")}
-                      // required
-                    />
-                    <label
-                      className="custom-file-label"
-                      htmlFor="customFileLang"
-                    >
-                      Upload imagem
-                    </label>
-                  </div>
+                  <Form.Control
+                    type="text"
+                    className="form-control"
+                    placeholder="Estado (UF)"
+                    {...register("state")}
+                    // required
+                  />
                 </Form.Group>
                 <Form.Group>
-                  <textarea
+                  <Form.Control
+                    type="text"
                     className="form-control"
-                    id="exampleTextarea1"
-                    rows="4"
-                    placeholder="Observação"
-                    {...register("obs")}
+                    placeholder="País"
+                    {...register("country")}
                     // required
-                  ></textarea>
+                  />
                 </Form.Group>
                 <div>
                   <button type="submit" className="btn btn-primary mr-2">
