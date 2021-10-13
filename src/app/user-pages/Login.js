@@ -8,18 +8,14 @@ export default function Login() {
   const { register, handleSubmit, reset } = useForm();
   const history = useHistory();
 
-  const verifyEmail = () => {
-    console.log("clicou");
+  const onSubmit = (data) => {
+    console.log(data);
     history.push("/dashboard");
-  };
-
-  const onSubmit = () => {
-    console.log("oo");
   };
 
   return (
     <div>
-      <div className="d-flex align-items-center auth px-0">
+      <div className="d-flex align-items-center auth px-0 h-100">
         <div className="row w-100 mx-0">
           <div className="col-lg-4 mx-auto">
             <div className="card text-left py-5 px-4 px-sm-5">
@@ -29,33 +25,31 @@ export default function Login() {
               <h4>Hello! let's get started</h4>
               <h6 className="font-weight-light">Sign in to continue.</h6>
               <form className="pt-3" onSubmit={handleSubmit(onSubmit)}>
-                <Form.Group className="d-flex search-field">
+                <div className="form-group">
                   <input
-                    type="email"
-                    placeholder="Username"
-                    size="lg"
-                    className="h-auto"
-                    {...register("user_email")}
+                    type="text"
+                    className="form-control form-control-lg"
+                    placeholder="Email Nexsolar"
+                    {...register("email")}
                   />
-                </Form.Group>
-                <Form.Group className="d-flex search-field">
-                  <Form.Control
+                </div>
+                <div className="form-group">
+                  <input
                     type="password"
-                    placeholder="Password"
-                    size="lg"
-                    className="h-auto"
+                    className="form-control form-control-lg"
+                    placeholder="Senha"
+                    {...register("password")}
                   />
-                </Form.Group>
+                </div>
                 <div className="mt-3">
                   <button
                     type="submit"
                     className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"
-                    onClick={verifyEmail}
                   >
                     Sign
                   </button>
                 </div>
-                <div className="my-2 d-flex justify-content-between align-items-center">
+                {/* <div className="my-2 d-flex justify-content-between align-items-center">
                   <div className="form-check">
                     <label className="form-check-label text-muted">
                       <input type="checkbox" className="form-check-input" />
@@ -70,16 +64,7 @@ export default function Login() {
                   >
                     Forgot password?
                   </a>
-                </div>
-                <div className="mb-2">
-                  <button
-                    type="button"
-                    className="btn btn-block btn-google auth-form-btn"
-                  >
-                    <i className="mdi mdi-google mr-2"></i>Entra com conta
-                    Google
-                  </button>
-                </div>
+                </div> */}
                 <div className="text-center mt-4 font-weight-light">
                   Don't have an account?{" "}
                   <Link className="text-primary" to="/user-pages/register-1">
