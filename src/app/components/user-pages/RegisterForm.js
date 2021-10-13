@@ -1,20 +1,96 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import firebase from "firebase/app";
 
 export default function RegisterForm() {
   const { register, handleSubmit, reset } = useForm();
+  const [branchs, setBranchs] = useState({});
+
+  useEffect(() => {
+    const dbRef = firebase.database().ref();
+    dbRef
+      .child("filiais")
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          // console.log(snapshot.val());
+          setBranchs(snapshot.val());
+        } else {
+          console.log("No data available");
+        }
+      })
+      .catch((error) => {
+        // console.error(error);
+      });
+  }, []);
+
   const onSubmit = (data) => {
-    toast.success(
-      " Sua Solicitação foi armazenada em nosso banco de dados, por favor aguarde o administrador aprovar você",
-      {
-        theme: "dark",
-        position: "bottom-center",
-      }
-    );
-    console.log(data);
+    // console.log(data);
+    const date = new Date();
+    const dd = String(date.getDate()).padStart(2, "0");
+    const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
+    const yyyy = date.getFullYear();
+    const today = `${dd}/${mm}/${yyyy}`;
+    const seconds = date.getSeconds();
+    const minutes = date.getMinutes();
+    const hour = date.getHours();
+    const time = `${hour}:${minutes}:${seconds}`;
+    const firstName = data.full_name
+      .split(" ")
+      .slice(0, 1)
+      .join(" ")
+      .toLowerCase();
+    const lastName = data.full_name
+      .split(" ")
+      .slice(-1)
+      .join(" ")
+      .toLowerCase();
+    const userName = `${firstName}.${lastName}`;
+    const userRef = firebase.database().ref("usuarios/");
+    const newUserRef = userRef.push();
+
+    newUserRef
+      .set({
+        nome: data.full_name,
+        email: `${userName}@nexsolar.com`,
+        senha: data.password,
+        id_filial: data.branch_id,
+        tipo_requisicao: data.type_request,
+        tipo_atual: "novo",
+        data_criacao: today,
+        hora_criacao: time,
+      })
+      .then(() => {
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(
+            `${userName}@nexsolar.com`,
+            data.password
+          )
+          .then((userCredential) => {
+            toast.success(
+              "Sua Solicitação foi armazenada em nosso banco de dados, por favor aguarde o administrador aprovar você",
+              {
+                theme: "dark",
+                position: "bottom-center",
+              }
+            );
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch(() => {
+        toast.error("Algo deu errado tente novamente", {
+          theme: "dark",
+          position: "bottom-center",
+        });
+      });
+
+    toast.clearWaitingQueue();
     reset();
   };
 
@@ -23,12 +99,6 @@ export default function RegisterForm() {
       <div className="row w-100 mx-0">
         <div className="col-lg-4 mx-auto">
           <div className="card text-left py-5 px-4 px-sm-5">
-            {/* <div className="brand-logo">
-              <img
-                src={require("../../../assets/images/nexsolar.svg")}
-                alt="logo"
-              />
-            </div> */}
             <h4>Novo por aqui?</h4>
             <h6 className="font-weight-light">
               Se inscreva para ter acesso ao sistema em poucos passos
@@ -38,41 +108,69 @@ export default function RegisterForm() {
                 <input
                   type="text"
                   className="form-control form-control-lg"
-                  id="exampleInputUsername1"
-                  placeholder="Username"
-                  {...register("username")}
+                  placeholder="Nome Completo"
+                  {...register("full_name")}
                 />
               </div>
-              <div className="form-group">
+              {/* <div className="form-group">
                 <input
-                  type="email"
+                  type="text"
                   className="form-control form-control-lg"
-                  id="exampleInputEmail1"
-                  placeholder="Email"
+                  placeholder="Email de usuário"
                   {...register("email")}
                 />
-              </div>
+              </div> */}
               <div className="form-group">
                 <input
                   type="password"
                   className="form-control form-control-lg"
-                  id="exampleInputPassword1"
-                  placeholder="Password"
+                  placeholder="Senha"
+                  {...register("password")}
                 />
               </div>
               <div className="form-group">
                 <select
                   className="form-control form-control-lg"
-                  id="exampleFormControlSelect2"
-                  {...register("branch")}
+                  defaultValue=""
+                  {...register("branch_id")}
                 >
-                  <option>Branch</option>
-                  <option>United States of America</option>
-                  <option>United Kingdom</option>
-                  <option>India</option>
-                  <option>Germany</option>
-                  <option>Argentina</option>
+                  <option value="" disabled hidden>
+                    Filial da Nexsolar
+                  </option>
+                  {Object.keys(branchs).map((id, value) => {
+                    return (
+                      <option key={id} value={id}>
+                        {branchs[id].localizacao.cidade} ,{" "}
+                        {branchs[id].localizacao.estado} -{" "}
+                        {branchs[id].localizacao.pais}{" "}
+                      </option>
+                    );
+                  })}
                 </select>
+              </div>
+              <div className="form-group">
+                <select
+                  defaultValue=""
+                  className="form-control form-control-lg"
+                  {...register("type_request")}
+                >
+                  <option value="" disabled hidden>
+                    Tipo de Usuário
+                  </option>
+                  <option value="administrador">Administrador</option>
+                  <option value="funcionario">Funcionário</option>
+                  );
+                </select>
+                <p className="card-description">
+                  <code>administrador :</code> é possível cadastrar novos
+                  produtos que chegam ao estoque, selecione esta opção apenas se
+                  você possui controle de estoque
+                </p>
+                <p className="card-description">
+                  <code>funcionário :</code>
+                  esse perfil é voltada para quem faz retirada e devoluções de
+                  produtos do estoque
+                </p>
               </div>
 
               <div className="mt-3">

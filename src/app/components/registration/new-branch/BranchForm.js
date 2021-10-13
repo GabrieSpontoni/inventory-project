@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
@@ -29,7 +29,6 @@ export function BranchForm() {
 
     newBranchRef
       .set({
-        cadastrado_por: "Gabriel",
         cnpj: data.cnpj,
         responsavel_filial: data.responsible,
         localizacao: {

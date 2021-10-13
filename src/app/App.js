@@ -5,10 +5,11 @@ import AppRoutes from "./AppRoutes";
 import Navbar from "./shared/Navbar";
 import Sidebar from "./shared/Sidebar";
 import Footer from "./shared/Footer";
-import Login from "./user-pages/Login";
+
 import firebase from "firebase/app";
 import "../firebase/config";
-import Register from "./user-pages/Register";
+import "firebase/database";
+import "firebase/auth";
 
 class App extends Component {
   state = {};

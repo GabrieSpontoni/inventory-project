@@ -1,22 +1,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Form } from "react-bootstrap";
+import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 
 export default function Login() {
-  // const googleLogin = async () => {
-  //   const provider = new firebase.auth.GoogleAuthProvider();
-  //   firebase
-  //     .auth()
-  //     .signInWithPopup(provider)
-  //     .then((result) => {
-  //       console.log("ok");
-  //     })
-  //     .catch((error) => {
-  //       console.log("erro");
-  //     });
-  // };
+  const { register, handleSubmit, reset } = useForm();
   const history = useHistory();
+
+  const verifyEmail = () => {
+    console.log("clicou");
+    history.push("/dashboard");
+  };
+
+  const onSubmit = () => {
+    console.log("oo");
+  };
 
   return (
     <div>
@@ -29,13 +28,14 @@ export default function Login() {
               </div>
               <h4>Hello! let's get started</h4>
               <h6 className="font-weight-light">Sign in to continue.</h6>
-              <Form className="pt-3">
+              <form className="pt-3" onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group className="d-flex search-field">
-                  <Form.Control
+                  <input
                     type="email"
                     placeholder="Username"
                     size="lg"
                     className="h-auto"
+                    {...register("user_email")}
                   />
                 </Form.Group>
                 <Form.Group className="d-flex search-field">
@@ -48,8 +48,9 @@ export default function Login() {
                 </Form.Group>
                 <div className="mt-3">
                   <button
+                    type="submit"
                     className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"
-                    onClick={() => history.push("/dashboard")}
+                    onClick={verifyEmail}
                   >
                     Sign
                   </button>
@@ -85,7 +86,7 @@ export default function Login() {
                     Create
                   </Link>
                 </div>
-              </Form>
+              </form>
             </div>
           </div>
         </div>

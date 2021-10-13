@@ -24,7 +24,6 @@ class Navbar extends Component {
     // console.log(user);
     if (isMounted) {
       if (user) {
-        console.log("entrou");
         this.setState({
           userPhoto: user.photoURL,
           userName: user.displayName,
