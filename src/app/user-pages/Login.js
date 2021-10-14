@@ -1,16 +1,29 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import firebase from "firebase/app";
 
 export default function Login() {
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit } = useForm();
   const history = useHistory();
 
   const onSubmit = (data) => {
-    console.log(data);
-    history.push("/dashboard");
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(data.email, data.password)
+      .then((userCredential) => {
+        history.push("/dashboard");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Usuário ou senha incorreto", {
+          theme: "dark",
+          position: "bottom-center",
+        });
+      });
   };
 
   return (
@@ -30,6 +43,7 @@ export default function Login() {
                     type="text"
                     className="form-control form-control-lg"
                     placeholder="Email Nexsolar"
+                    required
                     {...register("email")}
                   />
                 </div>
@@ -38,6 +52,7 @@ export default function Login() {
                     type="password"
                     className="form-control form-control-lg"
                     placeholder="Senha"
+                    required
                     {...register("password")}
                   />
                 </div>
@@ -46,8 +61,9 @@ export default function Login() {
                     type="submit"
                     className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"
                   >
-                    Sign
+                    SIGN UP
                   </button>
+                  <ToastContainer limit={3} />
                 </div>
                 {/* <div className="my-2 d-flex justify-content-between align-items-center">
                   <div className="form-check">

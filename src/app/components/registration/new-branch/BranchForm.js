@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import firebase from "firebase/app";
-import "firebase/database";
 
 export function BranchForm() {
   const { register, handleSubmit } = useForm();

@@ -28,6 +28,10 @@ export default function RegisterForm() {
   }, []);
 
   const onSubmit = (data) => {
+    toast.info("Estamos criando sua conta", {
+      icon: "⌛",
+      theme: "dark",
+    });
     // console.log(data);
     const date = new Date();
     const dd = String(date.getDate()).padStart(2, "0");
@@ -38,39 +42,27 @@ export default function RegisterForm() {
     const minutes = date.getMinutes();
     const hour = date.getHours();
     const time = `${hour}:${minutes}:${seconds}`;
-    const firstName = data.full_name
-      .split(" ")
-      .slice(0, 1)
-      .join(" ")
-      .toLowerCase();
-    const lastName = data.full_name
-      .split(" ")
-      .slice(-1)
-      .join(" ")
-      .toLowerCase();
-    const userName = `${firstName}.${lastName}`;
-    const userRef = firebase.database().ref("usuarios/");
-    const newUserRef = userRef.push();
 
-    newUserRef
-      .set({
-        nome: data.full_name,
-        email: `${userName}@nexsolar.com`,
-        senha: data.password,
-        id_filial: data.branch_id,
-        tipo_requisicao: data.type_request,
-        tipo_atual: "novo",
-        data_criacao: today,
-        hora_criacao: time,
-      })
-      .then(() => {
-        firebase
-          .auth()
-          .createUserWithEmailAndPassword(
-            `${userName}@nexsolar.com`,
-            data.password
-          )
-          .then((userCredential) => {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(data.email, data.password)
+      .then((userCredential) => {
+        const userRef = firebase
+          .database()
+          .ref(`usuarios/${userCredential.user.uid}`);
+        const newUserRef = userRef;
+
+        newUserRef
+          .set({
+            nome: data.full_name,
+            email: data.email,
+            id_filial: data.branch_id,
+            tipo_requisicao: data.type_request,
+            tipo_atual: "novo",
+            data_criacao: today,
+            hora_criacao: time,
+          })
+          .then(() => {
             toast.success(
               "Sua Solicitação foi armazenada em nosso banco de dados, por favor aguarde o administrador aprovar você",
               {
@@ -79,12 +71,16 @@ export default function RegisterForm() {
               }
             );
           })
-          .catch((error) => {
-            console.log(error);
+          .catch(() => {
+            toast.error("Algo deu errado tente novamente", {
+              theme: "dark",
+              position: "bottom-center",
+            });
           });
       })
-      .catch(() => {
-        toast.error("Algo deu errado tente novamente", {
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.message, {
           theme: "dark",
           position: "bottom-center",
         });
@@ -109,22 +105,25 @@ export default function RegisterForm() {
                   type="text"
                   className="form-control form-control-lg"
                   placeholder="Nome Completo"
+                  required
                   {...register("full_name")}
                 />
               </div>
-              {/* <div className="form-group">
+              <div className="form-group">
                 <input
                   type="text"
                   className="form-control form-control-lg"
-                  placeholder="Email de usuário"
+                  placeholder="Email"
+                  required
                   {...register("email")}
                 />
-              </div> */}
+              </div>
               <div className="form-group">
                 <input
                   type="password"
                   className="form-control form-control-lg"
                   placeholder="Senha"
+                  required
                   {...register("password")}
                 />
               </div>
@@ -132,6 +131,7 @@ export default function RegisterForm() {
                 <select
                   className="form-control form-control-lg"
                   defaultValue=""
+                  required
                   {...register("branch_id")}
                 >
                   <option value="" disabled hidden>
@@ -152,6 +152,7 @@ export default function RegisterForm() {
                 <select
                   defaultValue=""
                   className="form-control form-control-lg"
+                  required
                   {...register("type_request")}
                 >
                   <option value="" disabled hidden>
@@ -178,12 +179,12 @@ export default function RegisterForm() {
                   type="submit"
                   className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"
                 >
-                  SIGN UP
+                  Criar Conta
                 </button>
                 <ToastContainer limit={3} />
               </div>
               <div className="text-center mt-4 font-weight-light">
-                Already have an account?{" "}
+                Já tem uma conta ?{" "}
                 <Link to="/user-pages/login-1" className="text-primary">
                   Login
                 </Link>

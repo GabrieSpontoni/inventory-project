@@ -26,10 +26,10 @@ function TableDashboard() {
     };
   }, []);
 
-  const colorBadge = (action) => {
-    if (action === "devolução") return "success";
-    else return "danger";
-  };
+  // const colorBadge = (action) => {
+  //   if (action === "devolução") return "success";
+  //   else return "danger";
+  // };
 
   return (
     <div className="row ">

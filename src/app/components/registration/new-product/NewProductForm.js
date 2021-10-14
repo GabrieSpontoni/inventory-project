@@ -1,17 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import firebase from "firebase/app";
-import "firebase/database";
 
 export default function NewProductForm() {
   const { register, handleSubmit } = useForm();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    const dbRef = firebase.database().ref();
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        dbRef
+          .child(`usuarios/${user.uid}`)
+          .get()
+          .then((snapshot) => {
+            if (isMounted) {
+              if (snapshot.exists()) {
+                setUser({ ...snapshot.val() });
+              } else {
+                console.log("No data available");
+                setUser({});
+              }
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } else {
+        console.log("no user");
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const onSubmit = (data) => {
+    console.log(user);
     console.log(data);
-    toast.info("Cadastrando Nova Filial", {
+    toast.info("Cadastrando Novo Produto", {
       icon: "⌛",
       theme: "dark",
     });
@@ -26,12 +59,17 @@ export default function NewProductForm() {
     const time = `${hour}:${minutes}:${seconds}`;
     const productRef = firebase
       .database()
-      .ref("filiais/-MlhSXCV2jOipziUjiQA/estoque/produtos");
+      .ref(`filiais/${user.id_filial}/estoque/produtos`);
     const newProductRef = productRef.push();
 
     newProductRef
       .set({
-        test: "ola",
+        cadastrado_por: user.nome,
+        nome: data.product,
+        qt_inicial: data.amount,
+        qt_atual: data.amount,
+        data: today,
+        hora: time,
       })
       .then(() => {
         toast.success("Cadastro realizado com sucesso", {
@@ -46,6 +84,7 @@ export default function NewProductForm() {
     toast.clearWaitingQueue();
   };
 
+  // if (user && user.tipo_atual === "novo") {
   return (
     <div>
       <div className="page-header">
@@ -68,33 +107,42 @@ export default function NewProductForm() {
           <div className="card">
             <div className="card-body">
               <h4 className="card-title">Novo Produto</h4>
-              <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
-                <Form.Group>
-                  <Form.Control
-                    type="text"
-                    className="form-control"
-                    placeholder="Nome Produto (ex: martelo) "
-                    {...register("product")}
-                    // required
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Control
-                    type="text"
-                    className="form-control"
-                    placeholder="Quantidade"
-                    {...register("amount")}
-                    // required
-                  />
-                </Form.Group>
+              {user && user.tipo_atual === "administrador" && (
+                <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
+                  <Form.Group>
+                    <Form.Control
+                      type="text"
+                      className="form-control"
+                      placeholder="Nome Produto (ex: martelo) "
+                      {...register("product")}
+                      // required
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Control
+                      type="text"
+                      className="form-control"
+                      placeholder="Quantidade"
+                      {...register("amount")}
+                      // required
+                    />
+                  </Form.Group>
 
-                <div>
-                  <button type="submit" className="btn btn-primary mr-2">
-                    Salvar
-                  </button>
-                  <ToastContainer limit={3} />
-                </div>
-              </form>
+                  <div>
+                    <button type="submit" className="btn btn-primary mr-2">
+                      Salvar
+                    </button>
+                    <ToastContainer limit={3} />
+                  </div>
+                </form>
+              )}
+
+              {user && user.tipo_atual !== "administrador" && (
+                <h4 style={{ color: "#E51212" }}>
+                  Seu perfil é do tipo "{user.tipo_atual}" e não possui acesso
+                  para está função, apenas administrador pode acessar
+                </h4>
+              )}
             </div>
           </div>
         </div>

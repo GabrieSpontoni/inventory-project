@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import firebase from "firebase/app";
-import "firebase/database";
 
 function TableOutput() {
-  const [data, setData] = useState({});
+  // const [data, setData] = useState({});
   useEffect(() => {
     const dbRef = firebase.database().ref();
     dbRef
@@ -12,10 +11,10 @@ function TableOutput() {
       .then((snapshot) => {
         if (snapshot.exists()) {
           // console.log(snapshot.val());
-          setData({ ...snapshot.val() });
+          // setData({ ...snapshot.val() });
         } else {
           console.log("No data available");
-          setData({});
+          // setData({});
         }
       })
       .catch((error) => {
@@ -23,14 +22,14 @@ function TableOutput() {
       });
 
     return () => {
-      setData({});
+      // setData({});
     };
   }, []);
 
-  const colorBadge = (action) => {
-    if (action === "devolução") return "success";
-    else return "danger";
-  };
+  // const colorBadge = (action) => {
+  //   if (action === "devolução") return "success";
+  //   else return "danger";
+  // };
 
   return (
     <div className="row ">

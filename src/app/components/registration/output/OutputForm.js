@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import firebase from "firebase/app";
-import "firebase/storage";
 
 export function OutputForm() {
   const { register, handleSubmit } = useForm();
