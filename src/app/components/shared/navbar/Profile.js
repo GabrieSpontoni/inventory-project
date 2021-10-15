@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import firebase from "firebase/app";
+import { Redirect } from "react-router-dom";
 
 export function Profile() {
   const [user, setUser] = useState({});
@@ -36,6 +37,15 @@ export function Profile() {
       isMounted = false;
     };
   }, []);
+
+  const handleLogout = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {})
+      .catch((error) => {});
+    return <Redirect to={"/user-pages/login-1"} />;
+  };
 
   return (
     <ul className="navbar-nav navbar-nav-right">
@@ -76,7 +86,7 @@ export function Profile() {
           <Dropdown.Divider />
           <Dropdown.Item
             href="!#"
-            onClick={(evt) => evt.preventDefault()}
+            onClick={() => handleLogout()}
             className="preview-item"
           >
             <div className="preview-thumbnail">

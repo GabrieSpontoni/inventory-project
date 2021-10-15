@@ -38,7 +38,7 @@ class Sidebar extends Component {
     const dropdownPaths = [
       { path: "/apps", state: "appsMenuOpen" },
       { path: "/registration", state: "registerMenuOpen" },
-      { path: "/form-elements", state: "formElementsMenuOpen" },
+      { path: "/management", state: "managementMenuOpen" },
       { path: "/tables", state: "tablesMenuOpen" },
       { path: "/icons", state: "iconsMenuOpen" },
       { path: "/charts", state: "chartsMenuOpen" },
@@ -108,7 +108,7 @@ class Sidebar extends Component {
                 <i className="mdi mdi-database-plus"></i>
               </span>
               <span className="menu-title">
-                <div>Cadastrar</div>
+                <div>Cadastrar ações</div>
               </span>
               <i className="menu-arrow"></i>
             </div>
@@ -117,26 +117,6 @@ class Sidebar extends Component {
                 <ul className="nav flex-column sub-menu">
                   <li className="nav-item">
                     {" "}
-                    <Link
-                      className={
-                        this.isPathActive("/registration/new-product")
-                          ? "nav-link active"
-                          : "nav-link"
-                      }
-                      to="/registration/new-product"
-                    >
-                      <div>Novo Produto</div>
-                    </Link>
-                    <Link
-                      className={
-                        this.isPathActive("/registration/new-branch")
-                          ? "nav-link active"
-                          : "nav-link"
-                      }
-                      to="/registration/new-branch"
-                    >
-                      <div>Nova Filial</div>
-                    </Link>
                     <Link
                       className={
                         this.isPathActive("/registration/output")
@@ -190,40 +170,78 @@ class Sidebar extends Component {
           </li>
           <li
             className={
-              this.isPathActive("/form-elements")
+              this.isPathActive("/management")
                 ? "nav-item menu-items active"
                 : "nav-item menu-items"
             }
           >
             <div
               className={
-                this.state.formElementsMenuOpen
+                this.state.managementMenuOpen
                   ? "nav-link menu-expanded"
                   : "nav-link"
               }
-              onClick={() => this.toggleMenuState("formElementsMenuOpen")}
+              onClick={() => this.toggleMenuState("managementMenuOpen")}
               data-toggle="collapse"
             >
               <span className="menu-icon">
-                <i className="mdi mdi-playlist-play"></i>
+                <i className="mdi mdi-account-key"></i>
               </span>
               <span className="menu-title">
-                <div>Form Elements</div>
+                <div>Administração</div>
               </span>
               <i className="menu-arrow"></i>
             </div>
-            <Collapse in={this.state.formElementsMenuOpen}>
+            <Collapse in={this.state.managementMenuOpen}>
               <div>
                 <ul className="nav flex-column sub-menu">
                   <li className="nav-item">
                     {" "}
                     <Link
                       className={
-                        this.isPathActive("/form-elements/basic-elements")
+                        this.isPathActive("/management/release-access")
                           ? "nav-link active"
                           : "nav-link"
                       }
-                      to="/form-elements/basic-elements"
+                      to="/management/release-access"
+                    >
+                      <div>Liberar acessos</div>
+                    </Link>
+                  </li>
+
+                  <li className="nav-item">
+                    <Link
+                      className={
+                        this.isPathActive("/management/new-product")
+                          ? "nav-link active"
+                          : "nav-link"
+                      }
+                      to="/management/new-product"
+                    >
+                      <div>Novo Produto</div>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link
+                      className={
+                        this.isPathActive("/management/new-branch")
+                          ? "nav-link active"
+                          : "nav-link"
+                      }
+                      to="/management/new-branch"
+                    >
+                      <div>Nova Filial</div>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    {" "}
+                    <Link
+                      className={
+                        this.isPathActive("/management/basic-elements")
+                          ? "nav-link active"
+                          : "nav-link"
+                      }
+                      to="/management/basic-elements"
                     >
                       <div>Basic Elements</div>
                     </Link>

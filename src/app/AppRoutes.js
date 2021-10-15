@@ -2,17 +2,20 @@ import React, { Component, Suspense, lazy } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 
 import Spinner from "../app/shared/Spinner";
+import { AuthProvider } from "../firebase/authContext/auth";
+import PrivateRoute from "./PrivateRoute";
 
 const Dashboard = lazy(() => import("./dashboard/Dashboard"));
 
-const NewProduct = lazy(() => import("./registration/NewProduct"));
-const NewBranch = lazy(() => import("./registration/NewBranch"));
 const Output = lazy(() => import("./registration/Output"));
 const Buttons = lazy(() => import("./registration/Buttons"));
 const Dropdowns = lazy(() => import("./registration/Dropdowns"));
 const Typography = lazy(() => import("./registration/Typography"));
 
-const BasicElements = lazy(() => import("./form-elements/BasicElements"));
+const ReleaseAccess = lazy(() => import("./management/ReleaseAccess"));
+const BasicElements = lazy(() => import("./management/BasicElements"));
+const NewProduct = lazy(() => import("./management/NewProduct"));
+const NewBranch = lazy(() => import("./management/NewBranch"));
 
 const BasicTable = lazy(() => import("./tables/BasicTable"));
 
@@ -29,37 +32,51 @@ const Register1 = lazy(() => import("./user-pages/Register"));
 class AppRoutes extends Component {
   render() {
     return (
-      <Suspense fallback={<Spinner />}>
-        <Switch>
-          <Route exact path="/dashboard" component={Dashboard} />
+      <AuthProvider>
+        <Suspense fallback={<Spinner />}>
+          <Switch>
+            <PrivateRoute exact path="/dashboard" component={Dashboard} />
 
-          <Route path="/registration/new-product" component={NewProduct} />
-          <Route path="/registration/new-branch" component={NewBranch} />
-          <Route path="/registration/output" component={Output} />
-          <Route path="/registration/buttons" component={Buttons} />
-          <Route path="/registration/dropdowns" component={Dropdowns} />
-          <Route path="/registration/typography" component={Typography} />
+            <PrivateRoute path="/registration/output" component={Output} />
+            <PrivateRoute path="/registration/buttons" component={Buttons} />
+            <PrivateRoute
+              path="/registration/dropdowns"
+              component={Dropdowns}
+            />
+            <PrivateRoute
+              path="/registration/typography"
+              component={Typography}
+            />
+            <PrivateRoute
+              path="/management/new-product"
+              component={NewProduct}
+            />
+            <PrivateRoute path="/management/new-branch" component={NewBranch} />
+            <PrivateRoute
+              path="/management/release-access"
+              component={ReleaseAccess}
+            />
+            <PrivateRoute
+              path="/management/basic-elements"
+              component={BasicElements}
+            />
 
-          <Route
-            path="/form-Elements/basic-elements"
-            component={BasicElements}
-          />
+            <PrivateRoute path="/tables/basic-table" component={BasicTable} />
 
-          <Route path="/tables/basic-table" component={BasicTable} />
+            <PrivateRoute path="/icons/mdi" component={Mdi} />
 
-          <Route path="/icons/mdi" component={Mdi} />
+            <PrivateRoute path="/charts/chart-js" component={ChartJs} />
 
-          <Route path="/charts/chart-js" component={ChartJs} />
+            <Route path="/user-pages/login-1" component={Login} />
+            <Route path="/user-pages/register-1" component={Register1} />
 
-          <Route path="/user-pages/login-1" component={Login} />
-          <Route path="/user-pages/register-1" component={Register1} />
+            <Route path="/error-pages/error-404" component={Error404} />
+            <Route path="/error-pages/error-500" component={Error500} />
 
-          <Route path="/error-pages/error-404" component={Error404} />
-          <Route path="/error-pages/error-500" component={Error500} />
-
-          <Redirect to="/user-pages/login-1" />
-        </Switch>
-      </Suspense>
+            <Redirect to="/user-pages/login-1" />
+          </Switch>
+        </Suspense>
+      </AuthProvider>
     );
   }
 }
