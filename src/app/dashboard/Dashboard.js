@@ -43,10 +43,6 @@ export class Dashboard extends Component {
   }
 
   render() {
-    function handleClick() {
-      // console.log(data);
-      // pushProduct();
-    }
     return (
       <div>
         <div className="page-header">
@@ -56,7 +52,7 @@ export class Dashboard extends Component {
           </h3>
         </div>
 
-        <div className="row">
+        {/* <div className="row">
           <div className="col-12 grid-margin stretch-card">
             <div className="card">
               <div className="card-body py-0 px-0 px-sm-3">
@@ -87,7 +83,7 @@ export class Dashboard extends Component {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <CardsContent />
 

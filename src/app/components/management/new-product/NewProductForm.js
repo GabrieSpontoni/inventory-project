@@ -5,8 +5,11 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import firebase from "firebase/app";
 
+import "./NewProductForm.css";
+
 export default function NewProductForm() {
   const { register, handleSubmit } = useForm();
+
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -42,12 +45,14 @@ export default function NewProductForm() {
   }, []);
 
   const onSubmit = (data) => {
-    console.log(user);
-    console.log(data);
-    toast.info("Cadastrando Novo Produto", {
-      icon: "⌛",
-      theme: "dark",
-    });
+    // console.log(data);
+
+    // console.log(user);
+
+    // toast.info("Cadastrando Novo Produto", {
+    //   icon: "⌛",
+    //   theme: "dark",
+    // });
     const date = new Date();
     const dd = String(date.getDate()).padStart(2, "0");
     const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -57,34 +62,60 @@ export default function NewProductForm() {
     const minutes = date.getMinutes();
     const hour = date.getHours();
     const time = `${hour}:${minutes}:${seconds}`;
+
     const productRef = firebase
       .database()
-      .ref(`filiais/${user.id_filial}/estoque/produtos`);
+      .ref(`filiais/${user.id_filial}/estoque/produtos/`);
     const newProductRef = productRef.push();
-
+    const productKey = newProductRef.key;
     newProductRef
       .set({
         cadastrado_por: user.nome,
-        nome: data.product,
+        categoria: data.category.toLowerCase(),
+        tipo: data.type.toLowerCase(),
+        descricao: data.description,
+        unidade_medida: data.unity,
         qt_inicial: data.amount,
         qt_atual: data.amount,
         data: today,
         hora: time,
       })
       .then(() => {
-        toast.success("Cadastro realizado com sucesso", {
-          theme: "dark",
-        });
+        toast.info(
+          `Cadastro no banco de Dados OK! Realizando upload das suas ${data.files.length} Fotos Aguarde`,
+          {
+            icon: "⌛",
+            theme: "dark",
+          }
+        );
+        const storageRef = firebase.storage().ref();
+
+        for (let i = 0; i < data.files.length; i++) {
+          storageRef
+            .child(
+              `filiais/${user.id_filial}/produtos/${productKey}/${data.files[i].name}`
+            )
+            .put(data.files[i])
+            .then(function (snapshot) {
+              toast.success(`${data.files[i].name} upload OK`, {
+                theme: "dark",
+                position: "top-center",
+              });
+            })
+            .catch(() => {
+              console.log("upload fail");
+            });
+        }
       })
       .catch(() => {
         toast.error("Algo deu errado tente novamente", {
           theme: "dark",
         });
       });
+
     toast.clearWaitingQueue();
   };
 
-  // if (user && user.tipo_atual === "novo") {
   return (
     <div>
       <div className="page-header">
@@ -113,9 +144,36 @@ export default function NewProductForm() {
                     <Form.Control
                       type="text"
                       className="form-control"
-                      placeholder="Nome Produto (ex: martelo) "
-                      {...register("product")}
-                      // required
+                      placeholder="Categoria "
+                      {...register("category")}
+                      required
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Control
+                      type="text"
+                      className="form-control"
+                      placeholder="Tipo do Produto"
+                      {...register("type")}
+                      required
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Control
+                      type="text"
+                      className="form-control"
+                      placeholder="Descrição do produto "
+                      {...register("description")}
+                      required
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Control
+                      type="text"
+                      className="form-control"
+                      placeholder="Unidade de medida "
+                      {...register("unity")}
+                      required
                     />
                   </Form.Group>
                   <Form.Group>
@@ -124,8 +182,36 @@ export default function NewProductForm() {
                       className="form-control"
                       placeholder="Quantidade"
                       {...register("amount")}
-                      // required
+                      required
                     />
+                  </Form.Group>
+
+                  <Form.Group
+                    style={{
+                      textAlign: "center",
+                      border: "1px solid white",
+                    }}
+                  >
+                    <label
+                      style={{
+                        width: "100%",
+                        display: "inline-block",
+                        marginBottom: "0%",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <i className="icon-md mdi mdi-image-multiple"> Fotos</i>
+                      <input
+                        style={{ cursor: "pointer" }}
+                        id="myInput"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="form-control"
+                        required
+                        {...register("files")}
+                      />
+                    </label>
                   </Form.Group>
 
                   <div>

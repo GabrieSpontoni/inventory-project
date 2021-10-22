@@ -41,7 +41,7 @@ export default function Login() {
             <div className="card text-left py-5 px-4 px-sm-5">
               <div className="brand-logo">
                 <img
-                  src={require("../../assets/images/nexwhite.png")}
+                  src={require("../../assets/images/nexSolar.png")}
                   alt="logo"
                 />
               </div>

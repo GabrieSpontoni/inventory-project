@@ -9,6 +9,7 @@ import Footer from "./shared/Footer";
 import "../firebase/config";
 import "firebase/database";
 import "firebase/auth";
+import "firebase/storage";
 
 class App extends Component {
   state = {};

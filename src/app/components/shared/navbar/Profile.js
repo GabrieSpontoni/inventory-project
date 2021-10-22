@@ -19,6 +19,7 @@ export function Profile() {
             if (isMounted) {
               if (snapshot.exists()) {
                 setUser({ ...snapshot.val() });
+                // console.log(user);
               } else {
                 console.log("No data available");
                 setUser({});
