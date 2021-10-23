@@ -12,6 +12,7 @@ const Buttons = lazy(() => import("./registration/Buttons"));
 const Dropdowns = lazy(() => import("./registration/Dropdowns"));
 const Typography = lazy(() => import("./registration/Typography"));
 
+const ProductsList = lazy(() => import("./management/ProductsList"));
 const ReleaseAccess = lazy(() => import("./management/ReleaseAccess"));
 const BasicElements = lazy(() => import("./management/BasicElements"));
 const NewProduct = lazy(() => import("./management/NewProduct"));
@@ -46,6 +47,10 @@ class AppRoutes extends Component {
             <PrivateRoute
               path="/registration/typography"
               component={Typography}
+            />
+            <PrivateRoute
+              path="/management/products-list"
+              component={ProductsList}
             />
             <PrivateRoute
               path="/management/new-product"

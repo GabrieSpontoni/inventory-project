@@ -203,16 +203,15 @@ class Sidebar extends Component {
                     {" "}
                     <Link
                       className={
-                        this.isPathActive("/management/release-access")
+                        this.isPathActive("/management/products-list")
                           ? "nav-link active"
                           : "nav-link"
                       }
-                      to="/management/release-access"
+                      to="/management/products-list"
                     >
-                      <div>Liberar acessos</div>
+                      <div>Listar Produtos</div>
                     </Link>
                   </li>
-
                   <li className="nav-item">
                     <Link
                       className={
@@ -248,6 +247,19 @@ class Sidebar extends Component {
                       to="/management/basic-elements"
                     >
                       <div>Basic Elements</div>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    {" "}
+                    <Link
+                      className={
+                        this.isPathActive("/management/release-access")
+                          ? "nav-link active"
+                          : "nav-link"
+                      }
+                      to="/management/release-access"
+                    >
+                      <div>Liberar acessos</div>
                     </Link>
                   </li>
                 </ul>
