@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router";
 import firebase from "firebase/app";
 
 function TableProducts() {
+  const history = useHistory();
   const [data, setData] = useState({});
   const [user, setUser] = useState(null);
 
@@ -47,9 +49,11 @@ function TableProducts() {
         .once("value", (snapshot) => {
           if (isMounted) {
             const items = [];
+
             snapshot.forEach((childSnapshot) => {
+              // console.log(childSnapshot.key);
               // console.log(childSnapshot.val());
-              items.push(childSnapshot.val());
+              items[childSnapshot.key] = childSnapshot.val();
             });
             setData(items);
           }
@@ -60,9 +64,11 @@ function TableProducts() {
       isMounted = false;
     };
   }, [user]);
-  useEffect(() => {
-    // console.log(data);
-  });
+
+  const handleSeePhotos = (id) => {
+    history.push(`/management/products-list-photos/${id}`);
+    console.log(id);
+  };
 
   return (
     <div className="row ">
@@ -82,6 +88,7 @@ function TableProducts() {
                     <th> Descrição </th>
                     <th> Hora do Cadastro </th>
                     <th> Data do Cadastro </th>
+                    <th> Ações </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -103,15 +110,19 @@ function TableProducts() {
                           <td> {data[id].descricao}</td>
                           <td> {data[id].hora}</td>
                           <td> {data[id].data}</td>
-                          {/* <td>
-                            <div
-                              className={`badge badge-${colorBadge(
-                                data[id].acao
-                              )}`}
+                          <td>
+                            <button
+                              style={{ display: "flex" }}
+                              type="button"
+                              className="btn btn-primary btn-icon-text"
+                              onClick={() => {
+                                handleSeePhotos(id);
+                              }}
                             >
-                              {data[id].acao}
-                            </div>
-                          </td> */}
+                              <i className="icon mdi mdi-image-multiple" />
+                              Fotos
+                            </button>
+                          </td>
                         </tr>
                       );
                     })}

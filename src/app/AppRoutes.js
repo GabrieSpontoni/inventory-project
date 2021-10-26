@@ -17,6 +17,9 @@ const ReleaseAccess = lazy(() => import("./management/ReleaseAccess"));
 const BasicElements = lazy(() => import("./management/BasicElements"));
 const NewProduct = lazy(() => import("./management/NewProduct"));
 const NewBranch = lazy(() => import("./management/NewBranch"));
+const ProductsListPhotos = lazy(() =>
+  import("./management/ProductsListPhotos")
+);
 
 const BasicTable = lazy(() => import("./tables/BasicTable"));
 
@@ -64,6 +67,11 @@ class AppRoutes extends Component {
             <PrivateRoute
               path="/management/basic-elements"
               component={BasicElements}
+            />
+
+            <PrivateRoute
+              path="/management/products-list-photos/:idProd"
+              component={ProductsListPhotos}
             />
 
             <PrivateRoute path="/tables/basic-table" component={BasicTable} />
