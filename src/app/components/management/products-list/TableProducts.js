@@ -67,7 +67,6 @@ function TableProducts() {
 
   const handleSeePhotos = (id) => {
     history.push(`/management/products-list-photos/${id}`);
-    console.log(id);
   };
 
   return (
