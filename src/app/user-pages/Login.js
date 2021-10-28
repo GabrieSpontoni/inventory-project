@@ -38,16 +38,15 @@ export default function Login() {
       <div className="d-flex align-items-center auth px-0 h-100 ">
         <div className="row w-100 mx-0">
           <div className="col-lg-4 mx-auto">
-            <div className="card text-left py-5 px-4 px-sm-5">
+            <div className="card text-center py-5 px-4 px-sm-5">
               <div className="brand-logo">
                 <img
-                  src={require("../../assets/images/nexSolar.png")}
+                  src={require("../../assets/images/logoNexSolar.png")}
                   alt="logo"
+                  style={{ width: "250px" }}
                 />
               </div>
-              <h4>
-                Bem ao gerenciamento de estoque da Nexsolar. Vamos começar
-              </h4>
+              <h4>Gerenciamento de estoque Nexsolar.</h4>
               <h6 className="font-weight-light">Faça login para continuar.</h6>
               <form className="pt-3" onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">

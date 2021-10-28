@@ -106,24 +106,28 @@ export function Photos() {
   //   console.log(photosName);
   // });
   const handleDelete = (photoName) => {
-    console.log(photoName);
-    const storageRef = firebase.storage().ref();
-    storageRef
-      .child(`filiais/${user.id_filial}/produtos/${idProd}/${photoName}`)
-      .delete()
-      .then(function () {
-        console.log("delete ok");
-        window.location.reload();
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    // console.log(photoName);
+
+    if (window.confirm(`Deseja realmente excluir a foto ${photoName}?`)) {
+      const storageRef = firebase.storage().ref();
+      storageRef
+        .child(`filiais/${user.id_filial}/produtos/${idProd}/${photoName}`)
+        .delete()
+        .then(function () {
+          console.log("delete ok");
+          window.location.reload();
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
   };
 
   return (
     <div>
-      {photosUrl.length === 0 && isLoading && (
-        <div>... Carregando Fotos - Aguarde</div>
+      {photosUrl.length === 0 && isLoading && <div>Carregando...</div>}
+      {photosUrl.length === 0 && !isLoading && (
+        <div>Este produto não possui fotos</div>
       )}
       <div className="row">
         {photosUrl.length > 0 &&
@@ -151,73 +155,81 @@ export function Photos() {
                       }}
                     />
                   </div>
+                  {user.ti}
                   <div className="card-footer">
-                    <button
-                      type="button"
-                      className="btn btn-danger btn-icon-text"
-                      style={{ marginRight: "10px" }}
-                      onClick={() => {
-                        handleDelete(photosName[e]);
-                      }}
-                    >
-                      <i className="mdi mdi-delete btn-icon-prepend" />
-                      Excluir
-                    </button>
+                    {user && user.tipo_atual === "administrador" && (
+                      <button
+                        type="button"
+                        className="btn btn-danger btn-icon-text"
+                        style={{ marginRight: "10px", marginBottom: "10px" }}
+                        onClick={() => {
+                          handleDelete(photosName[e]);
+                        }}
+                      >
+                        <i className="mdi mdi-delete btn-icon-prepend" />
+                        Excluir
+                      </button>
+                    )}
                     {photosName[e]}
                   </div>
                 </div>
               </div>
             );
           })}
-
-        {photosUrl.length === 0 && !isLoading && (
-          <div>Sem fotos para este produto</div>
-        )}
-        <div
-          style={{
-            width: "100%",
-            marginTop: "50px",
-          }}
-        >
-          <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
-            <label
-              style={{
-                width: "100%",
-                display: "inline-block",
-                marginBottom: "0%",
-                cursor: "pointer",
-                textAlign: "center",
-                border: "1px solid white",
-              }}
-            >
-              <i className="icon-md mdi mdi-image-multiple">Adicionar Fotos</i>
-              <input
-                style={{ cursor: "pointer" }}
-                id="myInput"
-                type="file"
-                accept="image/*"
-                multiple
-                className="form-control"
-                required
-                {...register("files")}
-              />
-            </label>
-
-            <div>
-              <button
-                type="submit"
-                className="btn btn-primary mr-2"
-                style={{
-                  width: "100%",
-                  marginTop: "10px",
-                }}
-              >
-                Confirmar
-              </button>
-              <ToastContainer limit={3} />
+        {user && user.tipo_atual === "administrador" && (
+          <div
+            className="card"
+            style={{
+              height: "400px",
+              width: "300px",
+              marginRight: "50px",
+              marginTop: "50px",
+              display: "flex",
+            }}
+          >
+            <div className="card-body">
+              <div>
+                <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
+                  <label>
+                    <i
+                      className="icon-lg mdi mdi-image-multiple text-primary"
+                      style={{
+                        marginLeft: "90px",
+                        marginTop: "90px",
+                        display: "flex",
+                        cursor: "pointer",
+                      }}
+                    />
+                    <input
+                      style={{
+                        cursor: "pointer",
+                        background: "transparent",
+                        border: "none",
+                      }}
+                      id="myInput"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="form-control"
+                      required
+                      {...register("files")}
+                    />
+                  </label>
+                  <div>
+                    <button
+                      type="submit"
+                      className="btn btn-primary btn-icon-text"
+                      style={{ width: "100%", marginTop: "100px" }}
+                    >
+                      Adicionar Fotos(s)
+                    </button>
+                    <ToastContainer />
+                  </div>
+                </form>
+              </div>
             </div>
-          </form>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "../../firebase/config";
-import { Photos } from "../components/products-list-photos/Photos";
+import { Photos } from "../components/management/products-list-photos/Photos";
 
 export class ProductsListPhotos extends Component {
   render() {

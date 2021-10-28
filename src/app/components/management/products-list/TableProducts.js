@@ -69,6 +69,10 @@ function TableProducts() {
     history.push(`/management/products-list-photos/${id}`);
   };
 
+  const handleEditProduct = (id) => {
+    history.push(`/management/products-list-edit/${id}`);
+  };
+
   return (
     <div className="row ">
       <div className="col-12 grid-margin">
@@ -87,44 +91,61 @@ function TableProducts() {
                     <th> Descrição </th>
                     <th> Hora do Cadastro </th>
                     <th> Data do Cadastro </th>
-                    <th> Ações </th>
+                    <th> </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.keys(data)
-                    .slice(0, 10)
-                    .map((id) => {
-                      return (
-                        <tr key={id}>
-                          <td>
-                            {data[id].cadastrado_por
-                              .split(" ")
-                              .slice(0, 2)
-                              .join(" ")}{" "}
-                          </td>
-                          <td> {data[id].categoria} </td>
-                          <td> {data[id].tipo} </td>
-                          <td> {data[id].qt_inicial}</td>
-                          <td> {data[id].qt_atual}</td>
-                          <td> {data[id].descricao}</td>
-                          <td> {data[id].hora}</td>
-                          <td> {data[id].data}</td>
-                          <td>
-                            <button
-                              style={{ display: "flex" }}
-                              type="button"
-                              className="btn btn-primary btn-icon-text"
-                              onClick={() => {
-                                handleSeePhotos(id);
-                              }}
-                            >
-                              <i className="icon mdi mdi-image-multiple" />
-                              Fotos
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                  {Object.keys(data).map((id) => {
+                    return (
+                      <tr key={id}>
+                        <td>
+                          {data[id].cadastrado_por
+                            .split(" ")
+                            .slice(0, 2)
+                            .join(" ")}{" "}
+                        </td>
+                        <td> {data[id].categoria} </td>
+                        <td> {data[id].tipo} </td>
+                        <td> {data[id].qt_inicial}</td>
+                        <td> {data[id].qt_atual}</td>
+                        <td> {data[id].descricao}</td>
+                        <td> {data[id].hora}</td>
+                        <td> {data[id].data}</td>
+                        <td style={{ display: "flex" }}>
+                          <button
+                            style={{ display: "flex" }}
+                            type="button"
+                            className="btn btn-primary btn-icon-text"
+                            onClick={() => {
+                              handleSeePhotos(id);
+                            }}
+                          >
+                            <i className="icon mdi mdi-image-multiple" />
+                          </button>
+                          <button
+                            style={{ display: "flex" }}
+                            type="button"
+                            className="btn btn-warning btn-icon-text"
+                            onClick={() => {
+                              handleEditProduct(id);
+                            }}
+                          >
+                            <i className="icon mdi mdi-pencil" />
+                          </button>
+                          <button
+                            style={{ display: "flex" }}
+                            type="button"
+                            className="btn btn-danger btn-icon-text"
+                            onClick={() => {
+                              handleSeePhotos(id);
+                            }}
+                          >
+                            <i className="icon mdi mdi mdi-delete" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

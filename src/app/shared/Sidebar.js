@@ -63,10 +63,10 @@ class Sidebar extends Component {
           >
             <h2>
               Nexsolar{" "}
-              <i
+              {/* <i
                 style={{ color: "yellow" }}
                 className="mdi mdi-white-balance-sunny"
-              ></i>
+              ></i> */}
             </h2>
           </a>
         </div>

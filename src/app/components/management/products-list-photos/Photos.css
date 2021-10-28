@@ -1,4 +1,5 @@
 ::-webkit-file-upload-button {
+  display: none;
   color: white;
   background: none;
   cursor: pointer;
