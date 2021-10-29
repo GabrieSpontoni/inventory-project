@@ -70,48 +70,46 @@ function ProductsEdit() {
   // });
 
   const onSubmit = (data) => {
-    if (window.confirm("Todos os dados estão corretos?")) {
-      const date = new Date();
-      const dd = String(date.getDate()).padStart(2, "0");
-      const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
-      const yyyy = date.getFullYear();
-      const today = `${dd}/${mm}/${yyyy}`;
-      const seconds = date.getSeconds();
-      const minutes = date.getMinutes();
-      const hour = date.getHours();
-      const time = `${hour}:${minutes}:${seconds}`;
-      var updateData = {
-        qt_atual: data.amount,
-        categoria: data.category,
-        descricao: data.description,
-        tipo: data.type,
-        unidade_medida: data.unity,
-      };
+    const date = new Date();
+    const dd = String(date.getDate()).padStart(2, "0");
+    const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
+    const yyyy = date.getFullYear();
+    const today = `${dd}/${mm}/${yyyy}`;
+    const seconds = date.getSeconds();
+    const minutes = date.getMinutes();
+    const hour = date.getHours();
+    const time = `${hour}:${minutes}:${seconds}`;
+    var updateData = {
+      qt_atual: data.amount,
+      categoria: data.category,
+      descricao: data.description,
+      tipo: data.type,
+      unidade_medida: data.unity,
+    };
 
-      firebase
-        .database()
-        .ref(`/filiais/${user.id_filial}/estoque/produtos/${idProd}`)
-        .update(updateData)
-        .then(() => {
-          firebase
-            .database()
-            .ref(`/filiais/${user.id_filial}/estoque/acoes/`)
-            .push()
-            .set({
-              id_prod: idProd,
-              tipo: "alteracao",
-              realizada_por: user.nome,
-              data: today,
-              hora: time,
-              obs: data.obs,
-            })
-            .then(() => {
-              toast.success("Produto atualizado com sucesso!", {
-                theme: "dark",
-              });
+    firebase
+      .database()
+      .ref(`/filiais/${user.id_filial}/estoque/produtos/${idProd}`)
+      .update(updateData)
+      .then(() => {
+        firebase
+          .database()
+          .ref(`/filiais/${user.id_filial}/estoque/acoes/`)
+          .push()
+          .set({
+            id_prod: idProd,
+            tipo: "alteracao",
+            realizada_por: user.nome,
+            data: today,
+            hora: time,
+            obs: data.obs,
+          })
+          .then(() => {
+            toast.success("Produto atualizado com sucesso!", {
+              theme: "dark",
             });
-        });
-    }
+          });
+      });
   };
   return (
     <div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Modal, Button, Alert } from "react-bootstrap";
 import { useHistory } from "react-router";
 import firebase from "firebase/app";
 
@@ -6,6 +7,9 @@ function TableProducts() {
   const history = useHistory();
   const [data, setData] = useState({});
   const [user, setUser] = useState(null);
+  const [show, setShow] = useState(false);
+  const [deleteProduct, setDeleteProduct] = useState(null);
+  const [productID, setProductID] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -73,6 +77,35 @@ function TableProducts() {
     history.push(`/management/products-list-edit/${id}`);
   };
 
+  const handleDeleteProduct = () => {
+    // const storageRef = firebase.storage().ref();
+    // storageRef
+    //   .child(`filiais/${user.id_filial}/produtos/${productID}/hammer.jpg`)
+    //   .delete()
+    //   .then(function () {
+    //     console.log("delete ok");
+    //     window.location.reload();
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
+    // setShow(false);
+    // firebase
+    //   .database()
+    //   .ref(`/filiais/${user.id_filial}/estoque/produtos/${productID}`)
+    //   .remove()
+    //   .then(() => {
+    //     window.location.reload();
+    //   });
+  };
+
+  const handleClose = () => setShow(false);
+  const handleShow = (id) => {
+    setShow(true);
+    setDeleteProduct(data[id]);
+    setProductID(id);
+  };
+
   return (
     <div className="row ">
       <div className="col-12 grid-margin">
@@ -137,7 +170,7 @@ function TableProducts() {
                             type="button"
                             className="btn btn-danger btn-icon-text"
                             onClick={() => {
-                              handleSeePhotos(id);
+                              handleShow(id);
                             }}
                           >
                             <i className="icon mdi mdi mdi-delete" />
@@ -148,6 +181,34 @@ function TableProducts() {
                   })}
                 </tbody>
               </table>
+
+              {deleteProduct && (
+                <Modal show={show} onHide={handleClose}>
+                  <Modal.Body>
+                    <Alert variant="danger">
+                      <Alert.Heading>TEM CERTEZA?</Alert.Heading>
+                      <p>
+                        Ao excluir este produto a operação não poderá ser
+                        desfeita. Produto: {deleteProduct.categoria}
+                      </p>
+                      <hr />
+                    </Alert>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="danger" onClick={handleClose}>
+                      Cancelar
+                    </Button>
+                    <Button
+                      variant="success"
+                      onClick={() => {
+                        handleDeleteProduct();
+                      }}
+                    >
+                      Confirmar
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+              )}
             </div>
           </div>
         </div>
