@@ -13,7 +13,7 @@ function TableOutput() {
           // console.log(snapshot.val());
           // setData({ ...snapshot.val() });
         } else {
-          console.log("No data available");
+          // console.log("No data available");
           // setData({});
         }
       })

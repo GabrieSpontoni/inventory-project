@@ -7,10 +7,10 @@ import PrivateRoute from "./PrivateRoute";
 
 const Dashboard = lazy(() => import("./dashboard/Dashboard"));
 
-const Output = lazy(() => import("./registration/Output"));
-const Buttons = lazy(() => import("./registration/Buttons"));
-const Dropdowns = lazy(() => import("./registration/Dropdowns"));
-const Typography = lazy(() => import("./registration/Typography"));
+const Output = lazy(() => import("./actions/Output"));
+const Buttons = lazy(() => import("./actions/Buttons"));
+const Dropdowns = lazy(() => import("./actions/Dropdowns"));
+const Typography = lazy(() => import("./actions/Typography"));
 
 const ProductsList = lazy(() => import("./management/ProductsList"));
 const ReleaseAccess = lazy(() => import("./management/ReleaseAccess"));
@@ -42,16 +42,10 @@ class AppRoutes extends Component {
           <Switch>
             <PrivateRoute exact path="/dashboard" component={Dashboard} />
 
-            <PrivateRoute path="/registration/output" component={Output} />
-            <PrivateRoute path="/registration/buttons" component={Buttons} />
-            <PrivateRoute
-              path="/registration/dropdowns"
-              component={Dropdowns}
-            />
-            <PrivateRoute
-              path="/registration/typography"
-              component={Typography}
-            />
+            <PrivateRoute path="/actions/output" component={Output} />
+            <PrivateRoute path="/actions/buttons" component={Buttons} />
+            <PrivateRoute path="/actions/dropdowns" component={Dropdowns} />
+            <PrivateRoute path="/actions/typography" component={Typography} />
             <PrivateRoute
               path="/management/products-list"
               component={ProductsList}

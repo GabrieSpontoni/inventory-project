@@ -7,9 +7,11 @@ import CSVReader from "react-csv-reader";
 import firebase from "firebase/app";
 
 import "./NewProductForm.css";
+import { TextField } from "@mui/material";
 
 export default function NewProductForm() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
+  const toastId = React.useRef(null);
 
   const [user, setUser] = useState(null);
   const [dataCsv, setDataCsv] = useState(null);
@@ -47,8 +49,6 @@ export default function NewProductForm() {
   }, []);
 
   const onSubmit = (data) => {
-    // console.log(data);
-
     const date = new Date();
     const dd = String(date.getDate()).padStart(2, "0");
     const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -71,36 +71,43 @@ export default function NewProductForm() {
         tipo: data.type.toLowerCase(),
         descricao: data.description,
         unidade_medida: data.unity,
-        qt_inicial: data.amount,
-        qt_atual: data.amount,
+        qt_inicial: parseFloat(data.amount),
+        qt_atual: parseFloat(data.amount),
         data: today,
         hora: time,
       })
       .then(() => {
-        toast.info(`Realizando upload das Fotos AGUARDE`, {
-          icon: "⌛",
-          theme: "dark",
-          hideProgressBar: true,
-          autoClose: 1000,
-        });
+        notify();
         const storageRef = firebase.storage().ref();
+        let index = 0;
+        const dataFilesLenght = Array.from(data.files).length;
 
-        for (let i = 0; i < data.files.length; i++) {
+        Array.from(data.files).forEach((file) => {
           storageRef
             .child(
-              `filiais/${user.id_filial}/produtos/${productKey}/${data.files[i].name}`
+              `filiais/${user.id_filial}/produtos/${productKey}/${file.name}`
             )
-            .put(data.files[i])
+            .put(file)
             .then(function (snapshot) {
-              toast.success(`${data.files[i].name} upload OK`, {
-                theme: "dark",
-                position: "top-center",
-              });
+              index = index + 1;
+
+              if (index === dataFilesLenght) {
+                toast.success(
+                  `Todas os dados e fotos foram salvos com sucesso`,
+                  {
+                    theme: "dark",
+                    hideProgressBar: true,
+                    autoClose: 4000,
+                  }
+                );
+                dismiss();
+                reset();
+              }
             })
             .catch(() => {
               console.log("upload fail");
             });
-        }
+        });
       })
       .catch(() => {
         toast.error("Algo deu errado tente novamente", {
@@ -179,6 +186,14 @@ export default function NewProductForm() {
     }
   };
 
+  const notify = () =>
+    (toastId.current = toast.loading(`Salvando Dados Aguarde...`, {
+      theme: "dark",
+      autoClose: false,
+    }));
+
+  const dismiss = () => toast.dismiss(toastId.current);
+
   return (
     <div>
       <div className="page-header">
@@ -212,46 +227,91 @@ export default function NewProductForm() {
               {user && user.tipo_atual === "administrador" && (
                 <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
                   <Form.Group>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder="Categoria "
+                    <TextField
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      label="Categoria"
                       {...register("category")}
                       required
                     />
                   </Form.Group>
                   <Form.Group>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder="Tipo do Produto"
+                    <TextField
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      label="Tipo"
                       {...register("type")}
                       required
                     />
                   </Form.Group>
                   <Form.Group>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder="Descrição do produto "
+                    <TextField
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      label="Decrição"
                       {...register("description")}
                       required
                     />
                   </Form.Group>
                   <Form.Group>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder="Unidade de medida "
+                    <TextField
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      label="Unidade de medida"
                       {...register("unity")}
                       required
                     />
                   </Form.Group>
                   <Form.Group>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder="Quantidade"
+                    <TextField
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      label="Quantidade"
                       {...register("amount")}
                       required
                     />
@@ -276,7 +336,7 @@ export default function NewProductForm() {
                         style={{ cursor: "pointer" }}
                         id="myInput"
                         type="file"
-                        accept=""
+                        accept="image/*"
                         multiple
                         className="form-control"
                         required
@@ -386,7 +446,7 @@ export default function NewProductForm() {
           </div>
         </div>
       )}
-      <ToastContainer limit={5} />
+      <ToastContainer limit={10} />
     </div>
   );
 }

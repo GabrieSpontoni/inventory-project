@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Alert } from "react-bootstrap";
 import { useHistory } from "react-router";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import firebase from "firebase/app";
 
 function TableProducts() {
@@ -23,7 +25,6 @@ function TableProducts() {
             if (isMounted) {
               if (snapshot.exists()) {
                 setUser({ ...snapshot.val() });
-                // console.log(snapshot.val());
               } else {
                 console.log("No data available");
                 setUser({});
@@ -55,8 +56,6 @@ function TableProducts() {
             const items = [];
 
             snapshot.forEach((childSnapshot) => {
-              // console.log(childSnapshot.key);
-              // console.log(childSnapshot.val());
               items[childSnapshot.key] = childSnapshot.val();
             });
             setData(items);
@@ -78,25 +77,39 @@ function TableProducts() {
   };
 
   const handleDeleteProduct = () => {
-    // const storageRef = firebase.storage().ref();
-    // storageRef
-    //   .child(`filiais/${user.id_filial}/produtos/${productID}/hammer.jpg`)
-    //   .delete()
-    //   .then(function () {
-    //     console.log("delete ok");
-    //     window.location.reload();
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
-    // setShow(false);
-    // firebase
-    //   .database()
-    //   .ref(`/filiais/${user.id_filial}/estoque/produtos/${productID}`)
-    //   .remove()
-    //   .then(() => {
-    //     window.location.reload();
-    //   });
+    setShow(false);
+    const storageRef = firebase.storage().ref();
+
+    firebase
+      .database()
+      .ref(`/filiais/${user.id_filial}/estoque/produtos/${productID}`)
+      .remove()
+      .then(() => {
+        toast.loading(`Excluindo dados`, {
+          theme: "dark",
+          position: "top-center",
+        });
+        storageRef
+          .child(`filiais/${user.id_filial}/produtos/${productID}`)
+          .listAll()
+          .then(function (result) {
+            console.log(result.items.length);
+            let i = 1;
+            result.items.forEach(function (itemRef) {
+              storageRef
+                .child(itemRef.fullPath)
+                .delete()
+                .then(function () {
+                  if (i !== result.items.length) {
+                    i = i + 1;
+                  } else {
+                    window.location.reload();
+                  }
+                  console.log(`deleted : ${itemRef.name}`);
+                });
+            });
+          });
+      });
   };
 
   const handleClose = () => setShow(false);
@@ -209,6 +222,7 @@ function TableProducts() {
                   </Modal.Footer>
                 </Modal>
               )}
+              <ToastContainer />
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
+import { Modal, Button, Alert } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
 import firebase from "firebase/app";
 
@@ -14,6 +15,7 @@ export function Photos() {
   const [photosUrl, setPhotosUrl] = useState([]);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -102,25 +104,24 @@ export function Photos() {
         });
     }
   };
-  // useEffect(() => {
-  //   console.log(photosName);
-  // });
-  const handleDelete = (photoName) => {
-    // console.log(photoName);
 
-    if (window.confirm(`Deseja realmente excluir a foto ${photoName}?`)) {
-      const storageRef = firebase.storage().ref();
-      storageRef
-        .child(`filiais/${user.id_filial}/produtos/${idProd}/${photoName}`)
-        .delete()
-        .then(function () {
-          console.log("delete ok");
-          window.location.reload();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+  const handleDelete = (photoName) => {
+    const storageRef = firebase.storage().ref();
+    storageRef
+      .child(`filiais/${user.id_filial}/produtos/${idProd}/${photoName}`)
+      .delete()
+      .then(function () {
+        console.log("delete ok");
+        window.location.reload();
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  const handleClose = () => setShow(false);
+  const handleShow = (id) => {
+    setShow(true);
   };
 
   return (
@@ -155,81 +156,112 @@ export function Photos() {
                       }}
                     />
                   </div>
-                  {user.ti}
-                  <div className="card-footer">
-                    {user && user.tipo_atual === "administrador" && (
+
+                  <div
+                    className="card-footer"
+                    style={{ display: "inline-block" }}
+                  >
+                    {photosName[e]}
+
+                    <div>
                       <button
                         type="button"
                         className="btn btn-danger btn-icon-text"
-                        style={{ marginRight: "10px", marginBottom: "10px" }}
+                        style={{
+                          marginBottom: "10px",
+                          marginLeft: "60%",
+                        }}
                         onClick={() => {
-                          handleDelete(photosName[e]);
+                          handleShow();
                         }}
                       >
                         <i className="mdi mdi-delete btn-icon-prepend" />
                         Excluir
                       </button>
-                    )}
-                    {photosName[e]}
+                      <Modal show={show} onHide={handleClose}>
+                        <Modal.Body>
+                          <Alert variant="danger">
+                            <Alert.Heading>TEM CERTEZA?</Alert.Heading>
+                            <p>
+                              Ao excluir a foto deste produto a operação não
+                              poderá ser desfeita.
+                            </p>
+                            <hr />
+                          </Alert>
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button variant="danger" onClick={handleClose}>
+                            Cancelar
+                          </Button>
+                          <Button
+                            variant="success"
+                            onClick={() => {
+                              handleDelete(photosName[e]);
+                            }}
+                          >
+                            Confirmar
+                          </Button>
+                        </Modal.Footer>
+                      </Modal>
+                    </div>
                   </div>
                 </div>
               </div>
             );
           })}
-        {user && user.tipo_atual === "administrador" && (
-          <div
-            className="card"
-            style={{
-              height: "400px",
-              width: "300px",
-              marginRight: "50px",
-              marginTop: "50px",
-              display: "flex",
-            }}
-          >
-            <div className="card-body">
-              <div>
-                <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
-                  <label>
-                    <i
-                      className="icon-lg mdi mdi-image-multiple text-primary"
-                      style={{
-                        marginLeft: "90px",
-                        marginTop: "90px",
-                        display: "flex",
-                        cursor: "pointer",
-                      }}
-                    />
-                    <input
-                      style={{
-                        cursor: "pointer",
-                        background: "transparent",
-                        border: "none",
-                      }}
-                      id="myInput"
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="form-control"
-                      required
-                      {...register("files")}
-                    />
-                  </label>
-                  <div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary btn-icon-text"
-                      style={{ width: "100%", marginTop: "100px" }}
-                    >
-                      Adicionar Fotos(s)
-                    </button>
-                    <ToastContainer />
-                  </div>
-                </form>
-              </div>
+
+        <div
+          className="card"
+          style={{
+            height: "400px",
+            width: "300px",
+            marginRight: "50px",
+            marginTop: "50px",
+            display: "flex",
+          }}
+        >
+          <div className="card-body">
+            <div>
+              <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
+                <label>
+                  <i
+                    className="icon-lg mdi mdi-image-multiple text-primary"
+                    style={{
+                      marginLeft: "90px",
+                      marginTop: "90px",
+                      display: "flex",
+                      cursor: "pointer",
+                    }}
+                  />
+                  <input
+                    style={{
+                      cursor: "pointer",
+                      background: "transparent",
+                      border: "none",
+                    }}
+                    id="myInput"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="form-control"
+                    required
+                    {...register("files")}
+                  />
+                </label>
+                <div>
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-icon-text"
+                    style={{ width: "100%", marginTop: "100px" }}
+                  >
+                    Adicionar Fotos(s)
+                  </button>
+                  <ToastContainer />
+                </div>
+              </form>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

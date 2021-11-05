@@ -37,7 +37,7 @@ class Sidebar extends Component {
 
     const dropdownPaths = [
       { path: "/apps", state: "appsMenuOpen" },
-      { path: "/registration", state: "registerMenuOpen" },
+      { path: "/actions", state: "registerMenuOpen" },
       { path: "/management", state: "managementMenuOpen" },
       { path: "/tables", state: "tablesMenuOpen" },
       { path: "/icons", state: "iconsMenuOpen" },
@@ -123,21 +123,21 @@ class Sidebar extends Component {
                     {" "}
                     <Link
                       className={
-                        this.isPathActive("/registration/output")
+                        this.isPathActive("/actions/output")
                           ? "nav-link active"
                           : "nav-link"
                       }
-                      to="/registration/output"
+                      to="/actions/output"
                     >
                       <div>Retirada</div>
                     </Link>
                     <Link
                       className={
-                        this.isPathActive("/registration/buttons")
+                        this.isPathActive("/actions/buttons")
                           ? "nav-link active"
                           : "nav-link"
                       }
-                      to="/registration/buttons"
+                      to="/actions/buttons"
                     >
                       <div>Buttons</div>
                     </Link>
@@ -146,11 +146,11 @@ class Sidebar extends Component {
                     {" "}
                     <Link
                       className={
-                        this.isPathActive("/registration/dropdowns")
+                        this.isPathActive("/actions/dropdowns")
                           ? "nav-link active"
                           : "nav-link"
                       }
-                      to="/registration/dropdowns"
+                      to="/actions/dropdowns"
                     >
                       <div>Dropdowns</div>
                     </Link>
@@ -159,11 +159,11 @@ class Sidebar extends Component {
                     {" "}
                     <Link
                       className={
-                        this.isPathActive("/registration/typography")
+                        this.isPathActive("/actions/typography")
                           ? "nav-link active"
                           : "nav-link"
                       }
-                      to="/registration/typography"
+                      to="/actions/typography"
                     >
                       <div>Typography</div>
                     </Link>
