@@ -8,6 +8,9 @@ import PrivateRoute from "./PrivateRoute";
 const Dashboard = lazy(() => import("./dashboard/Dashboard"));
 
 const Output = lazy(() => import("./actions/Output"));
+const Return = lazy(() => import("./actions/Return"));
+const ReturnEdit = lazy(() => import("./actions/ReturnEdit"));
+const ReturnPhotos = lazy(() => import("./actions/ReturnPhotos"));
 const Buttons = lazy(() => import("./actions/Buttons"));
 const Dropdowns = lazy(() => import("./actions/Dropdowns"));
 const Typography = lazy(() => import("./actions/Typography"));
@@ -43,6 +46,15 @@ class AppRoutes extends Component {
             <PrivateRoute exact path="/dashboard" component={Dashboard} />
 
             <PrivateRoute path="/actions/output" component={Output} />
+            <PrivateRoute path="/actions/return" component={Return} />
+            <PrivateRoute
+              path="/actions/return-form/:idAction"
+              component={ReturnEdit}
+            />
+            <PrivateRoute
+              path="/actions/return-photos/:idAction"
+              component={ReturnPhotos}
+            />
             <PrivateRoute path="/actions/buttons" component={Buttons} />
             <PrivateRoute path="/actions/dropdowns" component={Dropdowns} />
             <PrivateRoute path="/actions/typography" component={Typography} />

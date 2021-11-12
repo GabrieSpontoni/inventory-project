@@ -2,7 +2,6 @@ import React, { Component } from "react";
 
 import bsCustomFileInput from "bs-custom-file-input";
 import { OutputForm } from "../components/actions/output/OutputForm";
-import TableOutput from "../components/actions/output/TableOutput";
 import "../../firebase/config";
 
 class Output extends Component {
@@ -24,7 +23,6 @@ class Output extends Component {
     return (
       <div>
         <OutputForm />
-        <TableOutput />
       </div>
     );
   }

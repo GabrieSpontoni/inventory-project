@@ -12,6 +12,7 @@ import "./OutputForm.css";
 export function OutputForm() {
   const { register, handleSubmit, reset } = useForm();
   const [user, setUser] = useState(null);
+  const [userID, setUserID] = useState(null);
   const [data, setData] = useState([]);
   const productsList = [];
   const toastId = React.useRef(null);
@@ -22,6 +23,7 @@ export function OutputForm() {
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        setUserID(user.uid);
         dbRef
           .child(`usuarios/${user.uid}`)
           .get()
@@ -78,9 +80,10 @@ export function OutputForm() {
       Object.keys(data).map((key) => {
         index++;
         productsList.push({
-          label: `${index} - ${data[key].categoria} - ${data[key].qt_atual} disponível`,
+          label: `${index} - ${data[key].categoria} - ${data[key].qt_atual} ${data[key].unidade_medida}`,
           id: key,
           qt_atual: data[key].qt_atual,
+          unidade_medida: data[key].unidade_medida,
         });
 
         return 1;
@@ -102,59 +105,84 @@ export function OutputForm() {
     const minutes = date.getMinutes();
     const hour = date.getHours();
     const time = `${hour}:${minutes}:${seconds}`;
+
     const productRef = firebase
       .database()
-      .ref(`filiais/${user.id_filial}/estoque/acoes`);
-    const newProductRef = productRef.push();
-    const productKey = newProductRef.key;
+      .ref(`filiais/${user.id_filial}/estoque/produtos/${productChosen.id}`);
 
-    newProductRef
-      .set({
-        data: today,
-        hora: time,
-        id_prod: productChosen.id,
-        obs: data.obs,
-        quantidade: parseFloat(data.quantidade),
-        realizado_por: user.nome,
-        tipo: "retirada",
-      })
+    productRef.once("value", (snapshot) => {
+      if (snapshot) {
+        if (data.quantidade > snapshot.val().qt_atual) {
+          toast.error(
+            `Quantidade solicitada maior que a disponível! Quantidade disponível: ${
+              snapshot.val().qt_atual
+            }`,
+            {
+              theme: "dark",
+              position: "top-center",
+            }
+          );
+        } else {
+          const actiontRef = firebase
+            .database()
+            .ref(`filiais/${user.id_filial}/estoque/acoes`);
+          const newActiontRef = actiontRef.push();
+          const actionKey = newActiontRef.key;
+          newActiontRef
+            .set({
+              data: today,
+              hora: time,
+              id_prod: productChosen.id,
+              id_usuario: userID,
+              obs: data.obs,
+              quantidade: parseFloat(data.quantidade),
+              tipo: "retirada",
+              status: "pendente",
+            })
+            .then(() => {
+              productRef.update({
+                qt_atual: snapshot.val().qt_atual - data.quantidade,
+              });
+              notify();
+              const storageRef = firebase.storage().ref();
+              let index = 0;
+              const dataFilesLenght = Array.from(data.files).length;
 
-      .then(() => {
-        notify();
-        const storageRef = firebase.storage().ref();
-        let index = 0;
-        const dataFilesLenght = Array.from(data.files).length;
+              Array.from(data.files).forEach((file) => {
+                storageRef
+                  .child(
+                    `filiais/${user.id_filial}/acoes/${actionKey}/${file.name}`
+                  )
+                  .put(file)
+                  .then(function (snapshot) {
+                    index = index + 1;
 
-        Array.from(data.files).forEach((file) => {
-          storageRef
-            .child(`filiais/${user.id_filial}/acoes/${productKey}/${file.name}`)
-            .put(file)
-            .then(function (snapshot) {
-              index = index + 1;
-
-              if (index === dataFilesLenght) {
-                toast.success(
-                  `Todas os dados e fotos foram salvos com sucesso`,
-                  {
-                    theme: "dark",
-                    hideProgressBar: true,
-                    autoClose: 4000,
-                  }
-                );
-                dismiss();
-                reset();
-              }
+                    if (index === dataFilesLenght) {
+                      toast.success(
+                        `Todas os dados e fotos foram salvos com sucesso`,
+                        {
+                          theme: "dark",
+                          hideProgressBar: true,
+                          autoClose: 4000,
+                        }
+                      );
+                      dismiss();
+                      reset();
+                    }
+                  })
+                  .catch(() => {
+                    console.log("upload fail");
+                  });
+              });
             })
             .catch(() => {
-              console.log("upload fail");
+              toast.error("Algo deu errado tente novamente", {
+                theme: "dark",
+              });
             });
-        });
-      })
-      .catch(() => {
-        toast.error("Algo deu errado tente novamente", {
-          theme: "dark",
-        });
-      });
+        }
+      }
+    });
     toast.clearWaitingQueue();
   };
 

@@ -129,7 +129,17 @@ class Sidebar extends Component {
                       }
                       to="/actions/output"
                     >
-                      <div>Retirada</div>
+                      <div>Retiradas</div>
+                    </Link>
+                    <Link
+                      className={
+                        this.isPathActive("/actions/return")
+                          ? "nav-link active"
+                          : "nav-link"
+                      }
+                      to="/actions/return"
+                    >
+                      <div>Devoluções</div>
                     </Link>
                     <Link
                       className={
