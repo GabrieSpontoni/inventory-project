@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import ReturnForms from "../components/actions/return-edit/ReturnForm";
+import ReturnForm from "../components/actions/return-edit/ReturnForm";
 
-export class ReturnForm extends Component {
+export class ReturnEdit extends Component {
   render() {
     return (
       <div>
@@ -21,10 +21,10 @@ export class ReturnForm extends Component {
           </nav>
         </div>
 
-        <ReturnForms />
+        <ReturnForm />
       </div>
     );
   }
 }
 
-export default ReturnForm;
+export default ReturnEdit;

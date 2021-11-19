@@ -11,28 +11,15 @@ const Output = lazy(() => import("./actions/Output"));
 const Return = lazy(() => import("./actions/Return"));
 const ReturnEdit = lazy(() => import("./actions/ReturnEdit"));
 const ReturnPhotos = lazy(() => import("./actions/ReturnPhotos"));
-const Buttons = lazy(() => import("./actions/Buttons"));
-const Dropdowns = lazy(() => import("./actions/Dropdowns"));
-const Typography = lazy(() => import("./actions/Typography"));
 
 const ProductsList = lazy(() => import("./management/ProductsList"));
 const ReleaseAccess = lazy(() => import("./management/ReleaseAccess"));
-const BasicElements = lazy(() => import("./management/BasicElements"));
 const NewProduct = lazy(() => import("./management/NewProduct"));
 const NewBranch = lazy(() => import("./management/NewBranch"));
 const ProductsListPhotos = lazy(() =>
   import("./management/ProductsListPhotos")
 );
 const ProductsEdit = lazy(() => import("./management/ProductsListEdit"));
-
-const BasicTable = lazy(() => import("./tables/BasicTable"));
-
-const Mdi = lazy(() => import("./icons/Mdi"));
-
-const ChartJs = lazy(() => import("./charts/ChartJs"));
-
-const Error404 = lazy(() => import("./error-pages/Error404"));
-const Error500 = lazy(() => import("./error-pages/Error500"));
 
 const Login = lazy(() => import("./user-pages/Login"));
 const Register1 = lazy(() => import("./user-pages/Register"));
@@ -55,9 +42,6 @@ class AppRoutes extends Component {
               path="/actions/return-photos/:idAction"
               component={ReturnPhotos}
             />
-            <PrivateRoute path="/actions/buttons" component={Buttons} />
-            <PrivateRoute path="/actions/dropdowns" component={Dropdowns} />
-            <PrivateRoute path="/actions/typography" component={Typography} />
             <PrivateRoute
               path="/management/products-list"
               component={ProductsList}
@@ -71,10 +55,6 @@ class AppRoutes extends Component {
               path="/management/release-access"
               component={ReleaseAccess}
             />
-            <PrivateRoute
-              path="/management/basic-elements"
-              component={BasicElements}
-            />
 
             <PrivateRoute
               path="/management/products-list-photos/:idProd"
@@ -85,17 +65,8 @@ class AppRoutes extends Component {
               component={ProductsEdit}
             />
 
-            <PrivateRoute path="/tables/basic-table" component={BasicTable} />
-
-            <PrivateRoute path="/icons/mdi" component={Mdi} />
-
-            <PrivateRoute path="/charts/chart-js" component={ChartJs} />
-
             <Route path="/user-pages/login-1" component={Login} />
             <Route path="/user-pages/register-1" component={Register1} />
-
-            <Route path="/error-pages/error-404" component={Error404} />
-            <Route path="/error-pages/error-500" component={Error500} />
 
             <Redirect to="/user-pages/login-1" />
           </Switch>

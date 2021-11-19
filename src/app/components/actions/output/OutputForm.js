@@ -135,7 +135,8 @@ export function OutputForm() {
               id_prod: productChosen.id,
               id_usuario: userID,
               obs: data.obs,
-              quantidade: parseFloat(data.quantidade),
+              quantidade_retirada: parseFloat(data.quantidade),
+              quantidade_devolvida: 0,
               tipo: "retirada",
               status: "pendente",
             })
@@ -197,16 +198,16 @@ export function OutputForm() {
   return (
     <div>
       <div className="page-header">
-        <h3 className="page-title"> Form elements </h3>
+        <h3 className="page-title"> Retiradas </h3>
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">
               <a href="!#" onClick={(event) => event.preventDefault()}>
-                Forms
+                Ações
               </a>
             </li>
             <li className="breadcrumb-item active" aria-current="page">
-              Form elements
+              Retiradas
             </li>
           </ol>
         </nav>

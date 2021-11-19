@@ -134,14 +134,7 @@ function ProductsEdit() {
             <div className="card-body">
               <h4 className="card-title">Editar Produto</h4>
 
-              {user && user.tipo_atual !== "administrador" && (
-                <h4 style={{ color: "yellow" }}>
-                  Seu perfil é do tipo "{user.tipo_atual}" e não possui acesso á
-                  este recurso, caso queira obter acesso fale com seu superior.
-                </h4>
-              )}
-
-              {user && user.tipo_atual === "administrador" && data && (
+              {user && data && (
                 <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
                   <Form.Group>
                     <label>Categoria</label>

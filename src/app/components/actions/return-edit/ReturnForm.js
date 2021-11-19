@@ -99,6 +99,7 @@ function ReturnForms() {
 
   const onSubmit = (data) => {
     console.log(data);
+
     const date = new Date();
     const dd = String(date.getDate()).padStart(2, "0");
     const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -111,8 +112,10 @@ function ReturnForms() {
 
     const actionRef = firebase
       .database()
-      .ref(`filiais/${user.id_filial}/estoque/acoes/`);
+      .ref()
+      .child(`filiais/${user.id_filial}/estoque/acoes/${idAction}/devolucoes`);
     const newActionRef = actionRef.push();
+    const newActionKey = newActionRef.key;
     newActionRef
       .set({
         data: today,
@@ -125,36 +128,59 @@ function ReturnForms() {
       })
       .then(() => {
         notify();
+
+        const updateOutput = {
+          quantidade_devolvida:
+            action.quantidade_devolvida + parseFloat(data.amount),
+          status:
+            data.checked === true ||
+            parseFloat(action.quantidade_retirada) === parseFloat(data.amount)
+              ? "devolvido"
+              : "pendente",
+        };
+
+        const updateProduct = {
+          qt_atual: product.qt_atual + parseFloat(data.amount),
+        };
+        firebase
+          .database()
+          .ref(`filiais/${user.id_filial}/estoque/acoes/${idAction}`)
+          .update(updateOutput);
+        firebase
+          .database()
+          .ref(`filiais/${user.id_filial}/estoque/produtos/${action.id_prod}`)
+          .update(updateProduct);
+
         const storageRef = firebase.storage().ref();
         let index = 0;
         const dataFilesLenght = Array.from(data.files).length;
 
-        // Array.from(data.files).forEach((file) => {
-        //   storageRef
-        //     .child(
-        //       `filiais/${user.id_filial}/produtos/${productKey}/${file.name}`
-        //     )
-        //     .put(file)
-        //     .then(function (snapshot) {
-        //       index = index + 1;
+        Array.from(data.files).forEach((file) => {
+          storageRef
+            .child(
+              `filiais/${user.id_filial}/acoes/${idAction}/devolucoes/${newActionKey}/${file.name}`
+            )
+            .put(file)
+            .then(function (snapshot) {
+              index = index + 1;
 
-        //       if (index === dataFilesLenght) {
-        //         toast.success(
-        //           `Todas os dados e fotos foram salvos com sucesso`,
-        //           {
-        //             theme: "dark",
-        //             hideProgressBar: true,
-        //             autoClose: 4000,
-        //           }
-        //         );
-        //         dismiss();
-        //         reset();
-        //       }
-        //     })
-        //     .catch(() => {
-        //       console.log("upload fail");
-        //     });
-        // });
+              if (index === dataFilesLenght) {
+                toast.success(
+                  `Todas os dados e fotos foram salvos com sucesso`,
+                  {
+                    theme: "dark",
+                    hideProgressBar: true,
+                    autoClose: 4000,
+                  }
+                );
+                dismiss();
+                reset();
+              }
+            })
+            .catch(() => {
+              console.log("upload fail");
+            });
+        });
       })
       .catch(() => {
         toast.error("Algo deu errado tente novamente", {
@@ -188,7 +214,13 @@ function ReturnForms() {
                       type="text"
                       className="form-control"
                       placeholder="Produto"
-                      value={product.categoria}
+                      value={
+                        product.categoria +
+                        " - " +
+                        action.quantidade_retirada +
+                        " " +
+                        "retirados"
+                      }
                       disabled
                     />
                   </Form.Group>
@@ -198,7 +230,9 @@ function ReturnForms() {
                       type="number"
                       className="form-control"
                       placeholder="Quantidade devolvida"
-                      defaultValue={action.quantidade}
+                      defaultValue={
+                        action.quantidade_retirada - action.quantidade_devolvida
+                      }
                       {...register("amount")}
                       required
                     />
@@ -241,6 +275,21 @@ function ReturnForms() {
                         {...register("files")}
                       />
                     </label>
+                  </Form.Group>
+
+                  <Form.Group>
+                    <div className="form-check">
+                      <label className="form-check-label">
+                        <input
+                          className="checkbox"
+                          type="checkbox"
+                          defaultChecked={false}
+                          {...register("checked")}
+                        />{" "}
+                        Não farei outras devoluções para este produto{" "}
+                        <i className="input-helper" />
+                      </label>
+                    </div>
                   </Form.Group>
 
                   <div style={{ display: "flex" }}>

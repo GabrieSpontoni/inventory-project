@@ -102,90 +102,109 @@ function TableOutput() {
   };
 
   return (
-    <div className="row ">
-      <div className="col-12 grid-margin">
-        <div className="card">
-          <div className="card-body">
-            <h4 className="card-title">Minhas Retiradas</h4>
+    <div>
+      <div className="page-header">
+        <h3 className="page-title"> Devoluções </h3>
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item">
+              <a href="!#" onClick={(event) => event.preventDefault()}>
+                Ações
+              </a>
+            </li>
+            <li className="breadcrumb-item active" aria-current="page">
+              Devoluções
+            </li>
+          </ol>
+        </nav>
+      </div>
+      <div className="row ">
+        <div className="col-12 grid-margin">
+          <div className="card">
+            <div className="card-body">
+              <h4 className="card-title">Minhas Retiradas</h4>
 
-            <div className="table-responsive">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th> Produto </th>
-                    <th> Quantidade retirada </th>
-                    <th> Data </th>
-                    <th> Hora </th>
-                    <th> Obs </th>
-                    <th> Fotos </th>
-                    <th> </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.keys(actions).map((id) => {
-                    const productChosen = productsList[actions[id].id_prod];
-                    if (productChosen) {
-                      return (
-                        <tr key={id}>
-                          <td> {productChosen.categoria} </td>
-                          <td> {actions[id].quantidade} </td>
-                          <td> {actions[id].data} </td>
-                          <td> {actions[id].hora}</td>
-                          <td> {actions[id].obs}</td>
-                          <td>
-                            <div>
-                              <button
-                                type="button"
-                                className="btn btn-primary btn-icon-text"
-                                onClick={() => handleSeePhotos(id)}
-                              >
-                                <i className="icon mdi mdi-image-multiple" />
-                              </button>
-                            </div>
-                          </td>
-                          {actions[id].status === "pendente" && (
+              <div className="table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th> Produto </th>
+                      <th> Qt retirada </th>
+                      <th> Qt devolvida </th>
+                      <th> Data </th>
+                      <th> Hora </th>
+                      <th> Obs </th>
+                      <th> Fotos </th>
+                      <th> </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.keys(actions).map((id) => {
+                      const productChosen = productsList[actions[id].id_prod];
+                      if (productChosen) {
+                        return (
+                          <tr key={id}>
+                            <td> {productChosen.categoria} </td>
+                            <td> {actions[id].quantidade_retirada} </td>
+                            <td> {actions[id].quantidade_devolvida} </td>
+                            <td> {actions[id].data} </td>
+                            <td> {actions[id].hora}</td>
+                            <td> {actions[id].obs}</td>
                             <td>
                               <div>
                                 <button
                                   type="button"
-                                  className="btn btn-outline-warning btn-fw"
-                                  style={{ width: "100%" }}
-                                  onClick={() => {
-                                    handleReturnProduct(id);
-                                  }}
+                                  className="btn btn-primary btn-icon-text"
+                                  onClick={() => handleSeePhotos(id)}
                                 >
-                                  Devolver
+                                  <i className="icon mdi mdi-image-multiple" />
                                 </button>
                               </div>
                             </td>
-                          )}
-                          {actions[id].status === "devolvido" && (
-                            <td>
-                              <div
-                                className="badge badge-outline-success"
-                                style={{ width: "100%" }}
-                              >
-                                Devolvido
-                              </div>
-                            </td>
-                          )}
-                        </tr>
-                      );
-                    } else {
-                      return (
-                        <tr key={id}>
-                          <td> Erro </td>
-                          <td> {actions[id].quantidade} </td>
-                          <td> {actions[id].data} </td>
-                          <td> {actions[id].hora}</td>
-                          <td> {actions[id].obs}</td>
-                          <td> Erro </td>
-                        </tr>
-                      );
-                    }
-                  })}
-                </tbody>
-              </table>
+                            {actions[id].status === "pendente" && (
+                              <td>
+                                <div>
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-warning btn-fw"
+                                    style={{ width: "100%" }}
+                                    onClick={() => {
+                                      handleReturnProduct(id);
+                                    }}
+                                  >
+                                    Devolver
+                                  </button>
+                                </div>
+                              </td>
+                            )}
+                            {actions[id].status === "devolvido" && (
+                              <td>
+                                <div
+                                  className="btn btn-outline-success btn-fw"
+                                  style={{ width: "100%", cursor: "default" }}
+                                >
+                                  Devolvido
+                                </div>
+                              </td>
+                            )}
+                          </tr>
+                        );
+                      } else {
+                        return (
+                          <tr key={id}>
+                            <td> Erro </td>
+                            <td> {actions[id].quantidade} </td>
+                            <td> {actions[id].data} </td>
+                            <td> {actions[id].hora}</td>
+                            <td> {actions[id].obs}</td>
+                            <td> Erro </td>
+                          </tr>
+                        );
+                      }
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

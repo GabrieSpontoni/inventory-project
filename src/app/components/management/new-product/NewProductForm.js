@@ -217,14 +217,7 @@ export default function NewProductForm() {
             <div className="card-body">
               <h4 className="card-title">Novo Produto</h4>
 
-              {user && user.tipo_atual !== "administrador" && (
-                <h4 style={{ color: "yellow" }}>
-                  Seu perfil é do tipo "{user.tipo_atual}" e não possui acesso á
-                  este recurso, caso queira obter acesso fale com seu superior.
-                </h4>
-              )}
-
-              {user && user.tipo_atual === "administrador" && (
+              {user && (
                 <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
                   <Form.Group>
                     <TextField
@@ -356,7 +349,7 @@ export default function NewProductForm() {
           </div>
         </div>
       </div>
-      {user && user.tipo_atual === "administrador" && (
+      {user && (
         <div className="row">
           <div className="col-12 grid-margin stretch-card">
             <div className="card">
