@@ -5,6 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import { CircularProgress } from "@mui/material";
 import firebase from "firebase/app";
 
 import "./OutputForm.css";
@@ -15,6 +16,7 @@ export function OutputForm() {
   const [userID, setUserID] = useState(null);
   const [data, setData] = useState([]);
   const productsList = [];
+  const [loading, setLoading] = useState(true);
   const toastId = React.useRef(null);
 
   useEffect(() => {
@@ -85,6 +87,7 @@ export function OutputForm() {
           qt_atual: data[key].qt_atual,
           unidade_medida: data[key].unidade_medida,
         });
+        setLoading(false);
 
         return 1;
       });
@@ -212,12 +215,15 @@ export function OutputForm() {
           </ol>
         </nav>
       </div>
-      <div className="row">
-        <div className="col-12 grid-margin stretch-card">
-          <div className="card">
-            <div className="card-body">
-              <h4 className="card-title">Retirada do Estoque</h4>
-              {data && (
+      {loading && (
+        <CircularProgress style={{ marginLeft: "50%", marginTop: "20%" }} />
+      )}
+      {!loading && (
+        <div className="row">
+          <div className="col-12 grid-margin stretch-card">
+            <div className="card">
+              <div className="card-body">
+                <h4 className="card-title">Retirada do Estoque</h4>
                 <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
                   <Form.Group>
                     <Autocomplete
@@ -317,11 +323,11 @@ export function OutputForm() {
                     <ToastContainer limit={3} />
                   </div>
                 </form>
-              )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

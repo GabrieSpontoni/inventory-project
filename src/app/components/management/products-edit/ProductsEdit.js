@@ -2,17 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
+import { useHistory } from "react-router";
+import { CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 
 import firebase from "firebase/app";
 
 function ProductsEdit() {
+  const history = useHistory();
   const { register, handleSubmit } = useForm();
   const { idProd } = useParams();
 
   const [user, setUser] = useState(null);
-  const [data, setData] = useState(null);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -46,7 +50,6 @@ function ProductsEdit() {
     };
   }, []);
 
-  // funtion to get the data from the database and set it to the state data
   useEffect(() => {
     let isMounted = true;
 
@@ -56,7 +59,7 @@ function ProductsEdit() {
         .ref(`/filiais/${user.id_filial}/estoque/produtos/${idProd}`)
         .once("value", (snapshot) => {
           if (isMounted) {
-            setData(snapshot.val());
+            setProduct(snapshot.val());
           }
         });
     }
@@ -65,11 +68,22 @@ function ProductsEdit() {
       isMounted = false;
     };
   }, [user, idProd]);
-  // useEffect(() => {
-  //   console.log(data);
-  // });
+
+  useEffect(() => {
+    if (product && user) {
+      setLoading(false);
+    }
+  }, [product, user]);
 
   const onSubmit = (data) => {
+    const diference = data.amount - product.qt_inicial;
+
+    if (product.qt_atual + diference < 0) {
+      toast.error("Erro Inesperado", {
+        theme: "dark",
+      });
+      return;
+    }
     const date = new Date();
     const dd = String(date.getDate()).padStart(2, "0");
     const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -80,7 +94,8 @@ function ProductsEdit() {
     const hour = date.getHours();
     const time = `${hour}:${minutes}:${seconds}`;
     var updateData = {
-      qt_atual: data.amount,
+      qt_inicial: parseFloat(data.amount),
+      qt_atual: product.qt_atual + diference,
       categoria: data.category,
       descricao: data.description,
       tipo: data.type,
@@ -107,6 +122,10 @@ function ProductsEdit() {
           .then(() => {
             toast.success("Produto atualizado com sucesso!", {
               theme: "dark",
+              autoClose: 3000,
+              onClose: () => {
+                history.push("/management/products-list");
+              },
             });
           });
       });
@@ -128,13 +147,16 @@ function ProductsEdit() {
           </ol>
         </nav>
       </div>
-      <div className="row">
-        <div className="col-12 grid-margin stretch-card">
-          <div className="card">
-            <div className="card-body">
-              <h4 className="card-title">Editar Produto</h4>
+      {loading && (
+        <CircularProgress style={{ marginLeft: "50%", marginTop: "20%" }} />
+      )}
+      {!loading && (
+        <div className="row">
+          <div className="col-12 grid-margin stretch-card">
+            <div className="card">
+              <div className="card-body">
+                <h4 className="card-title">Editar Produto</h4>
 
-              {user && data && (
                 <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
                   <Form.Group>
                     <label>Categoria</label>
@@ -142,7 +164,7 @@ function ProductsEdit() {
                       type="text"
                       className="form-control"
                       placeholder="Categoria "
-                      defaultValue={data.categoria}
+                      defaultValue={product.categoria}
                       {...register("category")}
                       required
                     />
@@ -153,7 +175,7 @@ function ProductsEdit() {
                       type="text"
                       className="form-control"
                       placeholder="Tipo do Produto"
-                      defaultValue={data.tipo}
+                      defaultValue={product.tipo}
                       {...register("type")}
                       required
                     />
@@ -164,7 +186,7 @@ function ProductsEdit() {
                       type="text"
                       className="form-control"
                       placeholder="Descrição do produto "
-                      defaultValue={data.descricao}
+                      defaultValue={product.descricao}
                       {...register("description")}
                       required
                     />
@@ -175,7 +197,7 @@ function ProductsEdit() {
                       type="text"
                       className="form-control"
                       placeholder="Unidade de medida "
-                      defaultValue={data.unidade_medida}
+                      defaultValue={product.unidade_medida}
                       {...register("unity")}
                       required
                     />
@@ -186,17 +208,17 @@ function ProductsEdit() {
                       type="number"
                       className="form-control"
                       placeholder="Quantidade"
-                      defaultValue={data.qt_inicial}
+                      defaultValue={product.qt_inicial}
                       {...register("amount")}
                       required
                     />
                   </Form.Group>
                   <Form.Group>
-                    <label>Observações</label>
+                    <label>O que foi mudado neste produto?</label>
                     <Form.Control
                       type="text"
                       className="form-control"
-                      placeholder="Obs"
+                      placeholder=""
                       {...register("obs")}
                       required
                     />
@@ -209,11 +231,11 @@ function ProductsEdit() {
                     <ToastContainer />
                   </div>
                 </form>
-              )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
