@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import { Modal, Button, Alert } from "react-bootstrap";
+import { CircularProgress } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 import firebase from "firebase/app";
 
@@ -126,7 +127,7 @@ export function Photos() {
 
   return (
     <div>
-      {photosUrl.length === 0 && isLoading && <div>Carregando...</div>}
+      {photosUrl.length === 0 && isLoading && <CircularProgress />}
       {photosUrl.length === 0 && !isLoading && (
         <div>Este produto não possui fotos</div>
       )}

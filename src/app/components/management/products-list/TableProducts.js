@@ -10,6 +10,7 @@ function TableProducts() {
   const history = useHistory();
   const [data, setData] = useState(null);
   const [user, setUser] = useState(null);
+  const [usersList, setUsersList] = useState(null);
   const [show, setShow] = useState(false);
   const [deleteProduct, setDeleteProduct] = useState(null);
   const [productID, setProductID] = useState(null);
@@ -63,6 +64,20 @@ function TableProducts() {
             setData(items);
           }
         });
+
+      firebase
+        .database()
+        .ref(`/usuarios/`)
+        .once("value", (snapshot) => {
+          if (isMounted) {
+            const users = [];
+
+            snapshot.forEach((childSnapshot) => {
+              users[childSnapshot.key] = childSnapshot.val();
+            });
+            setUsersList(users);
+          }
+        });
     }
 
     return () => {
@@ -71,10 +86,10 @@ function TableProducts() {
   }, [user]);
 
   useEffect(() => {
-    if (data) {
+    if (data && usersList) {
       setLoading(false);
     }
-  }, [data]);
+  }, [data, usersList]);
 
   const handleSeePhotos = (id) => {
     history.push(`/management/products-list-photos/${id}`);
@@ -102,6 +117,9 @@ function TableProducts() {
           .listAll()
           .then(function (result) {
             console.log(result.items.length);
+            if (result.items.length === 0) {
+              window.location.reload();
+            }
             let i = 1;
             result.items.forEach(function (itemRef) {
               storageRef
@@ -154,14 +172,17 @@ function TableProducts() {
                   </thead>
                   <tbody>
                     {data &&
+                      usersList &&
                       Object.keys(data).map((id) => {
                         return (
                           <tr key={id}>
                             <td>
-                              {data[id].cadastrado_por
-                                .split(" ")
-                                .slice(0, 2)
-                                .join(" ")}{" "}
+                              {usersList[data[id].id_usuario] !== undefined
+                                ? usersList[data[id].id_usuario].nome
+                                    .split(" ")
+                                    .slice(0, 2)
+                                    .join(" ")
+                                : data[id].id_usuario}
                             </td>
                             <td> {data[id].categoria} </td>
                             <td> {data[id].tipo} </td>

@@ -77,6 +77,9 @@ function ReturnForms() {
                 if (isMounted) {
                   setProduct(snapshot.val());
                 }
+              })
+              .catch((error) => {
+                console.error(error);
               });
           }
         })

@@ -14,6 +14,7 @@ export default function NewProductForm() {
   const toastId = React.useRef(null);
 
   const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [dataCsv, setDataCsv] = useState(null);
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export default function NewProductForm() {
             if (isMounted) {
               if (snapshot.exists()) {
                 setUser({ ...snapshot.val() });
+                setUserId(snapshot.key);
               } else {
                 console.log("No data available");
                 setUser({});
@@ -66,7 +68,7 @@ export default function NewProductForm() {
     const productKey = newProductRef.key;
     newProductRef
       .set({
-        cadastrado_por: user.nome,
+        id_usuario: userId,
         categoria: data.category.toLowerCase(),
         tipo: data.type.toLowerCase(),
         descricao: data.description,
@@ -159,7 +161,7 @@ export default function NewProductForm() {
         const newProductRef = productRef.push();
         newProductRef
           .set({
-            cadastrado_por: user.nome,
+            id_usuario: userId,
             categoria: dataCsv[id].categoria.toLowerCase(),
             tipo: dataCsv[id].tipo.toLowerCase(),
             descricao: dataCsv[id].descricao,

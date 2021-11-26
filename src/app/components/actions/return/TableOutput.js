@@ -153,92 +153,60 @@ function TableOutput() {
                       </thead>
                       <tbody>
                         {Object.keys(actions).map((id) => {
-                          if (productsList[actions[id].id_prod]) {
-                            return (
-                              <tr key={id}>
-                                <td>
-                                  {productsList[actions[id].id_prod].categoria}
-                                </td>
-                                <td> {actions[id].quantidade_retirada} </td>
-                                <td> {actions[id].quantidade_devolvida} </td>
-                                <td> {actions[id].data} </td>
-                                <td> {actions[id].hora}</td>
-                                <td> {actions[id].obs}</td>
+                          return (
+                            <tr key={id}>
+                              <td>
+                                {productsList[actions[id].id_prod] !== undefined
+                                  ? productsList[actions[id].id_prod].categoria
+                                  : actions[id].id_prod}
+                              </td>
+                              <td> {actions[id].quantidade_retirada} </td>
+                              <td> {actions[id].quantidade_devolvida} </td>
+                              <td> {actions[id].data} </td>
+                              <td> {actions[id].hora}</td>
+                              <td> {actions[id].obs}</td>
+                              <td>
+                                <div>
+                                  <button
+                                    type="button"
+                                    className="btn btn-primary btn-icon-text"
+                                    onClick={() => handleSeePhotos(id)}
+                                  >
+                                    <i className="icon mdi mdi-image-multiple" />
+                                  </button>
+                                </div>
+                              </td>
+                              {actions[id].status === "pendente" && (
                                 <td>
                                   <div>
                                     <button
                                       type="button"
-                                      className="btn btn-primary btn-icon-text"
-                                      onClick={() => handleSeePhotos(id)}
-                                    >
-                                      <i className="icon mdi mdi-image-multiple" />
-                                    </button>
-                                  </div>
-                                </td>
-                                {actions[id].status === "pendente" && (
-                                  <td>
-                                    <div>
-                                      <button
-                                        type="button"
-                                        className="btn btn-outline-warning btn-fw"
-                                        style={{ width: "100%" }}
-                                        onClick={() => {
-                                          handleReturnProduct(id);
-                                        }}
-                                      >
-                                        Devolver
-                                      </button>
-                                    </div>
-                                  </td>
-                                )}
-                                {actions[id].status === "devolvido" && (
-                                  <td>
-                                    <div
-                                      className="btn btn-outline-success btn-fw"
-                                      style={{
-                                        width: "100%",
-                                        cursor: "default",
+                                      className="btn btn-outline-warning btn-fw"
+                                      style={{ width: "100%" }}
+                                      onClick={() => {
+                                        handleReturnProduct(id);
                                       }}
                                     >
-                                      Devolvido
-                                    </div>
-                                  </td>
-                                )}
-                              </tr>
-                            );
-                          } else {
-                            return (
-                              <tr key={id}>
-                                <td> {actions[id].id_prod} </td>
-                                <td> {actions[id].quantidade_retirada} </td>
-                                <td> {actions[id].quantidade_devolvida} </td>
-                                <td> {actions[id].data} </td>
-                                <td> {actions[id].hora}</td>
-                                <td> {actions[id].obs}</td>
-
-                                <td>
-                                  <div>
-                                    <button
-                                      type="button"
-                                      className="btn btn-primary btn-icon-text"
-                                      onClick={() => handleSeePhotos(id)}
-                                    >
-                                      <i className="icon mdi mdi-image-multiple" />
+                                      Devolver
                                     </button>
                                   </div>
                                 </td>
-
+                              )}
+                              {actions[id].status === "devolvido" && (
                                 <td>
                                   <div
-                                    className="btn btn-outline-danger btn-fw"
-                                    style={{ width: "100%", cursor: "default" }}
+                                    className="btn btn-outline-success btn-fw"
+                                    style={{
+                                      width: "100%",
+                                      cursor: "default",
+                                    }}
                                   >
-                                    Indisponível
+                                    Devolvido
                                   </div>
                                 </td>
-                              </tr>
-                            );
-                          }
+                              )}
+                            </tr>
+                          );
                         })}
                       </tbody>
                     </table>
