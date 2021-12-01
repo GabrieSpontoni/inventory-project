@@ -1,0 +1,9 @@
+::-webkit-file-upload-button {
+  display: none;
+  color: white;
+  background: none;
+  cursor: pointer;
+  border: none;
+  border-radius: 50px;
+  width: 50%;
+}

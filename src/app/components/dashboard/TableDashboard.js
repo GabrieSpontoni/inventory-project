@@ -117,7 +117,7 @@ function TableDashboard() {
   }, [actions, productsList, usersList]);
 
   const handleSeePhotos = (id) => {
-    history.push(`/actions/return-photos/${id}`);
+    history.push(`/dashboard/dashboard-photos/${id}`);
   };
 
   return (

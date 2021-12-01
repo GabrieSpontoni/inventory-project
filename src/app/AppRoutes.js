@@ -6,6 +6,7 @@ import { AuthProvider } from "../firebase/authContext/auth";
 import PrivateRoute from "./PrivateRoute";
 
 const Dashboard = lazy(() => import("./dashboard/Dashboard"));
+const DashboardPhotos = lazy(() => import("./dashboard/DashboardPhotos"));
 
 const Output = lazy(() => import("./actions/Output"));
 const Return = lazy(() => import("./actions/Return"));
@@ -31,6 +32,10 @@ class AppRoutes extends Component {
         <Suspense fallback={<Spinner />}>
           <Switch>
             <PrivateRoute exact path="/dashboard" component={Dashboard} />
+            <PrivateRoute
+              path="/dashboard/dashboard-photos/:idProd"
+              component={DashboardPhotos}
+            />
 
             <PrivateRoute path="/actions/output" component={Output} />
             <PrivateRoute path="/actions/return" component={Return} />
