@@ -114,7 +114,11 @@ function TableOutput() {
         <CircularProgress style={{ marginLeft: "50%", marginTop: "20%" }} />
       )}
 
-      {!loading && (
+      {!loading && Object.keys(actions).length === 0 && (
+        <div>Você não possui nenhuma ação de retirada.</div>
+      )}
+
+      {!loading && Object.keys(actions).length > 0 && (
         <div>
           <div className="page-header">
             <h3 className="page-title"> Devoluções </h3>

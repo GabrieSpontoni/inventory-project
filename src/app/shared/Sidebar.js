@@ -4,7 +4,6 @@ import { Collapse } from "react-bootstrap";
 import firebase from "firebase/app";
 
 class Sidebar extends Component {
-  _isMounted = false;
   state = {};
   user = {};
 
@@ -28,7 +27,7 @@ class Sidebar extends Component {
     const dbRef = firebase.database().ref();
 
     firebase.auth().onAuthStateChanged((user) => {
-      if (user && this._isMounted) {
+      if (user) {
         dbRef
           .child(`usuarios/${user.uid}`)
           .get()
@@ -57,7 +56,10 @@ class Sidebar extends Component {
   }
 
   componentWillUnmount() {
-    this._isMounted = false;
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state, callback) => {
+      return;
+    };
   }
 
   toggleMenuState(menuState) {
@@ -93,6 +95,7 @@ class Sidebar extends Component {
       { path: "/apps", state: "appsMenuOpen" },
       { path: "/actions", state: "registerMenuOpen" },
       { path: "/management", state: "managementMenuOpen" },
+      { path: "/development", state: "developmentMenuOpen" },
       { path: "/tables", state: "tablesMenuOpen" },
       { path: "/icons", state: "iconsMenuOpen" },
       { path: "/charts", state: "chartsMenuOpen" },
@@ -199,90 +202,133 @@ class Sidebar extends Component {
             </Collapse>
           </li>
 
-          {this.state.tipo_atual === "administrador" && (
+          {this.state.tipo_atual === "administrador" ||
+            this.state.tipo_atual === "diretor" ||
+            (this.state.tipo_atual === "dev" && (
+              <div>
+                <li className="nav-item nav-category">
+                  <span className="nav-link">
+                    <div>Gerenciamento</div>
+                  </span>
+                </li>
+
+                <li
+                  className={
+                    this.isPathActive("/management")
+                      ? "nav-item menu-items active"
+                      : "nav-item menu-items"
+                  }
+                >
+                  <div
+                    className={
+                      this.state.managementMenuOpen
+                        ? "nav-link menu-expanded"
+                        : "nav-link"
+                    }
+                    onClick={() => this.toggleMenuState("managementMenuOpen")}
+                    data-toggle="collapse"
+                  >
+                    <span className="menu-icon">
+                      <i className="mdi mdi-account-key"></i>
+                    </span>
+                    <span className="menu-title">
+                      <div>Administração</div>
+                    </span>
+                    <i className="menu-arrow"></i>
+                  </div>
+                  <Collapse in={this.state.managementMenuOpen}>
+                    <div>
+                      <ul className="nav flex-column sub-menu">
+                        <li className="nav-item">
+                          {" "}
+                          <Link
+                            className={
+                              this.isPathActive("/management/products-list")
+                                ? "nav-link active"
+                                : "nav-link"
+                            }
+                            to="/management/products-list"
+                          >
+                            <div>Listar Produtos</div>
+                          </Link>
+                        </li>
+                        <li className="nav-item">
+                          <Link
+                            className={
+                              this.isPathActive("/management/new-product")
+                                ? "nav-link active"
+                                : "nav-link"
+                            }
+                            to="/management/new-product"
+                          >
+                            <div>Novo Produto</div>
+                          </Link>
+                        </li>
+
+                        <li className="nav-item">
+                          {" "}
+                          <Link
+                            className={
+                              this.isPathActive("/management/release-access")
+                                ? "nav-link active"
+                                : "nav-link"
+                            }
+                            to="/management/release-access"
+                          >
+                            <div>Liberar acessos</div>
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                  </Collapse>
+                </li>
+              </div>
+            ))}
+          {this.state.tipo_atual === "dev" && (
             <div>
               <li className="nav-item nav-category">
                 <span className="nav-link">
-                  <div>Gerenciamento</div>
+                  <div>DEV</div>
                 </span>
               </li>
 
               <li
                 className={
-                  this.isPathActive("/management")
+                  this.isPathActive("/development")
                     ? "nav-item menu-items active"
                     : "nav-item menu-items"
                 }
               >
                 <div
                   className={
-                    this.state.managementMenuOpen
+                    this.state.developmentMenuOpen
                       ? "nav-link menu-expanded"
                       : "nav-link"
                   }
-                  onClick={() => this.toggleMenuState("managementMenuOpen")}
+                  onClick={() => this.toggleMenuState("developmentMenuOpen")}
                   data-toggle="collapse"
                 >
                   <span className="menu-icon">
-                    <i className="mdi mdi-account-key"></i>
+                    <i className="mdi mdi-alert"></i>
                   </span>
                   <span className="menu-title">
-                    <div>Administração</div>
+                    <div>RESTRITO</div>
                   </span>
                   <i className="menu-arrow"></i>
                 </div>
-                <Collapse in={this.state.managementMenuOpen}>
+                <Collapse in={this.state.developmentMenuOpen}>
                   <div>
                     <ul className="nav flex-column sub-menu">
                       <li className="nav-item">
-                        {" "}
                         <Link
                           className={
-                            this.isPathActive("/management/products-list")
+                            this.isPathActive("/development/new-branch")
                               ? "nav-link active"
                               : "nav-link"
                           }
-                          to="/management/products-list"
+                          to="/development/new-branch"
                         >
-                          <div>Listar Produtos</div>
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link
-                          className={
-                            this.isPathActive("/management/new-product")
-                              ? "nav-link active"
-                              : "nav-link"
-                          }
-                          to="/management/new-product"
-                        >
-                          <div>Novo Produto</div>
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link
-                          className={
-                            this.isPathActive("/management/new-branch")
-                              ? "nav-link active"
-                              : "nav-link"
-                          }
-                          to="/management/new-branch"
-                        >
-                          <div>Nova Filial</div>
-                        </Link>
-                      </li>
-
-                      <li className="nav-item">
-                        {" "}
-                        <Link
-                          className={
-                            this.isPathActive("/management/release-access")
-                              ? "nav-link active"
-                              : "nav-link"
-                          }
-                          to="/management/release-access"
-                        >
-                          <div>Liberar acessos</div>
+                          <div>NOVA FILIAL</div>
                         </Link>
                       </li>
                     </ul>

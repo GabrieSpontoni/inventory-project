@@ -16,7 +16,7 @@ class Navbar extends Component {
     return (
       <nav className="navbar p-0 fixed-top d-flex flex-row">
         <div className="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
-          <Link className="navbar-brand brand-logo-mini" to="/">
+          <Link className="navbar-brand brand-logo-mini" to="/dashboard">
             <h2 style={{ color: "white", textDecoration: "none" }}>N</h2>
           </Link>
         </div>

@@ -55,7 +55,10 @@ class AppRoutes extends Component {
               path="/management/new-product"
               component={NewProduct}
             />
-            <PrivateRoute path="/management/new-branch" component={NewBranch} />
+            <PrivateRoute
+              path="/development/new-branch"
+              component={NewBranch}
+            />
             <PrivateRoute
               path="/management/release-access"
               component={ReleaseAccess}

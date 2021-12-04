@@ -159,7 +159,7 @@ export default function RegisterForm() {
                     Tipo de Usuário
                   </option>
                   <option value="administrador">Administrador</option>
-                  <option value="funcionario">Funcionário</option>
+                  <option value="colaborador">Colaborador</option>
                   );
                 </select>
                 <p className="card-description">

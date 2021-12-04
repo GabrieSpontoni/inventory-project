@@ -95,7 +95,7 @@ export function TableAdm() {
       <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
-            <h4>Solicitações de acesso para administrador</h4>
+            <h4>Solicitações de acesso (administradores)</h4>
 
             <div className="table-responsive">
               <table className="table">
@@ -112,7 +112,10 @@ export function TableAdm() {
                     .reverse()
                     .slice()
                     .map((id) => {
-                      if (data[id].tipo_atual === "novo") {
+                      if (
+                        data[id].tipo_atual === "novo" &&
+                        data[id].tipo_requisicao === "administrador"
+                      ) {
                         return (
                           <tr key={id}>
                             <td> {data[id].nome} </td>

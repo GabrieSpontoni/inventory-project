@@ -95,70 +95,61 @@ export function TableEmploye() {
       <div className="col-12 grid-margin">
         <div className="card">
           <div className="card-body">
-            <h4>Solicitações de acesso para funcionário</h4>
+            <h4>Solicitações de acesso (colaboradores)</h4>
 
-            {user &&
-              (user.tipo_atual === "administrador" ||
-                user.tipo_atual === "dono") && (
-                <div className="table-responsive">
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th> Nome do Funcionário </th>
-                        <th> Tipo de requisição </th>
-                        <th> Email </th>
-                        <th> </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.keys(data)
-                        .reverse()
-                        .slice()
-                        .map((id) => {
-                          if (data[id].tipo_atual === "novo") {
-                            return (
-                              <tr key={id}>
-                                <td> {data[id].nome} </td>
-                                <td> {data[id].tipo_requisicao} </td>
-                                <td> {data[id].email} </td>
-                                <td>
-                                  <div className="template-demo">
-                                    <button
-                                      type="button"
-                                      className="btn btn-outline-success btn-fw"
-                                      onClick={() =>
-                                        handleAccepted(data[id], id)
-                                      }
-                                    >
-                                      Aceitar
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="btn btn-outline-danger btn-fw"
-                                      onClick={() =>
-                                        handleRefused(data[id], id)
-                                      }
-                                    >
-                                      Recusar
-                                    </button>
-                                    <ToastContainer limit={3} />
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          } else {
-                            return null;
-                          }
-                        })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            {user && user.tipo_atual === "novo" && (
-              <h4 style={{ color: "#E51212" }}>
-                Seu perfil é do tipo "{user.tipo_atual}" e não possui acesso
-                para está função, apenas administrador pode acessar
-              </h4>
+            {user && (
+              <div className="table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th> Nome do Funcionário </th>
+                      <th> Tipo de requisição </th>
+                      <th> Email </th>
+                      <th> </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.keys(data)
+                      .reverse()
+                      .slice()
+                      .map((id) => {
+                        if (
+                          data[id].tipo_atual === "novo" &&
+                          data[id].tipo_requisicao === "colaborador"
+                        ) {
+                          return (
+                            <tr key={id}>
+                              <td> {data[id].nome} </td>
+                              <td> {data[id].tipo_requisicao} </td>
+                              <td> {data[id].email} </td>
+                              <td>
+                                <div className="template-demo">
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-success btn-fw"
+                                    onClick={() => handleAccepted(data[id], id)}
+                                  >
+                                    Aceitar
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-danger btn-fw"
+                                    onClick={() => handleRefused(data[id], id)}
+                                  >
+                                    Recusar
+                                  </button>
+                                  <ToastContainer limit={3} />
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        } else {
+                          return null;
+                        }
+                      })}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>
