@@ -284,7 +284,7 @@ class Sidebar extends Component {
                 </li>
               </div>
             ))}
-          {this.state.tipo_atual === "dev" && (
+          {/* {this.state.tipo_atual === "dev" && (
             <div>
               <li className="nav-item nav-category">
                 <span className="nav-link">
@@ -336,7 +336,7 @@ class Sidebar extends Component {
                 </Collapse>
               </li>
             </div>
-          )}
+          )} */}
         </ul>
       </nav>
     );

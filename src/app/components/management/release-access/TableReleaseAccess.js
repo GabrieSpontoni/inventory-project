@@ -43,8 +43,11 @@ function TableManagement() {
     <div>
       {user &&
         (user.tipo_atual === "administrador" ||
-          user.tipo_atual === "diretor") && <TableEmploye />}
-      {user && user.tipo_atual === "diretor" && <TableAdm />}
+          user.tipo_atual === "diretor" ||
+          user.tipo_atual === "dev") && <TableEmploye />}
+      {user && (user.tipo_atual === "diretor" || user.tipo_atual === "dev") && (
+        <TableAdm />
+      )}
     </div>
   );
 }

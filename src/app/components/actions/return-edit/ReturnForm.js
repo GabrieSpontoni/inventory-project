@@ -137,7 +137,9 @@ function ReturnForms() {
             action.quantidade_devolvida + parseFloat(data.amount),
           status:
             data.checked === true ||
-            parseFloat(action.quantidade_retirada) === parseFloat(data.amount)
+            parseFloat(data.amount) +
+              parseFloat(action.quantidade_devolvida) ===
+              parseFloat(action.quantidade_retirada)
               ? "devolvido"
               : "pendente",
         };

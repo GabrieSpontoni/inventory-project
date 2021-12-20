@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BranchForm } from "../components/management/new-branch/BranchForm";
+import { BranchForm } from "../components/dev/new-branch/BranchForm";
 import "../../firebase/config";
 
 export class NewBranch extends Component {

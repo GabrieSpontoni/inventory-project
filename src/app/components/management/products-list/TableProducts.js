@@ -86,10 +86,10 @@ function TableProducts() {
   }, [user]);
 
   useEffect(() => {
-    if (data && usersList) {
+    if (data && usersList && user) {
       setLoading(false);
     }
-  }, [data, usersList]);
+  }, [data, usersList, user]);
 
   const handleSeePhotos = (id) => {
     history.push(`/management/products-list-photos/${id}`);
@@ -150,118 +150,121 @@ function TableProducts() {
       {loading && (
         <CircularProgress style={{ marginLeft: "50%", marginTop: "20%" }} />
       )}
-      {!loading && (
-        <div className="col-12 grid-margin">
-          <div className="card">
-            <div className="card-body">
-              <h4 className="card-title">Produtos</h4>
-              <div className="table-responsive">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th> Cadastrado por </th>
-                      <th> Categoria </th>
-                      <th> Tipo </th>
-                      <th> Quantidade inicial </th>
-                      <th> Quantidade atual </th>
-                      <th> Descrição </th>
-                      <th> Hora do Cadastro </th>
-                      <th> Data do Cadastro </th>
-                      <th> </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data &&
-                      usersList &&
-                      Object.keys(data).map((id) => {
-                        return (
-                          <tr key={id}>
-                            <td>
-                              {usersList[data[id].id_usuario] !== undefined
-                                ? usersList[data[id].id_usuario].nome
-                                    .split(" ")
-                                    .slice(0, 2)
-                                    .join(" ")
-                                : data[id].id_usuario}
-                            </td>
-                            <td> {data[id].categoria} </td>
-                            <td> {data[id].tipo} </td>
-                            <td> {data[id].qt_inicial}</td>
-                            <td> {data[id].qt_atual}</td>
-                            <td> {data[id].descricao}</td>
-                            <td> {data[id].hora}</td>
-                            <td> {data[id].data}</td>
-                            <td style={{ display: "flex" }}>
-                              <button
-                                style={{ display: "flex" }}
-                                type="button"
-                                className="btn btn-primary btn-icon-text"
-                                onClick={() => {
-                                  handleSeePhotos(id);
-                                }}
-                              >
-                                <i className="icon mdi mdi-image-multiple" />
-                              </button>
-                              <button
-                                style={{ display: "flex" }}
-                                type="button"
-                                className="btn btn-warning btn-icon-text"
-                                onClick={() => {
-                                  handleEditProduct(id);
-                                }}
-                              >
-                                <i className="icon mdi mdi-pencil" />
-                              </button>
-                              <button
-                                style={{ display: "flex" }}
-                                type="button"
-                                className="btn btn-danger btn-icon-text"
-                                onClick={() => {
-                                  handleShow(id);
-                                }}
-                              >
-                                <i className="icon mdi mdi mdi-delete" />
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </table>
+      {!loading &&
+        (user.tipo_atual === "dev" ||
+          user.tipo_atual === "diretor" ||
+          user.tipo_atual === "administrador") && (
+          <div className="col-12 grid-margin">
+            <div className="card">
+              <div className="card-body">
+                <h4 className="card-title">Produtos</h4>
+                <div className="table-responsive">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th> Cadastrado por </th>
+                        <th> Categoria </th>
+                        <th> Tipo </th>
+                        <th> Quantidade inicial </th>
+                        <th> Quantidade atual </th>
+                        <th> Descrição </th>
+                        <th> Hora do Cadastro </th>
+                        <th> Data do Cadastro </th>
+                        <th> </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data &&
+                        usersList &&
+                        Object.keys(data).map((id) => {
+                          return (
+                            <tr key={id}>
+                              <td>
+                                {usersList[data[id].id_usuario] !== undefined
+                                  ? usersList[data[id].id_usuario].nome
+                                      .split(" ")
+                                      .slice(0, 2)
+                                      .join(" ")
+                                  : data[id].id_usuario}
+                              </td>
+                              <td> {data[id].categoria} </td>
+                              <td> {data[id].tipo} </td>
+                              <td> {data[id].qt_inicial}</td>
+                              <td> {data[id].qt_atual}</td>
+                              <td> {data[id].descricao}</td>
+                              <td> {data[id].hora}</td>
+                              <td> {data[id].data}</td>
+                              <td style={{ display: "flex" }}>
+                                <button
+                                  style={{ display: "flex" }}
+                                  type="button"
+                                  className="btn btn-primary btn-icon-text"
+                                  onClick={() => {
+                                    handleSeePhotos(id);
+                                  }}
+                                >
+                                  <i className="icon mdi mdi-image-multiple" />
+                                </button>
+                                <button
+                                  style={{ display: "flex" }}
+                                  type="button"
+                                  className="btn btn-warning btn-icon-text"
+                                  onClick={() => {
+                                    handleEditProduct(id);
+                                  }}
+                                >
+                                  <i className="icon mdi mdi-pencil" />
+                                </button>
+                                <button
+                                  style={{ display: "flex" }}
+                                  type="button"
+                                  className="btn btn-danger btn-icon-text"
+                                  onClick={() => {
+                                    handleShow(id);
+                                  }}
+                                >
+                                  <i className="icon mdi mdi mdi-delete" />
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
 
-                {deleteProduct && (
-                  <Modal show={show} onHide={handleClose}>
-                    <Modal.Body>
-                      <Alert variant="danger">
-                        <Alert.Heading>TEM CERTEZA?</Alert.Heading>
-                        <p>
-                          Ao excluir este produto a operação não poderá ser
-                          desfeita. Produto: {deleteProduct.categoria}
-                        </p>
-                        <hr />
-                      </Alert>
-                    </Modal.Body>
-                    <Modal.Footer>
-                      <Button variant="danger" onClick={handleClose}>
-                        Cancelar
-                      </Button>
-                      <Button
-                        variant="success"
-                        onClick={() => {
-                          handleDeleteProduct();
-                        }}
-                      >
-                        Confirmar
-                      </Button>
-                    </Modal.Footer>
-                  </Modal>
-                )}
-                <ToastContainer />
+                  {deleteProduct && (
+                    <Modal show={show} onHide={handleClose}>
+                      <Modal.Body>
+                        <Alert variant="danger">
+                          <Alert.Heading>TEM CERTEZA?</Alert.Heading>
+                          <p>
+                            Ao excluir este produto a operação não poderá ser
+                            desfeita. Produto: {deleteProduct.categoria}
+                          </p>
+                          <hr />
+                        </Alert>
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <Button variant="danger" onClick={handleClose}>
+                          Cancelar
+                        </Button>
+                        <Button
+                          variant="success"
+                          onClick={() => {
+                            handleDeleteProduct();
+                          }}
+                        >
+                          Confirmar
+                        </Button>
+                      </Modal.Footer>
+                    </Modal>
+                  )}
+                  <ToastContainer />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }

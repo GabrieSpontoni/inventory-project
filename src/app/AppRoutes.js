@@ -16,7 +16,7 @@ const ReturnPhotos = lazy(() => import("./actions/ReturnPhotos"));
 const ProductsList = lazy(() => import("./management/ProductsList"));
 const ReleaseAccess = lazy(() => import("./management/ReleaseAccess"));
 const NewProduct = lazy(() => import("./management/NewProduct"));
-const NewBranch = lazy(() => import("./management/NewBranch"));
+const NewBranch = lazy(() => import("./dev/NewBranch"));
 const ProductsListPhotos = lazy(() =>
   import("./management/ProductsListPhotos")
 );

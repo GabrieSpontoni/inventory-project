@@ -15,6 +15,7 @@ function ProductsEdit() {
   const { idProd } = useParams();
 
   const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,6 +32,7 @@ function ProductsEdit() {
             if (isMounted) {
               if (snapshot.exists()) {
                 setUser({ ...snapshot.val() });
+                setUserId(snapshot.key);
               } else {
                 console.log("No data available");
                 setUser({});
@@ -63,6 +65,7 @@ function ProductsEdit() {
           }
         });
     }
+    console.log(user);
 
     return () => {
       isMounted = false;
@@ -114,7 +117,7 @@ function ProductsEdit() {
           .set({
             id_prod: idProd,
             tipo: "alteracao",
-            realizada_por: user.nome,
+            realizada_por: userId,
             data: today,
             hora: time,
             obs: data.obs,
