@@ -115,9 +115,9 @@ export function OutputForm() {
 
     productRef.once("value", (snapshot) => {
       if (snapshot) {
-        if (data.quantidade > snapshot.val().qt_atual) {
+        if (data.quantidade > snapshot.val().qt_atual || data.quantidade <= 0) {
           toast.error(
-            `Quantidade solicitada maior que a disponível! Quantidade disponível: ${
+            `Quantidade solicitada indisponível! Quantidade disponível: ${
               snapshot.val().qt_atual
             }`,
             {
@@ -244,6 +244,7 @@ export function OutputForm() {
                               color: "white",
                             },
                           }}
+                          sx={{ input: { color: "white" } }}
                           required
                           {...register("produto")}
                         />
@@ -257,6 +258,7 @@ export function OutputForm() {
                         width: "100%",
                         backgroundColor: "#30343c",
                         borderRadius: "5px",
+                        color: "white",
                       }}
                       label="Quantidade"
                       InputLabelProps={{
@@ -265,6 +267,7 @@ export function OutputForm() {
                           color: "white",
                         },
                       }}
+                      sx={{ input: { color: "white" } }}
                       {...register("quantidade")}
                       required
                     />
@@ -283,6 +286,7 @@ export function OutputForm() {
                           color: "white",
                         },
                       }}
+                      sx={{ input: { color: "white" } }}
                       label="Observação"
                       {...register("obs")}
                       required

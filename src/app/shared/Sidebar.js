@@ -202,88 +202,88 @@ class Sidebar extends Component {
             </Collapse>
           </li>
 
-          {this.state.tipo_atual === "administrador" ||
+          {(this.state.tipo_atual === "administrador" ||
             this.state.tipo_atual === "diretor" ||
-            (this.state.tipo_atual === "dev" && (
-              <div>
-                <li className="nav-item nav-category">
-                  <span className="nav-link">
-                    <div>Gerenciamento</div>
-                  </span>
-                </li>
+            this.state.tipo_atual === "dev") && (
+            <div>
+              <li className="nav-item nav-category">
+                <span className="nav-link">
+                  <div>Gerenciamento</div>
+                </span>
+              </li>
 
-                <li
+              <li
+                className={
+                  this.isPathActive("/management")
+                    ? "nav-item menu-items active"
+                    : "nav-item menu-items"
+                }
+              >
+                <div
                   className={
-                    this.isPathActive("/management")
-                      ? "nav-item menu-items active"
-                      : "nav-item menu-items"
+                    this.state.managementMenuOpen
+                      ? "nav-link menu-expanded"
+                      : "nav-link"
                   }
+                  onClick={() => this.toggleMenuState("managementMenuOpen")}
+                  data-toggle="collapse"
                 >
-                  <div
-                    className={
-                      this.state.managementMenuOpen
-                        ? "nav-link menu-expanded"
-                        : "nav-link"
-                    }
-                    onClick={() => this.toggleMenuState("managementMenuOpen")}
-                    data-toggle="collapse"
-                  >
-                    <span className="menu-icon">
-                      <i className="mdi mdi-account-key"></i>
-                    </span>
-                    <span className="menu-title">
-                      <div>Administração</div>
-                    </span>
-                    <i className="menu-arrow"></i>
-                  </div>
-                  <Collapse in={this.state.managementMenuOpen}>
-                    <div>
-                      <ul className="nav flex-column sub-menu">
-                        <li className="nav-item">
-                          {" "}
-                          <Link
-                            className={
-                              this.isPathActive("/management/products-list")
-                                ? "nav-link active"
-                                : "nav-link"
-                            }
-                            to="/management/products-list"
-                          >
-                            <div>Listar Produtos</div>
-                          </Link>
-                        </li>
-                        <li className="nav-item">
-                          <Link
-                            className={
-                              this.isPathActive("/management/new-product")
-                                ? "nav-link active"
-                                : "nav-link"
-                            }
-                            to="/management/new-product"
-                          >
-                            <div>Novo Produto</div>
-                          </Link>
-                        </li>
+                  <span className="menu-icon">
+                    <i className="mdi mdi-account-key"></i>
+                  </span>
+                  <span className="menu-title">
+                    <div>Administração</div>
+                  </span>
+                  <i className="menu-arrow"></i>
+                </div>
+                <Collapse in={this.state.managementMenuOpen}>
+                  <div>
+                    <ul className="nav flex-column sub-menu">
+                      <li className="nav-item">
+                        {" "}
+                        <Link
+                          className={
+                            this.isPathActive("/management/products-list")
+                              ? "nav-link active"
+                              : "nav-link"
+                          }
+                          to="/management/products-list"
+                        >
+                          <div>Listar Produtos</div>
+                        </Link>
+                      </li>
+                      <li className="nav-item">
+                        <Link
+                          className={
+                            this.isPathActive("/management/new-product")
+                              ? "nav-link active"
+                              : "nav-link"
+                          }
+                          to="/management/new-product"
+                        >
+                          <div>Novo Produto</div>
+                        </Link>
+                      </li>
 
-                        <li className="nav-item">
-                          {" "}
-                          <Link
-                            className={
-                              this.isPathActive("/management/release-access")
-                                ? "nav-link active"
-                                : "nav-link"
-                            }
-                            to="/management/release-access"
-                          >
-                            <div>Liberar acessos</div>
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </Collapse>
-                </li>
-              </div>
-            ))}
+                      <li className="nav-item">
+                        {" "}
+                        <Link
+                          className={
+                            this.isPathActive("/management/release-access")
+                              ? "nav-link active"
+                              : "nav-link"
+                          }
+                          to="/management/release-access"
+                        >
+                          <div>Liberar acessos</div>
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                </Collapse>
+              </li>
+            </div>
+          )}
           {/* {this.state.tipo_atual === "dev" && (
             <div>
               <li className="nav-item nav-category">
