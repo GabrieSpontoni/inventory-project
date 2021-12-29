@@ -3,6 +3,7 @@ import { Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+import TextField from "@mui/material/TextField";
 
 import "react-toastify/dist/ReactToastify.css";
 import firebase from "firebase/app";
@@ -93,13 +94,6 @@ function ReturnForms() {
     };
   }, [user, userID, idAction]);
 
-  useEffect(() => {
-    if (product) {
-      console.log(action);
-      console.log(product);
-    }
-  }, [action, product]);
-
   const onSubmit = (data) => {
     console.log(data);
 
@@ -113,85 +107,98 @@ function ReturnForms() {
     const hour = date.getHours();
     const time = `${hour}:${minutes}:${seconds}`;
 
-    const actionRef = firebase
-      .database()
-      .ref()
-      .child(`filiais/${user.id_filial}/estoque/acoes/${idAction}/devolucoes`);
-    const newActionRef = actionRef.push();
-    const newActionKey = newActionRef.key;
-    newActionRef
-      .set({
-        data: today,
-        hora: time,
-        id_prod: action.id_prod,
-        id_usuario: userID,
-        obs: data.obs,
-        quantidade: parseFloat(data.amount),
-        tipo: "devolucao",
-      })
-      .then(() => {
-        notify();
-
-        const updateOutput = {
-          quantidade_devolvida:
-            action.quantidade_devolvida + parseFloat(data.amount),
-          status:
-            data.checked === true ||
-            parseFloat(data.amount) +
-              parseFloat(action.quantidade_devolvida) ===
-              parseFloat(action.quantidade_retirada)
-              ? "devolvido"
-              : "pendente",
-        };
-
-        const updateProduct = {
-          qt_atual: product.qt_atual + parseFloat(data.amount),
-        };
-        firebase
-          .database()
-          .ref(`filiais/${user.id_filial}/estoque/acoes/${idAction}`)
-          .update(updateOutput);
-        firebase
-          .database()
-          .ref(`filiais/${user.id_filial}/estoque/produtos/${action.id_prod}`)
-          .update(updateProduct);
-
-        const storageRef = firebase.storage().ref();
-        let index = 0;
-        const dataFilesLenght = Array.from(data.files).length;
-
-        Array.from(data.files).forEach((file) => {
-          storageRef
-            .child(
-              `filiais/${user.id_filial}/acoes/${idAction}/devolucoes/${newActionKey}/${file.name}`
-            )
-            .put(file)
-            .then(function (snapshot) {
-              index = index + 1;
-
-              if (index === dataFilesLenght) {
-                toast.success(
-                  `Todas os dados e fotos foram salvos com sucesso`,
-                  {
-                    theme: "dark",
-                    hideProgressBar: true,
-                    autoClose: 4000,
-                  }
-                );
-                dismiss();
-                reset();
-              }
-            })
-            .catch(() => {
-              console.log("upload fail");
-            });
-        });
-      })
-      .catch(() => {
-        toast.error("Algo deu errado tente novamente", {
-          theme: "dark",
-        });
+    if (
+      data.amount > action.quantidade_retirada - action.quantidade_devolvida ||
+      data.amount <= 0
+    ) {
+      toast.error("Quantidade inválida!", {
+        theme: "dark",
+        position: "top-center",
       });
+    } else {
+      const actionRef = firebase
+        .database()
+        .ref()
+        .child(
+          `filiais/${user.id_filial}/estoque/acoes/${idAction}/devolucoes`
+        );
+      const newActionRef = actionRef.push();
+      console.log(action);
+      const newActionKey = newActionRef.key;
+      newActionRef
+        .set({
+          data: today,
+          hora: time,
+          id_prod: action.id_prod,
+          id_usuario: userID,
+          obs: data.obs,
+          quantidade: parseFloat(data.amount),
+          tipo: "devolucao",
+        })
+        .then(() => {
+          notify();
+
+          const updateOutput = {
+            quantidade_devolvida:
+              action.quantidade_devolvida + parseFloat(data.amount),
+            status:
+              data.checked === true ||
+              parseFloat(data.amount) +
+                parseFloat(action.quantidade_devolvida) ===
+                parseFloat(action.quantidade_retirada)
+                ? "devolvido"
+                : "pendente",
+          };
+
+          const updateProduct = {
+            qt_atual: product.qt_atual + parseFloat(data.amount),
+          };
+          firebase
+            .database()
+            .ref(`filiais/${user.id_filial}/estoque/acoes/${idAction}`)
+            .update(updateOutput);
+          firebase
+            .database()
+            .ref(`filiais/${user.id_filial}/estoque/produtos/${action.id_prod}`)
+            .update(updateProduct);
+
+          const storageRef = firebase.storage().ref();
+          let index = 0;
+          const dataFilesLenght = Array.from(data.files).length;
+
+          Array.from(data.files).forEach((file) => {
+            storageRef
+              .child(
+                `filiais/${user.id_filial}/acoes/${idAction}/devolucoes/${newActionKey}/${file.name}`
+              )
+              .put(file)
+              .then(function (snapshot) {
+                index = index + 1;
+
+                if (index === dataFilesLenght) {
+                  toast.success(
+                    `Todos os dados e fotos foram salvos com sucesso`,
+                    {
+                      theme: "dark",
+                      hideProgressBar: true,
+                      autoClose: 4000,
+                    }
+                  );
+                  dismiss();
+                  reset();
+                }
+              })
+              .catch(() => {
+                console.log("upload fail");
+              });
+          });
+        })
+        .catch(() => {
+          toast.error("Algo deu errado tente novamente", {
+            theme: "dark",
+          });
+        });
+    }
 
     toast.clearWaitingQueue();
   };
@@ -213,7 +220,32 @@ function ReturnForms() {
               {action && product && (
                 <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
                   <Form.Group>
-                    <Form.Label>Produto</Form.Label>
+                    <TextField
+                      type="string"
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                        color: "white",
+                      }}
+                      label={
+                        product.categoria +
+                        " - " +
+                        action.quantidade_retirada +
+                        " " +
+                        "retirados"
+                      }
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      sx={{ input: { color: "white" } }}
+                      {...register("amount")}
+                      disabled
+                    />
+                    {/* <Form.Label>Produto</Form.Label>
                     <Form.Control
                       style={{ backgroundColor: "#30343c", color: "gray" }}
                       type="text"
@@ -227,11 +259,31 @@ function ReturnForms() {
                         "retirados"
                       }
                       disabled
-                    />
+                    /> */}
                   </Form.Group>
                   <Form.Group>
-                    <Form.Label>Quantidade a ser devolvida</Form.Label>
+                    <TextField
+                      type="number"
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                        color: "white",
+                      }}
+                      label="Quantidade"
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      sx={{ input: { color: "white" } }}
+                      {...register("amount")}
+                      required
+                    />
+                    {/* <Form.Label>Quantidade a ser devolvida</Form.Label>
                     <Form.Control
+                    
                       type="number"
                       className="form-control"
                       placeholder="Quantidade devolvida"
@@ -240,10 +292,29 @@ function ReturnForms() {
                       }
                       {...register("amount")}
                       required
-                    />
+                    /> */}
                   </Form.Group>
                   <Form.Group>
-                    <Form.Label>Obs</Form.Label>
+                    <TextField
+                      type="string"
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                        color: "white",
+                      }}
+                      label="Observação"
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      sx={{ input: { color: "white" } }}
+                      {...register("obs")}
+                      required
+                    />
+                    {/* <Form.Label>Obs</Form.Label>
                     <Form.Control
                       type="text"
                       className="form-control"
@@ -251,7 +322,7 @@ function ReturnForms() {
                       defaultValue={action.obs}
                       {...register("obs")}
                       required
-                    />
+                    /> */}
                   </Form.Group>
 
                   <Form.Group

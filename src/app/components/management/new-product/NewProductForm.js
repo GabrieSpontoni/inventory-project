@@ -234,6 +234,7 @@ export default function NewProductForm() {
                           color: "white",
                         },
                       }}
+                      sx={{ input: { color: "white" } }}
                       label="Categoria"
                       {...register("category")}
                       required
@@ -252,6 +253,7 @@ export default function NewProductForm() {
                           color: "white",
                         },
                       }}
+                      sx={{ input: { color: "white" } }}
                       label="Tipo"
                       {...register("type")}
                       required
@@ -270,6 +272,7 @@ export default function NewProductForm() {
                           color: "white",
                         },
                       }}
+                      sx={{ input: { color: "white" } }}
                       label="Decrição"
                       {...register("description")}
                       required
@@ -288,6 +291,7 @@ export default function NewProductForm() {
                           color: "white",
                         },
                       }}
+                      sx={{ input: { color: "white" } }}
                       label="Unidade de medida"
                       {...register("unity")}
                       required
@@ -306,6 +310,7 @@ export default function NewProductForm() {
                           color: "white",
                         },
                       }}
+                      sx={{ input: { color: "white" } }}
                       label="Quantidade"
                       {...register("amount")}
                       required

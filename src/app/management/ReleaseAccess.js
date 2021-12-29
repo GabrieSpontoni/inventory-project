@@ -15,7 +15,7 @@ export class ReleaseAccess extends Component {
                 </a>
               </li>
               <li className="breadcrumb-item active" aria-current="page">
-                Liberar acessos
+                Liberar acessos ao sistema
               </li>
             </ol>
           </nav>
