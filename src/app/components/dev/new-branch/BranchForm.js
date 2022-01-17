@@ -9,7 +9,6 @@ export function BranchForm() {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data);
     toast.info("Cadastrando Nova Filial", {
       icon: "⌛",
       theme: "dark",

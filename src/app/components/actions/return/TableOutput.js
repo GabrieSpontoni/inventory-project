@@ -7,6 +7,7 @@ function TableOutput() {
   const history = useHistory();
   const [actions, setActions] = useState(null);
   const [productsList, setProductsList] = useState(null);
+  const [constructionsList, setConstructionsList] = useState(null);
   const [user, setUser] = useState(null);
   const [userID, setUserID] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -83,6 +84,20 @@ function TableOutput() {
         .catch((error) => {
           console.error(error);
         });
+      firebase
+        .database()
+        .ref()
+        .child(`/filiais/${user.id_filial}/obras/`)
+        .get()
+        .then((snapshot) => {
+          if (isMounted) {
+            const constructions = [];
+            snapshot.forEach((childSnap) => {
+              constructions[childSnap.key] = childSnap.val();
+            });
+            setConstructionsList(constructions);
+          }
+        });
     }
 
     return () => {
@@ -92,13 +107,13 @@ function TableOutput() {
 
   useEffect(() => {
     let isMounted = true;
-    if (actions && productsList && isMounted) {
+    if (actions && productsList && constructionsList && isMounted) {
       setLoading(false);
     }
     return () => {
       isMounted = false;
     };
-  }, [actions, productsList]);
+  }, [actions, productsList, constructionsList]);
 
   const handleSeePhotos = (id) => {
     history.push(`/actions/return-photos/${id}`);
@@ -146,6 +161,7 @@ function TableOutput() {
                       <thead>
                         <tr>
                           <th> Produto </th>
+                          <th> Obra </th>
                           <th> Qt retirada </th>
                           <th> Qt devolvida </th>
                           <th> Data </th>
@@ -163,6 +179,13 @@ function TableOutput() {
                                 {productsList[actions[id].id_prod] !== undefined
                                   ? productsList[actions[id].id_prod].categoria
                                   : actions[id].id_prod}
+                              </td>
+                              <td>
+                                {constructionsList[actions[id].id_obra] !==
+                                undefined
+                                  ? constructionsList[actions[id].id_obra]
+                                      .nome_obra
+                                  : actions[id].id_obra}
                               </td>
                               <td> {actions[id].quantidade_retirada} </td>
                               <td> {actions[id].quantidade_devolvida} </td>

@@ -1,1 +1,0 @@
-{"version":3,"sources":["Photos.css"],"names":[],"mappings":"AAAA,6BACE,YAAa,CACb,UAAY,CACZ,eAAgB,CAChB,cAAe,CACf,WAAY,CACZ,kBAAmB,CACnB,SACF","file":"15.d46c1600.chunk.css","sourcesContent":["::-webkit-file-upload-button {\n  display: none;\n  color: white;\n  background: none;\n  cursor: pointer;\n  border: none;\n  border-radius: 50px;\n  width: 50%;\n}\n"]}

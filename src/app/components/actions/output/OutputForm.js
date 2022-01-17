@@ -15,7 +15,9 @@ export function OutputForm() {
   const [user, setUser] = useState(null);
   const [userID, setUserID] = useState(null);
   const [data, setData] = useState([]);
+  const [constructions, setConstructions] = useState([]);
   const productsList = [];
+  const constructionsList = [];
   const [loading, setLoading] = useState(true);
   const toastId = React.useRef(null);
 
@@ -77,6 +79,29 @@ export function OutputForm() {
   }, [user]);
 
   useEffect(() => {
+    let isMounted = true;
+    if (user) {
+      firebase
+        .database()
+        .ref(`/filiais/${user.id_filial}/obras/`)
+        .once("value", (snapshot) => {
+          if (isMounted) {
+            const items = [];
+
+            snapshot.forEach((childSnapshot) => {
+              items[childSnapshot.key] = childSnapshot.val();
+            });
+            setConstructions(items);
+          }
+        });
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
+
+  useEffect(() => {
     if (data) {
       let index = 0;
       Object.keys(data).map((key) => {
@@ -94,9 +119,35 @@ export function OutputForm() {
     }
   });
 
+  useEffect(() => {
+    if (constructions) {
+      let index = 0;
+      Object.keys(constructions).map((key) => {
+        index++;
+        constructionsList.push({
+          label: `${index} - ${constructions[key].nome_obra} - ${constructions[key].endereco_obra}`,
+          id: key,
+        });
+        setLoading(false);
+
+        return 1;
+      });
+    }
+  });
+
+  // useEffect(() => {
+  //   if (constructions && data && user) {
+  //     console.log(constructions);
+  //     console.log(data);
+  //   }
+  // }, [constructions, data, user]);
+
   const onSubmit = (data) => {
     const productChosen = productsList.find(
       (item) => item.label === data.produto
+    );
+    const constructionChosen = constructionsList.find(
+      (item) => item.label === data.construction
     );
 
     const date = new Date();
@@ -137,6 +188,7 @@ export function OutputForm() {
               hora: time,
               id_prod: productChosen.id,
               id_usuario: userID,
+              id_obra: constructionChosen.id,
               obs: data.obs,
               quantidade_retirada: parseFloat(data.quantidade),
               quantidade_devolvida: 0,
@@ -247,6 +299,32 @@ export function OutputForm() {
                           sx={{ input: { color: "white" } }}
                           required
                           {...register("produto")}
+                        />
+                      )}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Autocomplete
+                      style={{
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      disablePortal
+                      id="combo-box-demo"
+                      options={constructionsList}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Obra"
+                          InputLabelProps={{
+                            style: {
+                              height: "100%",
+                              color: "white",
+                            },
+                          }}
+                          sx={{ input: { color: "white" } }}
+                          required
+                          {...register("construction")}
                         />
                       )}
                     />

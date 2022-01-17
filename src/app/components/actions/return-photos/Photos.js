@@ -84,7 +84,6 @@ export function Photos() {
   }, [idAction, user]);
 
   const onSubmit = (data) => {
-    console.log(data);
     const storageRef = firebase.storage().ref();
 
     for (let i = 0; i < data.files.length; i++) {

@@ -70,7 +70,6 @@ export default function NewProductForm() {
       .set({
         id_usuario: userId,
         categoria: data.category.toLowerCase(),
-        tipo: data.type.toLowerCase(),
         descricao: data.description,
         unidade_medida: data.unity,
         qt_inicial: parseFloat(data.amount),
@@ -130,8 +129,6 @@ export default function NewProductForm() {
       if (
         dataCsv[id].categoria === null ||
         dataCsv[id].categoria === undefined ||
-        dataCsv[id].tipo === null ||
-        dataCsv[id].tipo === undefined ||
         dataCsv[id].descricao === null ||
         dataCsv[id].descricao === undefined ||
         dataCsv[id].unidade_medida === null ||
@@ -163,7 +160,7 @@ export default function NewProductForm() {
           .set({
             id_usuario: userId,
             categoria: dataCsv[id].categoria.toLowerCase(),
-            tipo: dataCsv[id].tipo.toLowerCase(),
+
             descricao: dataCsv[id].descricao,
             unidade_medida: dataCsv[id].unidade_medida,
             qt_inicial: dataCsv[id].quantidade,
@@ -235,49 +232,31 @@ export default function NewProductForm() {
                         },
                       }}
                       sx={{ input: { color: "white" } }}
+                      label="Descrição"
+                      {...register("description")}
+                      required
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <TextField
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      sx={{ input: { color: "white" } }}
                       label="Categoria"
                       {...register("category")}
                       required
                     />
                   </Form.Group>
-                  <Form.Group>
-                    <TextField
-                      style={{
-                        width: "100%",
-                        backgroundColor: "#30343c",
-                        borderRadius: "5px",
-                      }}
-                      InputLabelProps={{
-                        style: {
-                          height: "100%",
-                          color: "white",
-                        },
-                      }}
-                      sx={{ input: { color: "white" } }}
-                      label="Tipo"
-                      {...register("type")}
-                      required
-                    />
-                  </Form.Group>
-                  <Form.Group>
-                    <TextField
-                      style={{
-                        width: "100%",
-                        backgroundColor: "#30343c",
-                        borderRadius: "5px",
-                      }}
-                      InputLabelProps={{
-                        style: {
-                          height: "100%",
-                          color: "white",
-                        },
-                      }}
-                      sx={{ input: { color: "white" } }}
-                      label="Decrição"
-                      {...register("description")}
-                      required
-                    />
-                  </Form.Group>
+
                   <Form.Group>
                     <TextField
                       style={{
@@ -408,7 +387,7 @@ export default function NewProductForm() {
                       <tr>
                         <th> </th>
                         <th> categoria </th>
-                        <th> tipo </th>
+
                         <th> descricao </th>
                         <th> unidade_medida </th>
                         <th> quantidade </th>
@@ -420,7 +399,7 @@ export default function NewProductForm() {
                           <tr key={id}>
                             <td> {id} </td>
                             <td> {dataCsv[id].categoria} </td>
-                            <td> {dataCsv[id].tipo} </td>
+
                             <td> {dataCsv[id].descricao} </td>
                             <td> {dataCsv[id].unidade_medida} </td>
                             <td> {dataCsv[id].quantidade} </td>
