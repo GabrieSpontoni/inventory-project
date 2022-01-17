@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button, Alert } from "react-bootstrap";
+// import { Modal, Button, Alert } from "react-bootstrap";
 import { useHistory } from "react-router";
-import { ToastContainer, toast } from "react-toastify";
+// import { ToastContainer, toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 import firebase from "firebase/app";
 
-function TableProducts() {
+function Constructions() {
   const history = useHistory();
   const [data, setData] = useState(null);
   const [user, setUser] = useState(null);
   const [usersList, setUsersList] = useState(null);
-  const [show, setShow] = useState(false);
-  const [deleteProduct, setDeleteProduct] = useState(null);
-  const [productID, setProductID] = useState(null);
+  //   const [show, setShow] = useState(false);
+  //   const [deleteProduct, setDeleteProduct] = useState(null);
+  //   const [productID, setProductID] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,8 +52,7 @@ function TableProducts() {
     if (user) {
       firebase
         .database()
-        .ref(`/filiais/${user.id_filial}/estoque/produtos/`)
-        .orderByChild("tipo")
+        .ref(`/filiais/${user.id_filial}/obras/`)
         .once("value", (snapshot) => {
           if (isMounted) {
             const items = [];
@@ -91,57 +90,59 @@ function TableProducts() {
     }
   }, [data, usersList, user]);
 
-  const handleSeePhotos = (id) => {
-    history.push(`/management/products-list-photos/${id}`);
+  //   const handleSeePhotos = (id) => {
+  //     history.push(`/management/products-list-photos/${id}`);
+  //   };
+
+  const handleEditConstruction = (id) => {
+    history.push(`/management/constructions-list-edit/${id}`);
   };
 
-  const handleEditProduct = (id) => {
-    history.push(`/management/products-list-edit/${id}`);
-  };
+  //   const handleDeleteProduct = () => {
+  //     setShow(false);
+  //     const storageRef = firebase.storage().ref();
 
-  const handleDeleteProduct = () => {
-    setShow(false);
-    const storageRef = firebase.storage().ref();
+  //     firebase
+  //       .database()
+  //       .ref(`/filiais/${user.id_filial}/estoque/produtos/${productID}`)
+  //       .remove()
+  //       .then(() => {
+  //         toast.loading(`Excluindo dados`, {
+  //           theme: "dark",
+  //           position: "top-center",
+  //         });
+  //         storageRef
+  //           .child(`filiais/${user.id_filial}/produtos/${productID}`)
+  //           .listAll()
+  //           .then(function (result) {
+  //             console.log(result.items.length);
+  //             if (result.items.length === 0) {
+  //               window.location.reload();
+  //             }
+  //             let i = 1;
+  //             result.items.forEach(function (itemRef) {
+  //               storageRef
+  //                 .child(itemRef.fullPath)
+  //                 .delete()
+  //                 .then(function () {
+  //                   if (i !== result.items.length) {
+  //                     i = i + 1;
+  //                   } else {
+  //                     window.location.reload();
+  //                   }
+  //                   console.log(`deleted : ${itemRef.name}`);
+  //                 });
+  //             });
+  //           });
+  //       });
+  //   };
 
-    firebase
-      .database()
-      .ref(`/filiais/${user.id_filial}/estoque/produtos/${productID}`)
-      .remove()
-      .then(() => {
-        toast.loading(`Excluindo dados`, {
-          theme: "dark",
-          position: "top-center",
-        });
-        storageRef
-          .child(`filiais/${user.id_filial}/produtos/${productID}`)
-          .listAll()
-          .then(function (result) {
-            if (result.items.length === 0) {
-              window.location.reload();
-            }
-            let i = 1;
-            result.items.forEach(function (itemRef) {
-              storageRef
-                .child(itemRef.fullPath)
-                .delete()
-                .then(function () {
-                  if (i !== result.items.length) {
-                    i = i + 1;
-                  } else {
-                    window.location.reload();
-                  }
-                });
-            });
-          });
-      });
-  };
-
-  const handleClose = () => setShow(false);
-  const handleShow = (id) => {
-    setShow(true);
-    setDeleteProduct(data[id]);
-    setProductID(id);
-  };
+  //   const handleClose = () => setShow(false);
+  //   const handleShow = (id) => {
+  //     setShow(true);
+  //     setDeleteProduct(data[id]);
+  //     setProductID(id);
+  //   };
 
   return (
     <div className="row ">
@@ -160,12 +161,13 @@ function TableProducts() {
                   <table className="table">
                     <thead>
                       <tr>
-                        <th> Cadastrado por </th>
-                        <th> Categoria </th>
-                        <th> Tipo </th>
-                        <th> Quantidade inicial </th>
-                        <th> Quantidade atual </th>
-                        <th> Descrição </th>
+                        <th> Usuário </th>
+                        <th> Nome da Obra </th>
+                        <th> Endereço </th>
+                        <th> Cidade </th>
+                        <th> Responsável </th>
+                        <th> Telefone </th>
+                        <th> Email </th>
                         <th> Hora do Cadastro </th>
                         <th> Data do Cadastro </th>
                         <th> </th>
@@ -175,6 +177,7 @@ function TableProducts() {
                       {data &&
                         usersList &&
                         Object.keys(data).map((id) => {
+                          console.log(data);
                           return (
                             <tr key={id}>
                               <td>
@@ -185,15 +188,16 @@ function TableProducts() {
                                       .join(" ")
                                   : data[id].id_usuario}
                               </td>
-                              <td> {data[id].categoria} </td>
-                              <td> {data[id].tipo} </td>
-                              <td> {data[id].qt_inicial}</td>
-                              <td> {data[id].qt_atual}</td>
-                              <td> {data[id].descricao}</td>
+                              <td> {data[id].nome_obra} </td>
+                              <td> {data[id].endereco_obra} </td>
+                              <td> {data[id].cidade_obra}</td>
+                              <td> {data[id].responsavel}</td>
+                              <td> {data[id].telefone}</td>
+                              <td> {data[id].email}</td>
                               <td> {data[id].hora}</td>
                               <td> {data[id].data}</td>
                               <td style={{ display: "flex" }}>
-                                <button
+                                {/* <button
                                   style={{ display: "flex" }}
                                   type="button"
                                   className="btn btn-primary btn-icon-text"
@@ -202,18 +206,18 @@ function TableProducts() {
                                   }}
                                 >
                                   <i className="icon mdi mdi-image-multiple" />
-                                </button>
+                                </button> */}
                                 <button
                                   style={{ display: "flex" }}
                                   type="button"
                                   className="btn btn-warning btn-icon-text"
                                   onClick={() => {
-                                    handleEditProduct(id);
+                                    handleEditConstruction(id);
                                   }}
                                 >
                                   <i className="icon mdi mdi-pencil" />
                                 </button>
-                                <button
+                                {/* <button
                                   style={{ display: "flex" }}
                                   type="button"
                                   className="btn btn-danger btn-icon-text"
@@ -222,7 +226,7 @@ function TableProducts() {
                                   }}
                                 >
                                   <i className="icon mdi mdi mdi-delete" />
-                                </button>
+                                </button> */}
                               </td>
                             </tr>
                           );
@@ -230,7 +234,7 @@ function TableProducts() {
                     </tbody>
                   </table>
 
-                  {deleteProduct && (
+                  {/* {deleteProduct && (
                     <Modal show={show} onHide={handleClose}>
                       <Modal.Body>
                         <Alert variant="danger">
@@ -257,7 +261,7 @@ function TableProducts() {
                       </Modal.Footer>
                     </Modal>
                   )}
-                  <ToastContainer />
+                  <ToastContainer /> */}
                 </div>
               </div>
             </div>
@@ -267,4 +271,4 @@ function TableProducts() {
   );
 }
 
-export default TableProducts;
+export default Constructions;

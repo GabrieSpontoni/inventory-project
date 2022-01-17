@@ -14,8 +14,11 @@ const ReturnEdit = lazy(() => import("./actions/ReturnEdit"));
 const ReturnPhotos = lazy(() => import("./actions/ReturnPhotos"));
 
 const ProductsList = lazy(() => import("./management/ProductsList"));
-const ReleaseAccess = lazy(() => import("./management/ReleaseAccess"));
 const NewProduct = lazy(() => import("./management/NewProduct"));
+const NewConstructions = lazy(() => import("./management/NewConstructions"));
+const ConstructionsList = lazy(() => import("./management/ConstructionsList"));
+const ConstructionsEdit = lazy(() => import("./management/ConstructionsEdit"));
+const ReleaseAccess = lazy(() => import("./management/ReleaseAccess"));
 const NewBranch = lazy(() => import("./dev/NewBranch"));
 const ProductsListPhotos = lazy(() =>
   import("./management/ProductsListPhotos")
@@ -56,6 +59,19 @@ class AppRoutes extends Component {
               component={NewProduct}
             />
             <PrivateRoute
+              path="/management/new-constructions"
+              component={NewConstructions}
+            />
+            <PrivateRoute
+              path="/management/constructions-list"
+              component={ConstructionsList}
+            />
+
+            <PrivateRoute
+              path="/management/constructions-list-edit/:idConstruction"
+              component={ConstructionsEdit}
+            />
+            <PrivateRoute
               path="/development/new-branch"
               component={NewBranch}
             />
@@ -76,7 +92,7 @@ class AppRoutes extends Component {
             <Route path="/user-pages/login-1" component={Login} />
             <Route path="/user-pages/register-1" component={Register1} />
 
-            <Redirect to="/user-pages/login-1" />
+            <Redirect to="/dashboard" />
           </Switch>
         </Suspense>
       </AuthProvider>

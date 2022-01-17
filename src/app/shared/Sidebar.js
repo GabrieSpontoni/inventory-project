@@ -264,6 +264,31 @@ class Sidebar extends Component {
                           <div>Novo Produto</div>
                         </Link>
                       </li>
+                      <li className="nav-item">
+                        <Link
+                          className={
+                            this.isPathActive("/management/constructions-list")
+                              ? "nav-link active"
+                              : "nav-link"
+                          }
+                          to="/management/constructions-list"
+                        >
+                          <div>Listar Obras</div>
+                        </Link>
+                      </li>
+
+                      <li className="nav-item">
+                        <Link
+                          className={
+                            this.isPathActive("/management/new-constructions")
+                              ? "nav-link active"
+                              : "nav-link"
+                          }
+                          to="/management/new-constructions"
+                        >
+                          <div>Nova Obra</div>
+                        </Link>
+                      </li>
 
                       <li className="nav-item">
                         {" "}
@@ -284,7 +309,7 @@ class Sidebar extends Component {
               </li>
             </div>
           )}
-          {/* {this.state.tipo_atual === "dev" && (
+          {this.state.tipo_atual === "dev" && (
             <div>
               <li className="nav-item nav-category">
                 <span className="nav-link">
@@ -336,7 +361,7 @@ class Sidebar extends Component {
                 </Collapse>
               </li>
             </div>
-          )} */}
+          )}
         </ul>
       </nav>
     );
