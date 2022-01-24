@@ -15,6 +15,7 @@ export function OutputForm() {
   const [user, setUser] = useState(null);
   const [userID, setUserID] = useState(null);
   const [data, setData] = useState([]);
+  const [count, setCount] = useState(1);
   const [constructions, setConstructions] = useState([]);
   const productsList = [];
   const constructionsList = [];
@@ -112,6 +113,7 @@ export function OutputForm() {
           qt_atual: data[key].qt_atual,
           unidade_medida: data[key].unidade_medida,
         });
+
         setLoading(false);
 
         return 1;
@@ -143,103 +145,109 @@ export function OutputForm() {
   // }, [constructions, data, user]);
 
   const onSubmit = (data) => {
-    const productChosen = productsList.find(
-      (item) => item.label === data.produto
-    );
-    const constructionChosen = constructionsList.find(
-      (item) => item.label === data.construction
-    );
+    console.log(data);
+    for (let i = 0; i < count; i++) {
+      const productChosen = productsList.find(
+        (item) => item.label === data.produto[i]
+      );
+      const constructionChosen = constructionsList.find(
+        (item) => item.label === data.construction[i]
+      );
 
-    const date = new Date();
-    const dd = String(date.getDate()).padStart(2, "0");
-    const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
-    const yyyy = date.getFullYear();
-    const today = `${dd}/${mm}/${yyyy}`;
-    const seconds = date.getSeconds();
-    const minutes = date.getMinutes();
-    const hour = date.getHours();
-    const time = `${hour}:${minutes}:${seconds}`;
+      const date = new Date();
+      const dd = String(date.getDate()).padStart(2, "0");
+      const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
+      const yyyy = date.getFullYear();
+      const today = `${dd}/${mm}/${yyyy}`;
+      const seconds = date.getSeconds();
+      const minutes = date.getMinutes();
+      const hour = date.getHours();
+      const time = `${hour}:${minutes}:${seconds}`;
 
-    const productRef = firebase
-      .database()
-      .ref(`filiais/${user.id_filial}/estoque/produtos/${productChosen.id}`);
+      const productRef = firebase
+        .database()
+        .ref(`filiais/${user.id_filial}/estoque/produtos/${productChosen.id}`);
 
-    productRef.once("value", (snapshot) => {
-      if (snapshot) {
-        if (data.quantidade > snapshot.val().qt_atual || data.quantidade <= 0) {
-          toast.error(
-            `Quantidade solicitada indisponível! Quantidade disponível: ${
-              snapshot.val().qt_atual
-            }`,
-            {
-              theme: "dark",
-              position: "top-center",
-            }
-          );
-        } else {
-          const actiontRef = firebase
-            .database()
-            .ref(`filiais/${user.id_filial}/estoque/acoes`);
-          const newActiontRef = actiontRef.push();
-          const actionKey = newActiontRef.key;
-          newActiontRef
-            .set({
-              data: today,
-              hora: time,
-              id_prod: productChosen.id,
-              id_usuario: userID,
-              id_obra: constructionChosen.id,
-              obs: data.obs,
-              quantidade_retirada: parseFloat(data.quantidade),
-              quantidade_devolvida: 0,
-              tipo: "retirada",
-              status: "pendente",
-            })
-            .then(() => {
-              productRef.update({
-                qt_atual: snapshot.val().qt_atual - data.quantidade,
-              });
-              notify();
-              const storageRef = firebase.storage().ref();
-              let index = 0;
-              const dataFilesLenght = Array.from(data.files).length;
-
-              Array.from(data.files).forEach((file) => {
-                storageRef
-                  .child(
-                    `filiais/${user.id_filial}/acoes/${actionKey}/${file.name}`
-                  )
-                  .put(file)
-                  .then(function (snapshot) {
-                    index = index + 1;
-
-                    if (index === dataFilesLenght) {
-                      toast.success(
-                        `Todas os dados e fotos foram salvos com sucesso`,
-                        {
-                          theme: "dark",
-                          hideProgressBar: true,
-                          autoClose: 4000,
-                        }
-                      );
-                      dismiss();
-                      reset();
-                    }
-                  })
-                  .catch(() => {
-                    console.log("upload fail");
-                  });
-              });
-            })
-            .catch(() => {
-              toast.error("Algo deu errado tente novamente", {
+      productRef.once("value", (snapshot) => {
+        if (snapshot) {
+          if (
+            data.quantidade[i] > snapshot.val().qt_atual ||
+            data.quantidade[i] <= 0
+          ) {
+            toast.error(
+              `Quantidade solicitada indisponível! Quantidade disponível: ${
+                snapshot.val().qt_atual
+              }`,
+              {
                 theme: "dark",
+                position: "top-center",
+              }
+            );
+          } else {
+            const actiontRef = firebase
+              .database()
+              .ref(`filiais/${user.id_filial}/estoque/acoes`);
+            const newActiontRef = actiontRef.push();
+            const actionKey = newActiontRef.key;
+            newActiontRef
+              .set({
+                data: today,
+                hora: time,
+                id_prod: productChosen.id,
+                id_usuario: userID,
+                id_obra: constructionChosen.id,
+                obs: data.observacao[i],
+                quantidade_retirada: parseFloat(data.quantidade[i]),
+                quantidade_devolvida: 0,
+                tipo: "retirada",
+                status: "pendente",
+              })
+              .then(() => {
+                productRef.update({
+                  qt_atual: snapshot.val().qt_atual - data.quantidade[i],
+                });
+                notify();
+                const storageRef = firebase.storage().ref();
+                let index = 0;
+                const dataFilesLenght = Array.from(data.fotos[i]).length;
+
+                Array.from(data.fotos[i]).forEach((file) => {
+                  storageRef
+                    .child(
+                      `filiais/${user.id_filial}/acoes/${actionKey}/${file.name}`
+                    )
+                    .put(file)
+                    .then(function (snapshot) {
+                      index = index + 1;
+
+                      if (index === dataFilesLenght) {
+                        toast.success(
+                          `Todas os dados e fotos foram salvos com sucesso`,
+                          {
+                            theme: "dark",
+                            hideProgressBar: true,
+                            autoClose: 4000,
+                          }
+                        );
+                        dismiss();
+                        reset();
+                      }
+                    })
+                    .catch(() => {
+                      console.log("upload fail");
+                    });
+                });
+              })
+              .catch(() => {
+                toast.error("Algo deu errado tente novamente", {
+                  theme: "dark",
+                });
               });
-            });
+          }
         }
-      }
-    });
-    toast.clearWaitingQueue();
+      });
+      toast.clearWaitingQueue();
+    }
   };
 
   const notify = () =>
@@ -271,139 +279,172 @@ export function OutputForm() {
         <CircularProgress style={{ marginLeft: "50%", marginTop: "20%" }} />
       )}
       {!loading && (
+        <TextField
+          style={{
+            backgroundColor: "#30343c",
+            borderRadius: "5px",
+            width: "100%",
+            marginBottom: "10px",
+          }}
+          type="number"
+          defaultValue={1}
+          label="Quantidade de produtos que serão retirados"
+          InputLabelProps={{
+            style: {
+              height: "100%",
+              color: "white",
+            },
+          }}
+          sx={{ input: { color: "white" } }}
+          required
+          onChange={(event) => {
+            setCount(event.target.value < 50 ? event.target.value : 50);
+          }}
+        />
+      )}
+
+      {!loading && (
         <div className="row">
           <div className="col-12 grid-margin stretch-card">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Retirada do Estoque</h4>
                 <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
-                  <Form.Group>
-                    <Autocomplete
-                      style={{
-                        backgroundColor: "#30343c",
-                        borderRadius: "5px",
-                      }}
-                      disablePortal
-                      id="combo-box-demo"
-                      options={productsList}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Produto"
-                          InputLabelProps={{
-                            style: {
-                              height: "100%",
+                  {count > 0 &&
+                    Array.from({ length: count }).map((item, index) => (
+                      <div key={index}>
+                        <Form.Group>
+                          <Autocomplete
+                            style={{
+                              backgroundColor: "#30343c",
+                              borderRadius: "5px",
+                            }}
+                            disablePortal
+                            id="combo-box-demo"
+                            options={productsList}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Produto"
+                                InputLabelProps={{
+                                  style: {
+                                    height: "100%",
+                                    color: "white",
+                                  },
+                                }}
+                                sx={{ input: { color: "white" } }}
+                                required
+                                {...register(`produto[${index}]`)}
+                              />
+                            )}
+                          />
+                        </Form.Group>
+                        <Form.Group>
+                          <Autocomplete
+                            style={{
+                              backgroundColor: "#30343c",
+                              borderRadius: "5px",
+                            }}
+                            disablePortal
+                            id="combo-box-demo"
+                            options={constructionsList}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Obra"
+                                InputLabelProps={{
+                                  style: {
+                                    height: "100%",
+                                    color: "white",
+                                  },
+                                }}
+                                sx={{ input: { color: "white" } }}
+                                required
+                                {...register(`construction[${index}]`)}
+                              />
+                            )}
+                          />
+                        </Form.Group>
+                        <Form.Group>
+                          <TextField
+                            type="number"
+                            style={{
+                              width: "100%",
+                              backgroundColor: "#30343c",
+                              borderRadius: "5px",
                               color: "white",
-                            },
+                            }}
+                            label="Quantidade"
+                            InputLabelProps={{
+                              style: {
+                                height: "100%",
+                                color: "white",
+                              },
+                            }}
+                            sx={{ input: { color: "white" } }}
+                            {...register(`quantidade[${index}]`)}
+                            required
+                          />
+                        </Form.Group>
+                        <Form.Group>
+                          <TextField
+                            style={{
+                              width: "100%",
+                              backgroundColor: "#30343c",
+                              borderRadius: "5px",
+                            }}
+                            id="exampleTextarea1"
+                            InputLabelProps={{
+                              style: {
+                                height: "100%",
+                                color: "white",
+                              },
+                            }}
+                            sx={{ input: { color: "white" } }}
+                            label="Observação"
+                            {...register(`observacao[${index}]`)}
+                            required
+                          />
+                        </Form.Group>
+                        <Form.Group
+                          style={{
+                            textAlign: "center",
+                            border: "1px solid white",
                           }}
-                          sx={{ input: { color: "white" } }}
-                          required
-                          {...register("produto")}
-                        />
-                      )}
-                    />
-                  </Form.Group>
-                  <Form.Group>
-                    <Autocomplete
-                      style={{
-                        backgroundColor: "#30343c",
-                        borderRadius: "5px",
-                      }}
-                      disablePortal
-                      id="combo-box-demo"
-                      options={constructionsList}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Obra"
-                          InputLabelProps={{
-                            style: {
-                              height: "100%",
-                              color: "white",
-                            },
-                          }}
-                          sx={{ input: { color: "white" } }}
-                          required
-                          {...register("construction")}
-                        />
-                      )}
-                    />
-                  </Form.Group>
-                  <Form.Group>
-                    <TextField
-                      type="number"
-                      style={{
-                        width: "100%",
-                        backgroundColor: "#30343c",
-                        borderRadius: "5px",
-                        color: "white",
-                      }}
-                      label="Quantidade"
-                      InputLabelProps={{
-                        style: {
-                          height: "100%",
-                          color: "white",
-                        },
-                      }}
-                      sx={{ input: { color: "white" } }}
-                      {...register("quantidade")}
-                      required
-                    />
-                  </Form.Group>
-                  <Form.Group>
-                    <TextField
-                      style={{
-                        width: "100%",
-                        backgroundColor: "#30343c",
-                        borderRadius: "5px",
-                      }}
-                      id="exampleTextarea1"
-                      InputLabelProps={{
-                        style: {
-                          height: "100%",
-                          color: "white",
-                        },
-                      }}
-                      sx={{ input: { color: "white" } }}
-                      label="Observação"
-                      {...register("obs")}
-                      required
-                    />
-                  </Form.Group>
-                  <Form.Group
-                    style={{
-                      textAlign: "center",
-                      border: "1px solid white",
-                    }}
-                  >
-                    <label
-                      style={{
-                        width: "100%",
-                        display: "inline-block",
-                        marginBottom: "0%",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <i className="icon-md mdi mdi-image-multiple"> Fotos</i>
-                      <input
-                        style={{ cursor: "pointer" }}
-                        id="myInput"
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        className="form-control"
-                        required
-                        {...register("files")}
-                      />
-                    </label>
-                  </Form.Group>
-
-                  <div>
-                    <button type="submit" className="btn btn-primary mr-2">
-                      Salvar
-                    </button>
-                    <ToastContainer limit={3} />
-                  </div>
+                        >
+                          <label
+                            style={{
+                              width: "100%",
+                              display: "inline-block",
+                              marginBottom: "0%",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <i className="icon-md mdi mdi-image-multiple">
+                              {" "}
+                              Fotos
+                            </i>
+                            <input
+                              style={{ cursor: "pointer" }}
+                              id="myInput"
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              className="form-control"
+                              required
+                              {...register(`fotos[${index}]`)}
+                            />
+                          </label>
+                        </Form.Group>
+                      </div>
+                    ))}
+                  {count > 0 && (
+                    <div>
+                      <button type="submit" className="btn btn-primary mr-2">
+                        Salvar
+                      </button>
+                      <ToastContainer limit={3} />
+                    </div>
+                  )}
                 </form>
               </div>
             </div>
