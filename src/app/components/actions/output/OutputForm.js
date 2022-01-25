@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
+import { useHistory } from "react-router";
 import "react-toastify/dist/ReactToastify.css";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -11,6 +12,7 @@ import firebase from "firebase/app";
 import "./OutputForm.css";
 
 export function OutputForm() {
+  const history = useHistory();
   const { register, handleSubmit, reset } = useForm();
   const [user, setUser] = useState(null);
   const [userID, setUserID] = useState(null);
@@ -145,45 +147,75 @@ export function OutputForm() {
   // }, [constructions, data, user]);
 
   const onSubmit = (data) => {
-    console.log(data);
-    for (let i = 0; i < count; i++) {
-      const productChosen = productsList.find(
-        (item) => item.label === data.produto[i]
-      );
-      const constructionChosen = constructionsList.find(
-        (item) => item.label === data.construction[i]
-      );
+    if (toFindDuplicates(data.produto)) {
+      toast.error("Produtos duplicados, favor verificar e corrigir", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      return;
+    }
 
-      const date = new Date();
-      const dd = String(date.getDate()).padStart(2, "0");
-      const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
-      const yyyy = date.getFullYear();
-      const today = `${dd}/${mm}/${yyyy}`;
-      const seconds = date.getSeconds();
-      const minutes = date.getMinutes();
-      const hour = date.getHours();
-      const time = `${hour}:${minutes}:${seconds}`;
+    const amountOK = data.produto.map((item, index) => {
+      let ok = true;
 
-      const productRef = firebase
-        .database()
-        .ref(`filiais/${user.id_filial}/estoque/produtos/${productChosen.id}`);
-
-      productRef.once("value", (snapshot) => {
-        if (snapshot) {
+      productsList.map((product) => {
+        if (item === product.label) {
           if (
-            data.quantidade[i] > snapshot.val().qt_atual ||
-            data.quantidade[i] <= 0
+            data.quantidade[index] > product.qt_atual ||
+            data.quantidade[index] <= 0
           ) {
-            toast.error(
-              `Quantidade solicitada indisponível! Quantidade disponível: ${
-                snapshot.val().qt_atual
-              }`,
-              {
-                theme: "dark",
-                position: "top-center",
-              }
-            );
-          } else {
+            dismiss();
+            toast.error(`Quantidade indisponível (${product.label})`, {
+              position: "top-right",
+
+              theme: "dark",
+              style: {
+                width: "100%",
+              },
+            });
+            // dismiss();
+            ok = false;
+          }
+        }
+        return ok;
+      });
+      return ok;
+    });
+
+    if (!amountOK.includes(false)) {
+      notify();
+      for (let i = 0; i < count; i++) {
+        const productChosen = productsList.find(
+          (item) => item.label === data.produto[i]
+        );
+        const constructionChosen = constructionsList.find(
+          (item) => item.label === data.construction[i]
+        );
+
+        const date = new Date();
+        const dd = String(date.getDate()).padStart(2, "0");
+        const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
+        const yyyy = date.getFullYear();
+        const today = `${dd}/${mm}/${yyyy}`;
+        const seconds = date.getSeconds();
+        const minutes = date.getMinutes();
+        const hour = date.getHours();
+        const time = `${hour}:${minutes}:${seconds}`;
+
+        const productRef = firebase
+          .database()
+          .ref(
+            `filiais/${user.id_filial}/estoque/produtos/${productChosen.id}`
+          );
+
+        productRef.once("value", (snapshot) => {
+          if (snapshot) {
             const actiontRef = firebase
               .database()
               .ref(`filiais/${user.id_filial}/estoque/acoes`);
@@ -206,7 +238,7 @@ export function OutputForm() {
                 productRef.update({
                   qt_atual: snapshot.val().qt_atual - data.quantidade[i],
                 });
-                notify();
+
                 const storageRef = firebase.storage().ref();
                 let index = 0;
                 const dataFilesLenght = Array.from(data.fotos[i]).length;
@@ -220,16 +252,19 @@ export function OutputForm() {
                     .then(function (snapshot) {
                       index = index + 1;
 
-                      if (index === dataFilesLenght) {
-                        toast.success(
-                          `Todas os dados e fotos foram salvos com sucesso`,
-                          {
-                            theme: "dark",
-                            hideProgressBar: true,
-                            autoClose: 4000,
-                          }
-                        );
+                      if (index === dataFilesLenght && i === count - 1) {
+                        console.log("Uploaded");
                         dismiss();
+
+                        console.log("Finalizado");
+                        toast.success(`Dados salvos com sucesso`, {
+                          theme: "dark",
+                          hideProgressBar: false,
+                          autoClose: 2000,
+                          onClose: () => {
+                            history.push("/actions/return");
+                          },
+                        });
                         reset();
                       }
                     })
@@ -244,10 +279,11 @@ export function OutputForm() {
                 });
               });
           }
-        }
-      });
-      toast.clearWaitingQueue();
+        });
+      }
     }
+
+    toast.clearWaitingQueue();
   };
 
   const notify = () =>
@@ -256,7 +292,26 @@ export function OutputForm() {
       autoClose: false,
     }));
 
-  const dismiss = () => toast.dismiss(toastId.current);
+  const dismiss = () => toast.dismiss();
+
+  function toFindDuplicates(products) {
+    let arry = products;
+    let resultToReturn = false;
+    // call some function with callback function as argument
+    resultToReturn = arry.some((element, index) => {
+      if (element.length > 0) {
+        return arry.indexOf(element) !== index;
+      }
+      return false;
+    });
+    if (resultToReturn) {
+      console.log("Duplicate elements exist");
+      return true;
+    } else {
+      console.log("Duplicates dont exist ");
+      return false;
+    }
+  }
 
   return (
     <div>
