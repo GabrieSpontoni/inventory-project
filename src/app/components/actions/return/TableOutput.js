@@ -177,7 +177,7 @@ function TableOutput() {
                             <tr key={id}>
                               <td>
                                 {productsList[actions[id].id_prod] !== undefined
-                                  ? productsList[actions[id].id_prod].categoria
+                                  ? productsList[actions[id].id_prod].descricao
                                   : actions[id].id_prod}
                               </td>
                               <td>

@@ -156,7 +156,7 @@ function Constructions() {
           <div className="col-12 grid-margin">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Produtos</h4>
+                <h4 className="card-title">Obras</h4>
                 <div className="table-responsive">
                   <table className="table">
                     <thead>
@@ -177,7 +177,6 @@ function Constructions() {
                       {data &&
                         usersList &&
                         Object.keys(data).map((id) => {
-                          console.log(data);
                           return (
                             <tr key={id}>
                               <td>

@@ -3,6 +3,7 @@ import { Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+import { useHistory } from "react-router";
 import TextField from "@mui/material/TextField";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -11,6 +12,7 @@ import firebase from "firebase/app";
 import "./ReturnForm.css";
 
 function ReturnForms() {
+  const history = useHistory();
   const { register, handleSubmit, reset } = useForm();
   const toastId = React.useRef(null);
   const { idAction } = useParams();
@@ -121,7 +123,6 @@ function ReturnForms() {
           `filiais/${user.id_filial}/estoque/acoes/${idAction}/devolucoes`
         );
       const newActionRef = actionRef.push();
-      console.log(action);
       const newActionKey = newActionRef.key;
       newActionRef
         .set({
@@ -174,14 +175,14 @@ function ReturnForms() {
                 index = index + 1;
 
                 if (index === dataFilesLenght) {
-                  toast.success(
-                    `Todos os dados e fotos foram salvos com sucesso`,
-                    {
-                      theme: "dark",
-                      hideProgressBar: true,
-                      autoClose: 4000,
-                    }
-                  );
+                  toast.success(`Dados salvos com sucesso`, {
+                    theme: "dark",
+                    hideProgressBar: false,
+                    autoClose: 2000,
+                    onClose: () => {
+                      history.push("/actions/return");
+                    },
+                  });
                   dismiss();
                   reset();
                 }
@@ -227,7 +228,7 @@ function ReturnForms() {
                         color: "white",
                       }}
                       label={
-                        product.categoria +
+                        product.descricao +
                         " - " +
                         action.quantidade_retirada +
                         " " +
