@@ -8,6 +8,7 @@ function TableDashboard() {
   const [actions, setActions] = useState(null);
   const [productsList, setProductsList] = useState(null);
   const [usersList, setUsersList] = useState(null);
+  const [constructionsList, setConstructionsList] = useState(null);
   const [user, setUser] = useState(null);
   const [userID, setUserID] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -103,6 +104,21 @@ function TableDashboard() {
             setUsersList(users);
           }
         });
+
+      firebase
+        .database()
+        .ref()
+        .child(`/filiais/${user.id_filial}/obras/`)
+        .get()
+        .then((snapshot) => {
+          if (isMounted) {
+            const constructions = [];
+            snapshot.forEach((childSnap) => {
+              constructions[childSnap.key] = childSnap.val();
+            });
+            setConstructionsList(constructions);
+          }
+        });
     }
 
     return () => {
@@ -111,10 +127,10 @@ function TableDashboard() {
   }, [user, userID, countPending]);
 
   useEffect(() => {
-    if (actions && productsList && usersList) {
+    if (actions && productsList && usersList && constructionsList) {
       setLoading(false);
     }
-  }, [actions, productsList, usersList]);
+  }, [actions, productsList, usersList, constructionsList]);
 
   const handleSeePhotos = (id) => {
     history.push(`/dashboard/dashboard-photos/${id}`);
@@ -157,6 +173,7 @@ function TableDashboard() {
                       <tr>
                         <th>Usuário</th>
                         <th> Produto </th>
+                        <th> Obra </th>
                         <th> Qt retirada </th>
                         <th> Qt devolvida </th>
                         <th> Data </th>
@@ -170,6 +187,7 @@ function TableDashboard() {
                       {actions &&
                         productsList &&
                         usersList &&
+                        constructionsList &&
                         Object.keys(actions)
                           .reverse()
                           .map((id) => {
@@ -185,8 +203,15 @@ function TableDashboard() {
                                   {productsList[actions[id].id_prod] !==
                                   undefined
                                     ? productsList[actions[id].id_prod]
-                                        .categoria
+                                        .descricao
                                     : actions[id].id_prod}
+                                </td>
+                                <td>
+                                  {constructionsList[actions[id].id_obra] !==
+                                  undefined
+                                    ? constructionsList[actions[id].id_obra]
+                                        .nome_obra
+                                    : actions[id].id_obra}
                                 </td>
                                 <td> {actions[id].quantidade_retirada} </td>
                                 <td> {actions[id].quantidade_devolvida} </td>
