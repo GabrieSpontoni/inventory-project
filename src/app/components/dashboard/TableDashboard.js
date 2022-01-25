@@ -203,7 +203,7 @@ function TableDashboard() {
                                   {productsList[actions[id].id_prod] !==
                                   undefined
                                     ? productsList[actions[id].id_prod]
-                                        .categoria
+                                        .descricao
                                     : actions[id].id_prod}
                                 </td>
                                 <td>

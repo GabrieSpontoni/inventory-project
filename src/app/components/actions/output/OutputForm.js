@@ -110,7 +110,7 @@ export function OutputForm() {
       Object.keys(data).map((key) => {
         index++;
         productsList.push({
-          label: `${index} - ${data[key].categoria} - ${data[key].qt_atual} ${data[key].unidade_medida}`,
+          label: `${index} - ${data[key].descricao} - ${data[key].qt_atual} ${data[key].unidade_medida}`,
           id: key,
           qt_atual: data[key].qt_atual,
           unidade_medida: data[key].unidade_medida,
@@ -253,7 +253,6 @@ export function OutputForm() {
                       index = index + 1;
 
                       if (index === dataFilesLenght && i === count - 1) {
-                        console.log("Uploaded");
                         dismiss();
 
                         console.log("Finalizado");
@@ -305,10 +304,8 @@ export function OutputForm() {
       return false;
     });
     if (resultToReturn) {
-      console.log("Duplicate elements exist");
       return true;
     } else {
-      console.log("Duplicates dont exist ");
       return false;
     }
   }

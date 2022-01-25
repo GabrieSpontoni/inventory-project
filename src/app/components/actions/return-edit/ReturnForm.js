@@ -177,7 +177,7 @@ function ReturnForms() {
                 if (index === dataFilesLenght) {
                   toast.success(`Dados salvos com sucesso`, {
                     theme: "dark",
-                    hideProgressBar: true,
+                    hideProgressBar: false,
                     autoClose: 2000,
                     onClose: () => {
                       history.push("/actions/return");
@@ -228,7 +228,7 @@ function ReturnForms() {
                         color: "white",
                       }}
                       label={
-                        product.categoria +
+                        product.descricao +
                         " - " +
                         action.quantidade_retirada +
                         " " +
