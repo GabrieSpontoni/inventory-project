@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
-import { Collapse } from "react-bootstrap";
+import { Button, Collapse } from "react-bootstrap";
+import { Redirect } from "react-router-dom";
 import firebase from "firebase/app";
 
 class Sidebar extends Component {
@@ -114,6 +115,14 @@ class Sidebar extends Component {
   }
 
   render() {
+    const handleLogout = () => {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {})
+        .catch((error) => {});
+      return <Redirect to={"/user-pages/login-1"} />;
+    };
     return (
       <nav className="sidebar sidebar-offcanvas" id="sidebar">
         <div className="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
@@ -362,6 +371,30 @@ class Sidebar extends Component {
               </li>
             </div>
           )}
+
+          <li
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+            }}
+          >
+            <Button
+              style={{
+                width: "90%",
+                marginTop: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+              variant="outline-danger"
+              onClick={handleLogout}
+            >
+              <span className="menu-title">
+                <div>Logout</div>
+              </span>
+            </Button>
+          </li>
         </ul>
       </nav>
     );
