@@ -47,7 +47,7 @@ export class Dashboard extends Component {
         <div className="page-header">
           <h3 className="page-title">
             <strong>Dashboard </strong>
-            <small> versão 1.0</small>
+            <small> versão 1.0.0</small>
           </h3>
         </div>
 
