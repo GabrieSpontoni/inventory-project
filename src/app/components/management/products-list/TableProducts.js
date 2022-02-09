@@ -162,7 +162,6 @@ function TableProducts() {
                       <tr>
                         <th> Cadastrado por </th>
                         <th> Categoria </th>
-                        <th> Tipo </th>
                         <th> Quantidade inicial </th>
                         <th> Quantidade atual </th>
                         <th> Descrição </th>
@@ -186,7 +185,6 @@ function TableProducts() {
                                   : data[id].id_usuario}
                               </td>
                               <td> {data[id].categoria} </td>
-                              <td> {data[id].tipo} </td>
                               <td> {data[id].qt_inicial}</td>
                               <td> {data[id].qt_atual}</td>
                               <td> {data[id].descricao}</td>

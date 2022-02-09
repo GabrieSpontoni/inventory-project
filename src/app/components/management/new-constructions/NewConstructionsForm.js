@@ -69,8 +69,6 @@ export default function NewProductForm() {
         endereco_obra: data.constructionsAddress.toLowerCase(),
         cidade_obra: data.constructionsCity.toLowerCase(),
         responsavel: data.constructionsResponsible,
-        telefone: data.constructionsPhone,
-        email: data.constructionsEmail,
         data: today,
         hora: time,
       })
@@ -201,45 +199,6 @@ export default function NewProductForm() {
                       sx={{ input: { color: "white" } }}
                       label="Responsável"
                       {...register("constructionsResponsible")}
-                      required
-                    />
-                  </Form.Group>
-                  <Form.Group>
-                    <TextField
-                      style={{
-                        width: "100%",
-                        backgroundColor: "#30343c",
-                        borderRadius: "5px",
-                      }}
-                      InputLabelProps={{
-                        style: {
-                          height: "100%",
-                          color: "white",
-                        },
-                      }}
-                      sx={{ input: { color: "white" } }}
-                      label="Telefone"
-                      {...register("constructionsPhone")}
-                      required
-                    />
-                  </Form.Group>
-
-                  <Form.Group>
-                    <TextField
-                      style={{
-                        width: "100%",
-                        backgroundColor: "#30343c",
-                        borderRadius: "5px",
-                      }}
-                      InputLabelProps={{
-                        style: {
-                          height: "100%",
-                          color: "white",
-                        },
-                      }}
-                      sx={{ input: { color: "white" } }}
-                      label="Email"
-                      {...register("constructionsEmail")}
                       required
                     />
                   </Form.Group>

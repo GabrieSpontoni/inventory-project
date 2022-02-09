@@ -454,7 +454,6 @@ export function OutputForm() {
                             sx={{ input: { color: "white" } }}
                             label="Observação"
                             {...register(`observacao[${index}]`)}
-                            required
                           />
                         </Form.Group>
                         <Form.Group

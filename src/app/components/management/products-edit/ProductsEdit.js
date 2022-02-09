@@ -101,7 +101,7 @@ function ProductsEdit() {
       qt_atual: product.qt_atual + diference,
       categoria: data.category,
       descricao: data.description,
-      tipo: data.type,
+
       unidade_medida: data.unity,
     };
 
@@ -172,17 +172,7 @@ function ProductsEdit() {
                       required
                     />
                   </Form.Group>
-                  <Form.Group>
-                    <label>Tipo</label>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder="Tipo do Produto"
-                      defaultValue={product.tipo}
-                      {...register("type")}
-                      required
-                    />
-                  </Form.Group>
+
                   <Form.Group>
                     <label>Descrição</label>
                     <Form.Control
@@ -217,7 +207,7 @@ function ProductsEdit() {
                     />
                   </Form.Group>
                   <Form.Group>
-                    <label>O que foi mudado neste produto?</label>
+                    <label>O que foi mudado neste produto? (obs)</label>
                     <Form.Control
                       type="text"
                       className="form-control"
