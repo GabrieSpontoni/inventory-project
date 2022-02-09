@@ -106,7 +106,7 @@ export default function NewProductForm() {
   return (
     <div>
       <div className="page-header">
-        <h3 className="page-title"> Obras Nexsolar </h3>
+        <h3 className="page-title"> Produtos Nexsolar </h3>
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">
