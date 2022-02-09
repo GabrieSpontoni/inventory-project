@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
-import { Collapse } from "react-bootstrap";
+import { Collapse, Dropdown } from "react-bootstrap";
+import { Redirect } from "react-router-dom";
 import firebase from "firebase/app";
 
 class Sidebar extends Component {
@@ -114,6 +115,14 @@ class Sidebar extends Component {
   }
 
   render() {
+    const handleLogout = () => {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {})
+        .catch((error) => {});
+      return <Redirect to={"/user-pages/login-1"} />;
+    };
     return (
       <nav className="sidebar sidebar-offcanvas" id="sidebar">
         <div className="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
@@ -125,7 +134,50 @@ class Sidebar extends Component {
             <h2>Nexsolar</h2>
           </a>
         </div>
+
         <ul className="nav">
+          {this.state.username && (
+            <li className="nav-item profile">
+              <div className="profile-desc">
+                <div className="profile-pic">
+                  <div className="profile-name">
+                    <h5 className="mb-0 font-weight-normal">
+                      <div>
+                        {this.state.username.split(" ").slice(0, 2).join(" ")}
+                      </div>
+                    </h5>
+                    <span>
+                      <div>{this.state.tipo_atual}</div>
+                    </span>
+                  </div>
+                </div>
+                <Dropdown alignRight>
+                  <Dropdown.Toggle as="a" className="cursor-pointer no-caret">
+                    <i className="mdi mdi-dots-vertical"></i>
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu className="sidebar-dropdown preview-list">
+                    <a
+                      href="!#"
+                      className="dropdown-item preview-item"
+                      onClick={handleLogout}
+                    >
+                      <div className="preview-thumbnail">
+                        <div className="preview-icon bg-dark rounded-circle">
+                          <i className="mdi mdi-logout-variant text-danger"></i>
+                        </div>
+                      </div>
+                      <div className="preview-item-content">
+                        <p className="preview-subject ellipsis mb-1 text-small">
+                          Sair
+                        </p>
+                      </div>
+                    </a>
+                    <div className="dropdown-divider"></div>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+            </li>
+          )}
           <li className="nav-item nav-category">
             <span className="nav-link">
               <div>Estoque</div>
