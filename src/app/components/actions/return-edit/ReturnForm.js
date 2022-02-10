@@ -131,7 +131,7 @@ function ReturnForms() {
           id_prod: action.id_prod,
           id_usuario: userID,
           obs: data.obs,
-          quantidade: parseFloat(data.amount),
+          quantidade_devolvida: parseFloat(data.amount),
           tipo: "devolucao",
         })
         .then(() => {
@@ -311,7 +311,6 @@ function ReturnForms() {
                       }}
                       sx={{ input: { color: "white" } }}
                       {...register("obs")}
-                      required
                     />
                     {/* <Form.Label>Obs</Form.Label>
                     <Form.Control
