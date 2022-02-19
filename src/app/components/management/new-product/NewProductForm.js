@@ -62,9 +62,15 @@ export default function NewProductForm() {
     const minutes = date.getMinutes();
     const hour = date.getHours();
     const time = `${hour}:${minutes}:${seconds}`;
-
+    console.log(data);
     if (data.uniquesIds && data.checked) {
-      if (checkDuplicate(data.uniquesIds)) {
+      const uniqueIds = [];
+      data.uniquesIds.forEach((uniqueId) => {
+        if (uniqueId !== "") {
+          uniqueIds.push(uniqueId);
+        }
+      });
+      if (checkDuplicate(uniqueIds)) {
         toast.error("Identificadores repetidos favor corrigir", {
           position: "top-right",
           autoClose: 5000,
@@ -73,138 +79,78 @@ export default function NewProductForm() {
         return;
       }
     }
+    notify();
 
-    const productRef = firebase
-      .database()
-      .ref(`filiais/${user.id_filial}/estoque/produtos/`);
-    const newProductRef = productRef.push();
-    const productKey = newProductRef.key;
-    newProductRef
-      .set({
-        id_usuario: userId,
-        categoria: data.category.toLowerCase(),
-        descricao: data.description,
-        unidade_medida: data.unity,
-        qt_inicial: parseFloat(data.amount),
-        qt_atual: parseFloat(data.amount),
-        obs: data.obs,
-        data: today,
-        hora: time,
-        identificacao: data.checked === true ? data.uniquesIds : "null",
-      })
-      .then(() => {
-        notify();
-        const storageRef = firebase.storage().ref();
-        let index = 0;
-        const dataFilesLenght = Array.from(data.files).length;
+    Array.from({
+      length: data.checked ? parseInt(amountUniqueIds) : 1,
+    }).forEach((item, i) => {
+      const productRef = firebase
+        .database()
+        .ref(`filiais/${user.id_filial}/estoque/produtos/`);
+      const newProductRef = productRef.push();
+      const productKey = newProductRef.key;
+      newProductRef
+        .set({
+          id_usuario: userId,
+          categoria: data.category.toLowerCase(),
+          descricao:
+            data.checked === true
+              ? `${data.description} (${data.uniquesIds[i]})`
+              : data.description,
+          unidade_medida: data.unity,
+          qt_inicial: data.checked === true ? 1 : parseFloat(data.amount),
+          qt_atual: data.checked === true ? 1 : parseFloat(data.amount),
+          obs: data.obs,
+          data: today,
+          hora: time,
+          identificador: data.checked === true ? data.uniquesIds[i] : "null",
+        })
+        .then(() => {
+          const storageRef = firebase.storage().ref();
+          let j = 0;
+          const dataFilesLenght = Array.from(data.files).length;
 
-        Array.from(data.files).forEach((file) => {
-          storageRef
-            .child(
-              `filiais/${user.id_filial}/produtos/${productKey}/${file.name}`
-            )
-            .put(file)
-            .then(function (snapshot) {
-              index = index + 1;
+          Array.from(data.files).forEach((file) => {
+            storageRef
+              .child(
+                `filiais/${user.id_filial}/produtos/${productKey}/${file.name}`
+              )
+              .put(file)
+              .then(function (snapshot) {
+                j = j + 1;
+                console.log(j, amountUniqueIds);
 
-              if (index === dataFilesLenght) {
-                toast.success(
-                  `Todas os dados e fotos foram salvos com sucesso`,
-                  {
+                if (
+                  (j === dataFilesLenght && i === amountUniqueIds - 1) ||
+                  (j === dataFilesLenght && data.checked === false)
+                ) {
+                  toast.success(`Produtos salvos com sucesso`, {
                     theme: "dark",
                     hideProgressBar: true,
                     autoClose: 4000,
-                  }
-                );
-                dismiss();
-                reset();
-              }
-            })
-            .catch(() => {
-              console.log("upload fail");
-            });
+                  });
+                  dismiss();
+                  reset();
+                }
+              })
+              .catch(() => {
+                console.log("upload fail");
+              });
+          });
+        })
+        .catch(() => {
+          toast.error("Algo deu errado tente novamente", {
+            theme: "dark",
+          });
         });
-      })
-      .catch(() => {
-        toast.error("Algo deu errado tente novamente", {
-          theme: "dark",
-        });
-      });
 
-    toast.clearWaitingQueue();
+      toast.clearWaitingQueue();
+    });
   };
-
-  // const handleImport = (data) => {
-  //   setDataCsv(data);
-  // };
-
-  // const handleCsvSave = () => {
-  //   var isValid = true;
-  //   Object.keys(dataCsv).forEach((id) => {
-  //     if (
-  //       dataCsv[id].categoria === null ||
-  //       dataCsv[id].categoria === undefined ||
-  //       dataCsv[id].descricao === null ||
-  //       dataCsv[id].descricao === undefined ||
-  //       dataCsv[id].unidade_medida === null ||
-  //       dataCsv[id].unidade_medida === undefined ||
-  //       dataCsv[id].quantidade === null ||
-  //       dataCsv[id].quantidade === undefined
-  //     ) {
-  //       isValid = false;
-  //     }
-  //   });
-  //   if (isValid) {
-  //     const date = new Date();
-  //     const dd = String(date.getDate()).padStart(2, "0");
-  //     const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
-  //     const yyyy = date.getFullYear();
-  //     const today = `${dd}/${mm}/${yyyy}`;
-  //     const seconds = date.getSeconds();
-  //     const minutes = date.getMinutes();
-  //     const hour = date.getHours();
-  //     const time = `${hour}:${minutes}:${seconds}`;
-
-  //     const productRef = firebase
-  //       .database()
-  //       .ref(`filiais/${user.id_filial}/estoque/produtos/`);
-
-  //     Object.keys(dataCsv).forEach((id) => {
-  //       const newProductRef = productRef.push();
-  //       newProductRef
-  //         .set({
-  //           id_usuario: userId,
-  //           categoria: dataCsv[id].categoria.toLowerCase(),
-
-  //           descricao: dataCsv[id].descricao,
-  //           unidade_medida: dataCsv[id].unidade_medida,
-  //           qt_inicial: dataCsv[id].quantidade,
-  //           qt_atual: dataCsv[id].quantidade,
-  //           data: today,
-  //           hora: time,
-  //         })
-  //         .then(() => {
-  //           toast.success(`dados salvos ${id}/${dataCsv.length - 1}`, {
-  //             theme: "dark",
-  //             autoClose: 3000,
-  //           });
-  //         });
-  //     });
-  //   } else {
-  //     toast.error(
-  //       `CSV invalido, em seu arquivo, verifique se há campos nulos ou se os cabeçalhos estão iguais ao apresentado na tabela (incluindo letras minúsculas)`,
-  //       {
-  //         theme: "dark",
-  //       }
-  //     );
-  //   }
-  // };
 
   function checkDuplicate(arr) {
     let result = false;
-    // create a Set with array elements
     const s = new Set(arr);
-    // compare the size of array and Set
     if (arr.length !== s.size) {
       result = true;
     }
@@ -342,7 +288,6 @@ export default function NewProductForm() {
                       sx={{ input: { color: "white" } }}
                       label="Observação"
                       {...register("obs")}
-                      required
                     />
                   </Form.Group>
 
@@ -394,14 +339,21 @@ export default function NewProductForm() {
                       </label>
                     </div>
                   </Form.Group>
+
+                  {isChecked && amountUniqueIds > 0 && (
+                    <div style={{ color: "red" }}>
+                      Atenção, produtos com id unicos serão cadastrados como
+                      produtos diferentes, portanto verifique os todos os dados
+                      (inclusive nome) com cautela antes de salvar, cada produto
+                      será salvo como "Descrição (idUnico)".
+                    </div>
+                  )}
                   {isChecked &&
                     amountUniqueIds > 0 &&
                     Array.from({ length: amountUniqueIds }).map(
                       (item, index) => {
-                        console.log(index);
-
                         return (
-                          <Form.Group key={index}>
+                          <Form.Group style={{ marginTop: "10px" }} key={index}>
                             <TextField
                               style={{
                                 width: "100%",
@@ -435,96 +387,7 @@ export default function NewProductForm() {
           </div>
         </div>
       </div>
-      {/* {user && (
-        <div className="row">
-          <div className="col-12 grid-margin stretch-card">
-            <div className="card">
-              <div className="card-body">
-                <h4 className="card-title">Importar Arquivo csv</h4>
 
-                <Form.Group
-                  style={{
-                    textAlign: "center",
-                    border: "1px solid white",
-                  }}
-                >
-                  <label
-                    style={{
-                      width: "100%",
-                      display: "inline-block",
-                      marginBottom: "0%",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <i className="icon-md mdi mdi-upload"> Importar</i>
-                    <CSVReader
-                      inputStyle={{ display: "none" }}
-                      className="form-control"
-                      onFileLoaded={handleImport}
-                      parserOptions={{
-                        header: true,
-                        dynamicTyping: true,
-                        skipEmptyLines: true,
-                        transformHeader: (header) =>
-                          header.toLowerCase().replace(/\W/g, ""),
-                      }}
-                    />
-                  </label>
-                </Form.Group>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      {dataCsv && (
-        <div className="row">
-          <div className="col-12 grid-margin stretch-card">
-            <div className="card">
-              <div className="card-body">
-                <div className="table-responsive">
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th> </th>
-                        <th> categoria </th>
-
-                        <th> descricao </th>
-                        <th> unidade_medida </th>
-                        <th> quantidade </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.keys(dataCsv).map((id) => {
-                        return (
-                          <tr key={id}>
-                            <td> {id} </td>
-                            <td> {dataCsv[id].categoria} </td>
-
-                            <td> {dataCsv[id].descricao} </td>
-                            <td> {dataCsv[id].unidade_medida} </td>
-                            <td> {dataCsv[id].quantidade} </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-                <div style={{ display: "flex", marginTop: "10px" }}>
-                  <button
-                    type="button"
-                    className="btn btn-primary mr-2"
-                    onClick={() => {
-                      handleCsvSave();
-                    }}
-                  >
-                    Salvar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )} */}
       <ToastContainer limit={10} />
     </div>
   );

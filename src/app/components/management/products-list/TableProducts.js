@@ -166,7 +166,7 @@ function TableProducts() {
                         <th> Quantidade atual </th>
                         <th> Descrição </th>
                         <th> Observação </th>
-                        <th> Identificador(es) </th>
+                        <th> Identificador</th>
                         <th> Hora do Cadastro </th>
                         <th> Data do Cadastro </th>
                         <th> </th>
@@ -192,10 +192,10 @@ function TableProducts() {
                               <td> {data[id].descricao}</td>
                               <td> {data[id].obs}</td>
                               <td>
-                                {data[id].identificacao !== "null" &&
-                                data[id].identificacao !== undefined
-                                  ? "Sim"
-                                  : "Não"}
+                                {data[id].identificador !== "null" &&
+                                data[id].identificador !== undefined
+                                  ? data[id].identificador
+                                  : " "}
                               </td>
                               <td> {data[id].hora}</td>
                               <td> {data[id].data}</td>

@@ -22,8 +22,6 @@ export function OutputForm() {
   const productsList = [];
   const constructionsList = [];
   const [loading, setLoading] = useState(true);
-  const [uniqueIds, setUniqueIds] = useState(null);
-  const [countUniqueIds, setCountUniqueIds] = useState(null);
   const toastId = React.useRef(null);
 
   useEffect(() => {
@@ -241,10 +239,6 @@ export function OutputForm() {
                 quantidade_devolvida: 0,
                 tipo: "retirada",
                 status: "pendente",
-                identificacao:
-                  data.uniqueIds && data.uniqueIds[i]
-                    ? data.uniqueIds[i]
-                    : "null",
               })
               .then(() => {
                 productRef.update({
@@ -385,9 +379,6 @@ export function OutputForm() {
                             disablePortal
                             id="combo-box-demo"
                             options={productsList}
-                            onChange={(event, value) => {
-                              setUniqueIds({ ...uniqueIds, [index]: value });
-                            }}
                             renderInput={(params) => (
                               <TextField
                                 {...params}
@@ -449,65 +440,9 @@ export function OutputForm() {
                             }}
                             sx={{ input: { color: "white" } }}
                             {...register(`quantidade[${index}]`)}
-                            onChange={(event, value) => {
-                              setCountUniqueIds({
-                                ...countUniqueIds,
-                                [index]: event.target.value,
-                              });
-                            }}
                             required
                           />
                         </Form.Group>
-                        {uniqueIds &&
-                          countUniqueIds &&
-                          uniqueIds[index] &&
-                          uniqueIds[index].identificacao !== undefined &&
-                          uniqueIds[index].identificacao.length > 0 &&
-                          uniqueIds[index].identificacao !== "null" &&
-                          uniqueIds[index].identificacao !== undefined && (
-                            <div style={{ color: "red" }}>
-                              Este produto possui Identificador(es) único(s)
-                            </div>
-                          )}
-
-                        {uniqueIds &&
-                          countUniqueIds &&
-                          uniqueIds[index] &&
-                          uniqueIds[index].identificacao !== undefined &&
-                          uniqueIds[index].identificacao.length > 0 &&
-                          uniqueIds[index].identificacao !== "null" &&
-                          uniqueIds[index].identificacao !== undefined &&
-                          Array.from({ length: countUniqueIds[index] }).map(
-                            (item, i) => (
-                              <Form.Group key={i}>
-                                <Autocomplete
-                                  style={{
-                                    backgroundColor: "#30343c",
-                                    borderRadius: "5px",
-                                    marginTop: "10px",
-                                  }}
-                                  disablePortal
-                                  id="combo-box-demo"
-                                  options={uniqueIds[index].identificacao}
-                                  renderInput={(params) => (
-                                    <TextField
-                                      {...params}
-                                      label={`Identificador(ers)`}
-                                      InputLabelProps={{
-                                        style: {
-                                          height: "100%",
-                                          color: "white",
-                                        },
-                                      }}
-                                      sx={{ input: { color: "white" } }}
-                                      required
-                                      {...register(`uniqueIds[${index}][${i}]`)}
-                                    />
-                                  )}
-                                />
-                              </Form.Group>
-                            )
-                          )}
 
                         <Form.Group>
                           <TextField
