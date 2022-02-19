@@ -5,6 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useHistory } from "react-router";
 import { CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
+import { TextField } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 
 import firebase from "firebase/app";
@@ -18,6 +19,8 @@ function ProductsEdit() {
   const [userId, setUserId] = useState(null);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [amountUniqueIds, setAmountUniqueIds] = useState(0);
+  const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -62,10 +65,16 @@ function ProductsEdit() {
         .once("value", (snapshot) => {
           if (isMounted) {
             setProduct(snapshot.val());
+            if (
+              snapshot.val().identificacao &&
+              snapshot.val().identificacao.length > 0 &&
+              snapshot.val().identificacao !== "null"
+            ) {
+              setIsChecked(true);
+            }
           }
         });
     }
-    console.log(user);
 
     return () => {
       isMounted = false;
@@ -74,13 +83,24 @@ function ProductsEdit() {
 
   useEffect(() => {
     if (product && user) {
+      setAmountUniqueIds(product.qt_inicial);
       setLoading(false);
     }
   }, [product, user]);
 
   const onSubmit = (data) => {
-    const diference = data.amount - product.qt_inicial;
+    if (data.uniquesIds && data.checked) {
+      if (checkDuplicate(data.uniquesIds)) {
+        toast.error("Identificadores repetidos favor corrigir", {
+          position: "top-right",
+          autoClose: 5000,
+          theme: "dark",
+        });
+        return;
+      }
+    }
 
+    const diference = data.amount - product.qt_inicial;
     if (product.qt_atual + diference < 0) {
       toast.error("Erro Inesperado", {
         theme: "dark",
@@ -101,7 +121,8 @@ function ProductsEdit() {
       qt_atual: product.qt_atual + diference,
       categoria: data.category,
       descricao: data.description,
-
+      obs: data.obs_product,
+      identificacao: data.checked === true ? data.uniquesIds : "null",
       unidade_medida: data.unity,
     };
 
@@ -133,6 +154,17 @@ function ProductsEdit() {
           });
       });
   };
+
+  function checkDuplicate(arr) {
+    let result = false;
+    // create a Set with array elements
+    const s = new Set(arr);
+    // compare the size of array and Set
+    if (arr.length !== s.size) {
+      result = true;
+    }
+    return result;
+  }
   return (
     <div>
       <div className="page-header">
@@ -162,56 +194,181 @@ function ProductsEdit() {
 
                 <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
                   <Form.Group>
-                    <label>Categoria</label>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder="Categoria "
+                    <TextField
+                      defaultValue={product.descricao}
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      sx={{ input: { color: "white" } }}
+                      label="Descrição"
+                      {...register("description")}
+                      required
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <TextField
                       defaultValue={product.categoria}
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      sx={{ input: { color: "white" } }}
+                      label="Categoria"
                       {...register("category")}
                       required
                     />
                   </Form.Group>
 
                   <Form.Group>
-                    <label>Descrição</label>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder="Descrição do produto "
-                      defaultValue={product.descricao}
-                      {...register("description")}
-                      required
-                    />
-                  </Form.Group>
-                  <Form.Group>
-                    <label>Unidade de Medida</label>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder="Unidade de medida "
+                    <TextField
                       defaultValue={product.unidade_medida}
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      sx={{ input: { color: "white" } }}
+                      label="Unidade de medida"
                       {...register("unity")}
                       required
                     />
                   </Form.Group>
                   <Form.Group>
-                    <label>Quantidade</label>
-                    <Form.Control
-                      type="number"
-                      className="form-control"
-                      placeholder="Quantidade"
+                    <TextField
                       defaultValue={product.qt_inicial}
+                      type="number"
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      sx={{ input: { color: "white" } }}
+                      label="Quantidade"
                       {...register("amount")}
+                      onChange={(event) => {
+                        setAmountUniqueIds(event.target.value);
+                      }}
                       required
                     />
                   </Form.Group>
+
                   <Form.Group>
-                    <label>O que foi mudado neste produto? (obs)</label>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder=""
+                    <TextField
+                      defaultValue={product.obs}
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      sx={{ input: { color: "white" } }}
+                      label="Observação do produto"
+                      {...register("obs_product")}
+                    />
+                  </Form.Group>
+
+                  <Form.Group>
+                    <div className="form-check">
+                      <label className="form-check-label">
+                        <input
+                          className="checkbox"
+                          type="checkbox"
+                          defaultChecked={isChecked}
+                          {...register("checked")}
+                          onChange={(event) => {
+                            if (event.target.checked) {
+                              setIsChecked(true);
+                            } else {
+                              setIsChecked(false);
+                            }
+                          }}
+                        />{" "}
+                        Este produto possui identificador(es) único(s){" "}
+                        <i className="input-helper" />
+                      </label>
+                    </div>
+                  </Form.Group>
+                  {isChecked &&
+                    amountUniqueIds > 0 &&
+                    Array.from({ length: amountUniqueIds }).map(
+                      (item, index) => {
+                        return (
+                          <Form.Group key={index}>
+                            <TextField
+                              defaultValue={
+                                product.identificacao !== undefined &&
+                                product.identificacao !== "null"
+                                  ? product.identificacao[index]
+                                  : ""
+                              }
+                              style={{
+                                width: "100%",
+                                backgroundColor: "#30343c",
+                                borderRadius: "5px",
+                              }}
+                              InputLabelProps={{
+                                style: {
+                                  height: "100%",
+                                  color: "white",
+                                },
+                              }}
+                              sx={{ input: { color: "white" } }}
+                              label={`Identificador único ${index + 1}`}
+                              {...register(`uniquesIds[${index}]`)}
+                              required
+                            />
+                          </Form.Group>
+                        );
+                      }
+                    )}
+
+                  <Form.Group>
+                    <TextField
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      sx={{ input: { color: "white" } }}
+                      label="Observação sobre o que foi mudado no produto"
                       {...register("obs")}
                       required
                     />
@@ -221,7 +378,6 @@ function ProductsEdit() {
                     <button type="submit" className="btn btn-primary mr-2">
                       Salvar
                     </button>
-                    <ToastContainer />
                   </div>
                 </form>
               </div>
@@ -229,6 +385,7 @@ function ProductsEdit() {
           </div>
         </div>
       )}
+      <ToastContainer limit={10} />
     </div>
   );
 }

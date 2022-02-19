@@ -80,14 +80,6 @@ function ProductsEdit() {
   }, [construction, user]);
 
   const onSubmit = (data) => {
-    const diference = data.amount - construction.qt_inicial;
-
-    if (construction.qt_atual + diference < 0) {
-      toast.error("Erro Inesperado", {
-        theme: "dark",
-      });
-      return;
-    }
     const date = new Date();
     const dd = String(date.getDate()).padStart(2, "0");
     const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -102,8 +94,6 @@ function ProductsEdit() {
       endereco_obra: data.address,
       cidade_obra: data.city,
       responsavel: data.responsible,
-      telefone: data.telephone,
-      email: data.email,
     };
 
     firebase
@@ -207,28 +197,7 @@ function ProductsEdit() {
                       required
                     />
                   </Form.Group>
-                  <Form.Group>
-                    <label>Telefone</label>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder="Telefone"
-                      defaultValue={construction.telefone}
-                      {...register("telephone")}
-                      required
-                    />
-                  </Form.Group>
-                  <Form.Group>
-                    <label>Email</label>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder="Email"
-                      defaultValue={construction.email}
-                      {...register("email")}
-                      required
-                    />
-                  </Form.Group>
+
                   <Form.Group>
                     <label>O que foi mudado nesta obra??</label>
                     <Form.Control

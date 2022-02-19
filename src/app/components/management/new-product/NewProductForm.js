@@ -3,8 +3,8 @@ import { Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import CSVReader from "react-csv-reader";
 import firebase from "firebase/app";
+// import CSVReader from "react-csv-reader";
 
 import "./NewProductForm.css";
 import { TextField } from "@mui/material";
@@ -15,7 +15,9 @@ export default function NewProductForm() {
 
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
-  const [dataCsv, setDataCsv] = useState(null);
+  const [amountUniqueIds, setAmountUniqueIds] = useState(0);
+  const [isChecked, setIsChecked] = useState(false);
+  // const [dataCsv, setDataCsv] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -61,6 +63,17 @@ export default function NewProductForm() {
     const hour = date.getHours();
     const time = `${hour}:${minutes}:${seconds}`;
 
+    if (data.uniquesIds && data.checked) {
+      if (checkDuplicate(data.uniquesIds)) {
+        toast.error("Identificadores repetidos favor corrigir", {
+          position: "top-right",
+          autoClose: 5000,
+          theme: "dark",
+        });
+        return;
+      }
+    }
+
     const productRef = firebase
       .database()
       .ref(`filiais/${user.id_filial}/estoque/produtos/`);
@@ -74,8 +87,10 @@ export default function NewProductForm() {
         unidade_medida: data.unity,
         qt_inicial: parseFloat(data.amount),
         qt_atual: parseFloat(data.amount),
+        obs: data.obs,
         data: today,
         hora: time,
+        identificacao: data.checked === true ? data.uniquesIds : "null",
       })
       .then(() => {
         notify();
@@ -119,71 +134,82 @@ export default function NewProductForm() {
     toast.clearWaitingQueue();
   };
 
-  const handleImport = (data) => {
-    setDataCsv(data);
-  };
+  // const handleImport = (data) => {
+  //   setDataCsv(data);
+  // };
 
-  const handleCsvSave = () => {
-    var isValid = true;
-    Object.keys(dataCsv).forEach((id) => {
-      if (
-        dataCsv[id].categoria === null ||
-        dataCsv[id].categoria === undefined ||
-        dataCsv[id].descricao === null ||
-        dataCsv[id].descricao === undefined ||
-        dataCsv[id].unidade_medida === null ||
-        dataCsv[id].unidade_medida === undefined ||
-        dataCsv[id].quantidade === null ||
-        dataCsv[id].quantidade === undefined
-      ) {
-        isValid = false;
-      }
-    });
-    if (isValid) {
-      const date = new Date();
-      const dd = String(date.getDate()).padStart(2, "0");
-      const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
-      const yyyy = date.getFullYear();
-      const today = `${dd}/${mm}/${yyyy}`;
-      const seconds = date.getSeconds();
-      const minutes = date.getMinutes();
-      const hour = date.getHours();
-      const time = `${hour}:${minutes}:${seconds}`;
+  // const handleCsvSave = () => {
+  //   var isValid = true;
+  //   Object.keys(dataCsv).forEach((id) => {
+  //     if (
+  //       dataCsv[id].categoria === null ||
+  //       dataCsv[id].categoria === undefined ||
+  //       dataCsv[id].descricao === null ||
+  //       dataCsv[id].descricao === undefined ||
+  //       dataCsv[id].unidade_medida === null ||
+  //       dataCsv[id].unidade_medida === undefined ||
+  //       dataCsv[id].quantidade === null ||
+  //       dataCsv[id].quantidade === undefined
+  //     ) {
+  //       isValid = false;
+  //     }
+  //   });
+  //   if (isValid) {
+  //     const date = new Date();
+  //     const dd = String(date.getDate()).padStart(2, "0");
+  //     const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
+  //     const yyyy = date.getFullYear();
+  //     const today = `${dd}/${mm}/${yyyy}`;
+  //     const seconds = date.getSeconds();
+  //     const minutes = date.getMinutes();
+  //     const hour = date.getHours();
+  //     const time = `${hour}:${minutes}:${seconds}`;
 
-      const productRef = firebase
-        .database()
-        .ref(`filiais/${user.id_filial}/estoque/produtos/`);
+  //     const productRef = firebase
+  //       .database()
+  //       .ref(`filiais/${user.id_filial}/estoque/produtos/`);
 
-      Object.keys(dataCsv).forEach((id) => {
-        const newProductRef = productRef.push();
-        newProductRef
-          .set({
-            id_usuario: userId,
-            categoria: dataCsv[id].categoria.toLowerCase(),
+  //     Object.keys(dataCsv).forEach((id) => {
+  //       const newProductRef = productRef.push();
+  //       newProductRef
+  //         .set({
+  //           id_usuario: userId,
+  //           categoria: dataCsv[id].categoria.toLowerCase(),
 
-            descricao: dataCsv[id].descricao,
-            unidade_medida: dataCsv[id].unidade_medida,
-            qt_inicial: dataCsv[id].quantidade,
-            qt_atual: dataCsv[id].quantidade,
-            data: today,
-            hora: time,
-          })
-          .then(() => {
-            toast.success(`dados salvos ${id}/${dataCsv.length - 1}`, {
-              theme: "dark",
-              autoClose: 3000,
-            });
-          });
-      });
-    } else {
-      toast.error(
-        `CSV invalido, em seu arquivo, verifique se há campos nulos ou se os cabeçalhos estão iguais ao apresentado na tabela (incluindo letras minúsculas)`,
-        {
-          theme: "dark",
-        }
-      );
+  //           descricao: dataCsv[id].descricao,
+  //           unidade_medida: dataCsv[id].unidade_medida,
+  //           qt_inicial: dataCsv[id].quantidade,
+  //           qt_atual: dataCsv[id].quantidade,
+  //           data: today,
+  //           hora: time,
+  //         })
+  //         .then(() => {
+  //           toast.success(`dados salvos ${id}/${dataCsv.length - 1}`, {
+  //             theme: "dark",
+  //             autoClose: 3000,
+  //           });
+  //         });
+  //     });
+  //   } else {
+  //     toast.error(
+  //       `CSV invalido, em seu arquivo, verifique se há campos nulos ou se os cabeçalhos estão iguais ao apresentado na tabela (incluindo letras minúsculas)`,
+  //       {
+  //         theme: "dark",
+  //       }
+  //     );
+  //   }
+  // };
+
+  function checkDuplicate(arr) {
+    let result = false;
+    // create a Set with array elements
+    const s = new Set(arr);
+    // compare the size of array and Set
+    if (arr.length !== s.size) {
+      result = true;
     }
-  };
+    return result;
+  }
 
   const notify = () =>
     (toastId.current = toast.loading(`Salvando Dados Aguarde...`, {
@@ -278,6 +304,7 @@ export default function NewProductForm() {
                   </Form.Group>
                   <Form.Group>
                     <TextField
+                      type="number"
                       style={{
                         width: "100%",
                         backgroundColor: "#30343c",
@@ -292,6 +319,29 @@ export default function NewProductForm() {
                       sx={{ input: { color: "white" } }}
                       label="Quantidade"
                       {...register("amount")}
+                      onChange={(event) => {
+                        setAmountUniqueIds(event.target.value);
+                      }}
+                      required
+                    />
+                  </Form.Group>
+
+                  <Form.Group>
+                    <TextField
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      InputLabelProps={{
+                        style: {
+                          height: "100%",
+                          color: "white",
+                        },
+                      }}
+                      sx={{ input: { color: "white" } }}
+                      label="Observação"
+                      {...register("obs")}
                       required
                     />
                   </Form.Group>
@@ -323,6 +373,56 @@ export default function NewProductForm() {
                       />
                     </label>
                   </Form.Group>
+                  <Form.Group>
+                    <div className="form-check">
+                      <label className="form-check-label">
+                        <input
+                          className="checkbox"
+                          type="checkbox"
+                          defaultChecked={false}
+                          {...register("checked")}
+                          onChange={(event) => {
+                            if (event.target.checked) {
+                              setIsChecked(true);
+                            } else {
+                              setIsChecked(false);
+                            }
+                          }}
+                        />{" "}
+                        Este produto possui identificador(es) único(s){" "}
+                        <i className="input-helper" />
+                      </label>
+                    </div>
+                  </Form.Group>
+                  {isChecked &&
+                    amountUniqueIds > 0 &&
+                    Array.from({ length: amountUniqueIds }).map(
+                      (item, index) => {
+                        console.log(index);
+
+                        return (
+                          <Form.Group key={index}>
+                            <TextField
+                              style={{
+                                width: "100%",
+                                backgroundColor: "#30343c",
+                                borderRadius: "5px",
+                              }}
+                              InputLabelProps={{
+                                style: {
+                                  height: "100%",
+                                  color: "white",
+                                },
+                              }}
+                              sx={{ input: { color: "white" } }}
+                              label={`Identificador único ${index + 1}`}
+                              {...register(`uniquesIds[${index}]`)}
+                              required
+                            />
+                          </Form.Group>
+                        );
+                      }
+                    )}
 
                   <div style={{ display: "flex" }}>
                     <button type="submit" className="btn btn-primary mr-2">
@@ -335,7 +435,7 @@ export default function NewProductForm() {
           </div>
         </div>
       </div>
-      {user && (
+      {/* {user && (
         <div className="row">
           <div className="col-12 grid-margin stretch-card">
             <div className="card">
@@ -424,7 +524,7 @@ export default function NewProductForm() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       <ToastContainer limit={10} />
     </div>
   );
