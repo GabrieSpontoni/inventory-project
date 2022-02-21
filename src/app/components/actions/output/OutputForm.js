@@ -140,6 +140,34 @@ export function OutputForm() {
   });
 
   useEffect(() => {
+    console.log("useEffect");
+    if (user) {
+      let data = [];
+      const ref = firebase.database().ref();
+      ref
+        .child(`filiais/${user.id_filial}/estoque/produtos/`)
+        .on("child_added", (snapshot) => {
+          const id_usuario = snapshot.val().id_usuario;
+          const id_produto = snapshot.val().key;
+          data[snapshot.key] = snapshot.val();
+          ref.child(`usuarios/${id_usuario}`).on("value", (snapshot) => {
+            data[id_produto] = snapshot.val();
+          });
+        });
+      console.log(data);
+      // firebase
+      //   .database()
+      //   .ref(`/filiais/${user.id_filial}/obras/`)
+      //   .on("value", (snapshot) => {
+      //     console.log(snapshot.val());
+      //     userRef.once("value", (snapshot) => {
+      //       console.log(snapshot.val());
+      //     })
+      //   });
+    }
+  });
+
+  useEffect(() => {
     if (user && data && constructions) {
       setLoading(false);
     }
