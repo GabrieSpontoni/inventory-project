@@ -342,7 +342,6 @@ export default function NewProductForm() {
                       sx={{ input: { color: "white" } }}
                       label="Observação"
                       {...register("obs")}
-                      required
                     />
                   </Form.Group>
 

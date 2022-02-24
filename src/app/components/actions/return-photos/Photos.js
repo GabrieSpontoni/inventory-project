@@ -89,7 +89,7 @@ export function Photos() {
     for (let i = 0; i < data.files.length; i++) {
       storageRef
         .child(
-          `filiais/${user.id_filial}/produtos/${idAction}/${data.files[i].name}`
+          `filiais/${user.id_filial}/acoes/${idAction}/${data.files[i].name}`
         )
         .put(data.files[i])
         .then(function (snapshot) {
@@ -107,7 +107,7 @@ export function Photos() {
   const handleDelete = (photoName) => {
     const storageRef = firebase.storage().ref();
     storageRef
-      .child(`filiais/${user.id_filial}/produtos/${idAction}/${photoName}`)
+      .child(`filiais/${user.id_filial}/acoes/${idAction}/${photoName}`)
       .delete()
       .then(function () {
         console.log("delete ok");
