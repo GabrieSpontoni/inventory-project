@@ -112,7 +112,6 @@ export function OutputForm() {
         productsList.push({
           label: `${index} - ${data[key].descricao} - ${data[key].qt_atual} ${data[key].unidade_medida}`,
           id: key,
-          identificacao: data[key].identificacao,
           qt_atual: data[key].qt_atual,
           unidade_medida: data[key].unidade_medida,
         });
@@ -133,45 +132,12 @@ export function OutputForm() {
           label: `${index} - ${constructions[key].nome_obra} - ${constructions[key].endereco_obra}`,
           id: key,
         });
+        setLoading(false);
 
         return 1;
       });
     }
   });
-
-  useEffect(() => {
-    console.log("useEffect");
-    if (user) {
-      let data = [];
-      const ref = firebase.database().ref();
-      ref
-        .child(`filiais/${user.id_filial}/estoque/produtos/`)
-        .on("child_added", (snapshot) => {
-          const id_usuario = snapshot.val().id_usuario;
-          const id_produto = snapshot.val().key;
-          data[snapshot.key] = snapshot.val();
-          ref.child(`usuarios/${id_usuario}`).on("value", (snapshot) => {
-            data[id_produto] = snapshot.val();
-          });
-        });
-      console.log(data);
-      // firebase
-      //   .database()
-      //   .ref(`/filiais/${user.id_filial}/obras/`)
-      //   .on("value", (snapshot) => {
-      //     console.log(snapshot.val());
-      //     userRef.once("value", (snapshot) => {
-      //       console.log(snapshot.val());
-      //     })
-      //   });
-    }
-  });
-
-  useEffect(() => {
-    if (user && data && constructions) {
-      setLoading(false);
-    }
-  }, [user, data, constructions]);
 
   // useEffect(() => {
   //   if (constructions && data && user) {
@@ -471,7 +437,6 @@ export function OutputForm() {
                             required
                           />
                         </Form.Group>
-
                         <Form.Group>
                           <TextField
                             style={{

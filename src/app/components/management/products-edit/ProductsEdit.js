@@ -65,11 +65,7 @@ function ProductsEdit() {
         .once("value", (snapshot) => {
           if (isMounted) {
             setProduct(snapshot.val());
-            if (
-              snapshot.val().identificador &&
-              snapshot.val().identificador.length > 0 &&
-              snapshot.val().identificador !== "null"
-            ) {
+            if (snapshot.val().identificacao_unica) {
               setIsChecked(true);
             }
           }
@@ -88,14 +84,18 @@ function ProductsEdit() {
     }
   }, [product, user]);
 
-  function removeLastWord(str) {
-    var lastIndex = str.lastIndexOf(" ");
-
-    str = str.substring(0, lastIndex);
-    return str;
-  }
-
   const onSubmit = (data) => {
+    if (data.uniquesIds && data.checked) {
+      if (checkDuplicate(data.uniquesIds)) {
+        toast.error("Identificadores repetidos favor corrigir", {
+          position: "top-right",
+          autoClose: 5000,
+          theme: "dark",
+        });
+        return;
+      }
+    }
+
     const diference = data.amount - product.qt_inicial;
     if (product.qt_atual + diference < 0) {
       toast.error("Erro Inesperado", {
@@ -116,9 +116,9 @@ function ProductsEdit() {
       qt_inicial: parseFloat(data.amount),
       qt_atual: product.qt_atual + diference,
       categoria: data.category,
-      descricao: `${data.description} (${data.uniqueId})`,
+      descricao: data.description,
+      identificacao_unica: data.checked ? data.uniquesIds : false,
       obs: data.obs_product,
-      identificador: data.checked === true ? data.uniqueId : "null",
       unidade_medida: data.unity,
     };
 
@@ -151,6 +151,16 @@ function ProductsEdit() {
       });
   };
 
+  function checkDuplicate(arr) {
+    let result = false;
+    // create a Set with array elements
+    const s = new Set(arr);
+    // compare the size of array and Set
+    if (arr.length !== s.size) {
+      result = true;
+    }
+    return result;
+  }
   return (
     <div>
       <div className="page-header">
@@ -181,12 +191,7 @@ function ProductsEdit() {
                 <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
                   <Form.Group>
                     <TextField
-                      defaultValue={
-                        product.identificador !== undefined &&
-                        product.identificador !== "null"
-                          ? removeLastWord(product.descricao)
-                          : product.descricao
-                      }
+                      defaultValue={product.descricao}
                       style={{
                         width: "100%",
                         backgroundColor: "#30343c",
@@ -245,7 +250,6 @@ function ProductsEdit() {
                       required
                     />
                   </Form.Group>
-
                   <Form.Group>
                     <TextField
                       defaultValue={product.qt_inicial}
@@ -307,44 +311,43 @@ function ProductsEdit() {
                             }
                           }}
                         />{" "}
-                        Este produto possui identificador único
-                        <i className="input-helper" />
+                        Este produto é permanente <i className="input-helper" />
                       </label>
                     </div>
                   </Form.Group>
-                  {isChecked && amountUniqueIds > 0 && amountUniqueIds >= 2 && (
-                    <div style={{ color: "red" }}>
-                      Produtos com id unico são tratados de forma independente
-                      por isso só é permitido 1 por vez na edição
-                    </div>
-                  )}
-                  {isChecked && amountUniqueIds > 0 && amountUniqueIds < 2 && (
-                    <Form.Group>
-                      <TextField
-                        defaultValue={
-                          product.identificador !== undefined &&
-                          product.identificador !== "null"
-                            ? product.identificador
-                            : ""
-                        }
-                        style={{
-                          width: "100%",
-                          backgroundColor: "#30343c",
-                          borderRadius: "5px",
-                        }}
-                        InputLabelProps={{
-                          style: {
-                            height: "100%",
-                            color: "white",
-                          },
-                        }}
-                        sx={{ input: { color: "white" } }}
-                        label={`Identificador único`}
-                        {...register(`uniqueId`)}
-                        required
-                      />
-                    </Form.Group>
-                  )}
+                  {isChecked &&
+                    amountUniqueIds > 0 &&
+                    Array.from({ length: amountUniqueIds }).map(
+                      (item, index) => {
+                        return (
+                          <Form.Group key={index}>
+                            <TextField
+                              defaultValue={
+                                product.identificacao_unica !== undefined &&
+                                product.identificacao_unica !== "null"
+                                  ? product.identificacao_unica[index]
+                                  : ""
+                              }
+                              style={{
+                                width: "100%",
+                                backgroundColor: "#30343c",
+                                borderRadius: "5px",
+                              }}
+                              InputLabelProps={{
+                                style: {
+                                  height: "100%",
+                                  color: "white",
+                                },
+                              }}
+                              sx={{ input: { color: "white" } }}
+                              label={`Identificador único ${index + 1}`}
+                              {...register(`uniquesIds[${index}]`)}
+                              required
+                            />
+                          </Form.Group>
+                        );
+                      }
+                    )}
 
                   <Form.Group>
                     <TextField
