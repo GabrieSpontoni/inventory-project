@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "invenctoryprojectprod"
-  }
+    "default": "invenctoryprojectprod",
+    "javafirebase": "javafirebase-59664"
+  },
+  "targets": {}
 }
