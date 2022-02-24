@@ -165,6 +165,9 @@ function TableProducts() {
                         <th> Quantidade inicial </th>
                         <th> Quantidade atual </th>
                         <th> Descrição </th>
+                        <th> Observação </th>
+                        <th> Produto permanente</th>
+
                         <th> Hora do Cadastro </th>
                         <th> Data do Cadastro </th>
                         <th> </th>
@@ -188,6 +191,11 @@ function TableProducts() {
                               <td> {data[id].qt_inicial}</td>
                               <td> {data[id].qt_atual}</td>
                               <td> {data[id].descricao}</td>
+                              <td> {data[id].obs}</td>
+                              <td>
+                                {" "}
+                                {data[id].identificacao_unica ? "sim" : "nao"}
+                              </td>
                               <td> {data[id].hora}</td>
                               <td> {data[id].data}</td>
                               <td style={{ display: "flex" }}>
