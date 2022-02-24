@@ -129,7 +129,7 @@ function ProductsEdit() {
       .then(() => {
         firebase
           .database()
-          .ref(`/filiais/${user.id_filial}/estoque/acoes/`)
+          .ref(`/filiais/${user.id_filial}/estoque/alteracoes_produtos/`)
           .push()
           .set({
             id_prod: idProd,
