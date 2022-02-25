@@ -187,6 +187,7 @@ export function OutputForm() {
       });
       return ok;
     });
+    console.log(data);
 
     if (!amountOK.includes(false)) {
       notify();
@@ -195,7 +196,7 @@ export function OutputForm() {
           (item) => item.label === data.produto[i]
         );
         const constructionChosen = constructionsList.find(
-          (item) => item.label === data.construction[i]
+          (item) => item.label === data.construction[0]
         );
 
         const date = new Date();
@@ -241,7 +242,12 @@ export function OutputForm() {
 
                 const storageRef = firebase.storage().ref();
                 let index = 0;
-                const dataFilesLenght = Array.from(data.fotos[i]).length;
+                let dataFilesLenght = Array.from(data.fotos[i]).length;
+
+                if (dataFilesLenght === 0) {
+                  data.fotos[i] = [""];
+                  dataFilesLenght = 1;
+                }
 
                 Array.from(data.fotos[i]).forEach((file) => {
                   storageRef
@@ -251,6 +257,9 @@ export function OutputForm() {
                     .put(file)
                     .then(function (snapshot) {
                       index = index + 1;
+                      console.log(index);
+                      console.log(dataFilesLenght);
+                      console.log(count);
 
                       if (index === dataFilesLenght && i === count - 1) {
                         dismiss();
@@ -272,7 +281,8 @@ export function OutputForm() {
                     });
                 });
               })
-              .catch(() => {
+              .catch((err) => {
+                console.log(err);
                 toast.error("Algo deu errado tente novamente", {
                   theme: "dark",
                 });
@@ -361,6 +371,32 @@ export function OutputForm() {
             <div className="card">
               <div className="card-body">
                 <form className="form-sample" onSubmit={handleSubmit(onSubmit)}>
+                  <Form.Group>
+                    <Autocomplete
+                      style={{
+                        backgroundColor: "#30343c",
+                        borderRadius: "5px",
+                      }}
+                      disablePortal
+                      id="combo-box-demo"
+                      options={constructionsList}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Obra"
+                          InputLabelProps={{
+                            style: {
+                              height: "100%",
+                              color: "white",
+                            },
+                          }}
+                          sx={{ input: { color: "white" } }}
+                          required
+                          {...register(`construction[${0}]`)}
+                        />
+                      )}
+                    />
+                  </Form.Group>
                   {count > 0 &&
                     Array.from({ length: count }).map((item, index) => (
                       <div key={index}>
@@ -390,32 +426,7 @@ export function OutputForm() {
                             )}
                           />
                         </Form.Group>
-                        <Form.Group>
-                          <Autocomplete
-                            style={{
-                              backgroundColor: "#30343c",
-                              borderRadius: "5px",
-                            }}
-                            disablePortal
-                            id="combo-box-demo"
-                            options={constructionsList}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label="Obra"
-                                InputLabelProps={{
-                                  style: {
-                                    height: "100%",
-                                    color: "white",
-                                  },
-                                }}
-                                sx={{ input: { color: "white" } }}
-                                required
-                                {...register(`construction[${index}]`)}
-                              />
-                            )}
-                          />
-                        </Form.Group>
+
                         <Form.Group>
                           <TextField
                             type="number"
@@ -481,7 +492,6 @@ export function OutputForm() {
                               accept="image/*"
                               multiple
                               className="form-control"
-                              required
                               {...register(`fotos[${index}]`)}
                             />
                           </label>
