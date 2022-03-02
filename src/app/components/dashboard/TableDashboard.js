@@ -255,6 +255,19 @@ function TableDashboard() {
                                     </div>
                                   </td>
                                 )}
+                                {actions[id].status === "usado_em_obra" && (
+                                  <td>
+                                    <div
+                                      className="btn btn-outline-danger btn-fw"
+                                      style={{
+                                        width: "100%",
+                                        cursor: "default",
+                                      }}
+                                    >
+                                      Usado em obra
+                                    </div>
+                                  </td>
+                                )}
                               </tr>
                             );
                           })}
