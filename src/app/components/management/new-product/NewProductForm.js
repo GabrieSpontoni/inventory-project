@@ -74,9 +74,10 @@ export default function NewProductForm() {
       }
     }
 
-    const productRef = firebase
-      .database()
-      .ref(`filiais/${user.id_filial}/estoque/produtos/`);
+    const pathDatabse = data.checked
+      ? `filiais/${user.id_filial}/estoque/produtos_permanentes/`
+      : `filiais/${user.id_filial}/estoque/produtos/`;
+    const productRef = firebase.database().ref(pathDatabse);
     const newProductRef = productRef.push();
     const productKey = newProductRef.key;
     newProductRef
@@ -90,7 +91,7 @@ export default function NewProductForm() {
         obs: data.obs,
         data: today,
         hora: time,
-        identificacao_unica: data.checked === true ? data.uniquesIds : false,
+        identificacao_unica: data.checked === true ? data.uniquesIds : null,
       })
       .then(() => {
         notify();
@@ -99,10 +100,11 @@ export default function NewProductForm() {
         const dataFilesLenght = Array.from(data.files).length;
 
         Array.from(data.files).forEach((file) => {
+          const pathStorage = data.checked
+            ? `filiais/${user.id_filial}/produtos_permanentes/${productKey}/${file.name}`
+            : `filiais/${user.id_filial}/produtos/${productKey}/${file.name}`;
           storageRef
-            .child(
-              `filiais/${user.id_filial}/produtos/${productKey}/${file.name}`
-            )
+            .child(pathStorage)
             .put(file)
             .then(function (snapshot) {
               index = index + 1;
