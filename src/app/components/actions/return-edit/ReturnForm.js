@@ -21,6 +21,7 @@ function ReturnForms() {
   const [action, setAction] = useState(null);
   const [user, setUser] = useState(null);
   const [userID, setUserID] = useState(null);
+  const [required, setRequired] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -97,6 +98,7 @@ function ReturnForms() {
   }, [user, userID, idAction]);
 
   const onSubmit = (data) => {
+    console.log(data);
     const date = new Date();
     const dd = String(date.getDate()).padStart(2, "0");
     const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -107,9 +109,14 @@ function ReturnForms() {
     const hour = date.getHours();
     const time = `${hour}:${minutes}:${seconds}`;
 
+    if (data.checkedUsedOnBranch) {
+      data.amount = 0;
+    }
+
     if (
-      data.amount > action.quantidade_retirada - action.quantidade_devolvida ||
-      data.amount <= 0
+      (data.amount > action.quantidade_retirada - action.quantidade_devolvida ||
+        data.amount <= 0) &&
+      !data.checkedUsedOnBranch
     ) {
       toast.error("Quantidade inválida!", {
         theme: "dark",
@@ -140,13 +147,14 @@ function ReturnForms() {
           const updateOutput = {
             quantidade_devolvida:
               action.quantidade_devolvida + parseFloat(data.amount),
-            status:
-              data.checked === true ||
-              parseFloat(data.amount) +
-                parseFloat(action.quantidade_devolvida) ===
-                parseFloat(action.quantidade_retirada)
+            status: !data.checkedUsedOnBranch
+              ? data.checked === true ||
+                parseFloat(data.amount) +
+                  parseFloat(action.quantidade_devolvida) ===
+                  parseFloat(action.quantidade_retirada)
                 ? "devolvido"
-                : "pendente",
+                : "pendente"
+              : "usado_em_obra",
           };
 
           const updateProduct = {
@@ -163,7 +171,12 @@ function ReturnForms() {
 
           const storageRef = firebase.storage().ref();
           let index = 0;
-          const dataFilesLenght = Array.from(data.files).length;
+          let dataFilesLenght = Array.from(data.files).length;
+
+          if (dataFilesLenght === 0) {
+            data.files = [""];
+            dataFilesLenght = 1;
+          }
 
           Array.from(data.files).forEach((file) => {
             storageRef
@@ -192,7 +205,8 @@ function ReturnForms() {
               });
           });
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log(e);
           toast.error("Algo deu errado tente novamente", {
             theme: "dark",
           });
@@ -278,7 +292,7 @@ function ReturnForms() {
                       }}
                       sx={{ input: { color: "white" } }}
                       {...register("amount")}
-                      required
+                      required={required}
                     />
                     {/* <Form.Label>Quantidade a ser devolvida</Form.Label>
                     <Form.Control
@@ -312,15 +326,6 @@ function ReturnForms() {
                       sx={{ input: { color: "white" } }}
                       {...register("obs")}
                     />
-                    {/* <Form.Label>Obs</Form.Label>
-                    <Form.Control
-                      type="text"
-                      className="form-control"
-                      placeholder="Obs "
-                      defaultValue={action.obs}
-                      {...register("obs")}
-                      required
-                    /> */}
                   </Form.Group>
 
                   <Form.Group
@@ -345,13 +350,13 @@ function ReturnForms() {
                         accept="image/*"
                         multiple
                         className="form-control"
-                        required
+                        required={required}
                         {...register("files")}
                       />
                     </label>
                   </Form.Group>
 
-                  <Form.Group>
+                  {/* <Form.Group>
                     <div className="form-check">
                       <label className="form-check-label">
                         <input
@@ -362,6 +367,27 @@ function ReturnForms() {
                         />{" "}
                         Não farei outras devoluções para este produto{" "}
                         <i className="input-helper" />
+                      </label>
+                    </div>
+                  </Form.Group> */}
+
+                  <Form.Group>
+                    <div className="form-check">
+                      <label className="form-check-label">
+                        <input
+                          className="checkbox"
+                          type="checkbox"
+                          defaultChecked={false}
+                          {...register("checkedUsedOnBranch")}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setRequired(false);
+                            } else {
+                              setRequired(true);
+                            }
+                          }}
+                        />{" "}
+                        Produto utilizado em obra <i className="input-helper" />
                       </label>
                     </div>
                   </Form.Group>
