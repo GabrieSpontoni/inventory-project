@@ -19,13 +19,17 @@ const NewConstructions = lazy(() => import("./management/NewConstructions"));
 const ConstructionsList = lazy(() => import("./management/ConstructionsList"));
 const ConstructionsEdit = lazy(() => import("./management/ConstructionsEdit"));
 const ReleaseAccess = lazy(() => import("./management/ReleaseAccess"));
-const NewBranch = lazy(() => import("./dev/NewBranch"));
 const ProductsListPhotos = lazy(() =>
   import("./management/ProductsListPhotos")
 );
 const ProductsEdit = lazy(() => import("./management/ProductsListEdit"));
 const NewCategory = lazy(() => import("./permanent-management/NewCategory"));
+const ListCategory = lazy(() => import("./permanent-management/ListCategory"));
+const NewProductPermanent = lazy(() =>
+  import("./permanent-management/NewProductPermanent")
+);
 
+const NewBranch = lazy(() => import("./dev/NewBranch"));
 const Login = lazy(() => import("./user-pages/Login"));
 const Register1 = lazy(() => import("./user-pages/Register"));
 
@@ -90,6 +94,16 @@ class AppRoutes extends Component {
             <PrivateRoute
               path="/permanent-management/category-new"
               component={NewCategory}
+            />
+
+            <PrivateRoute
+              path="/permanent-management/category-list"
+              component={ListCategory}
+            />
+
+            <PrivateRoute
+              path="/permanent-management/product-new"
+              component={NewProductPermanent}
             />
 
             <PrivateRoute

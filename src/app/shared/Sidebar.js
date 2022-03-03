@@ -403,6 +403,30 @@ class Sidebar extends Component {
                         >
                           <div>Nova Categoria</div>
                         </Link>
+                        <Link
+                          className={
+                            this.isPathActive(
+                              "/permanent-management/category-list"
+                            )
+                              ? "nav-link active"
+                              : "nav-link"
+                          }
+                          to="/permanent-management/category-list"
+                        >
+                          <div>Listar Categorias</div>
+                        </Link>
+                        <Link
+                          className={
+                            this.isPathActive(
+                              "/permanent-management/product-new"
+                            )
+                              ? "nav-link active"
+                              : "nav-link"
+                          }
+                          to="/permanent-management/product-new"
+                        >
+                          <div>Novo Prod permanente</div>
+                        </Link>
                       </li>
                     </ul>
                   </div>

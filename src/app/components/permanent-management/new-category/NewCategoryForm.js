@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
@@ -8,6 +9,7 @@ import firebase from "firebase/app";
 import { TextField } from "@mui/material";
 
 export default function NewCategoryForm() {
+  const history = useHistory();
   const { register, handleSubmit, reset } = useForm();
   const toastId = React.useRef(null);
 
@@ -80,25 +82,52 @@ export default function NewCategoryForm() {
         `filiais/${user.id_filial}/estoque/categorias_produtos_permanentes/`
       );
     const newCategory = categoryRef.push();
+    const categoryKey = newCategory.key;
     newCategory
       .set({
         id_usuario: userId,
         categoria: data.category.toLowerCase(),
-        subcategorias: lowerCasedSubcategory,
         data: today,
         hora: time,
       })
-      .then(() => {
-        toast.success(`Categoria salva com sucesso`, {
-          theme: "dark",
-          hideProgressBar: true,
-          autoClose: 4000,
+      .then((snapshot) => {
+        const subcategoryRef = firebase
+          .database()
+          .ref(
+            `filiais/${user.id_filial}/estoque/categorias_produtos_permanentes/${categoryKey}/subcategorias`
+          );
+
+        lowerCasedSubcategory.forEach((subcategory, index) => {
+          const newSubcategory = subcategoryRef.push();
+          newSubcategory
+            .set({
+              subcategoria: subcategory,
+            })
+            .then(() => {
+              if (index === lowerCasedSubcategory.length - 1) {
+                toast.success(`Categoria salva com sucesso`, {
+                  theme: "dark",
+                  hideProgressBar: false,
+                  autoClose: 3000,
+                  onClose: () => {
+                    history.push("/permanent-management/category-list");
+                  },
+                });
+                dismiss();
+                reset();
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+              toast.error("Erro na subcategoria", {
+                theme: "dark",
+              });
+            });
         });
-        dismiss();
-        reset();
       })
       .catch((error) => {
-        toast.error("Algo deu errado tente novamente", {
+        console.error(error);
+        toast.error("Erro na categoria", {
           theme: "dark",
         });
       });
