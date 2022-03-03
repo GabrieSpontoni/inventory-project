@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { Collapse, Dropdown } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
@@ -96,6 +96,7 @@ class Sidebar extends Component {
       { path: "/apps", state: "appsMenuOpen" },
       { path: "/actions", state: "registerMenuOpen" },
       { path: "/management", state: "managementMenuOpen" },
+      { path: "/permanent-management", state: "permanentManagementMenuOpen" },
       { path: "/development", state: "developmentMenuOpen" },
       { path: "/tables", state: "tablesMenuOpen" },
       { path: "/icons", state: "iconsMenuOpen" },
@@ -201,7 +202,7 @@ class Sidebar extends Component {
           </li>
           <li
             className={
-              this.isPathActive("/cadastros")
+              this.isPathActive("/actions")
                 ? "nav-item menu-items active"
                 : "nav-item menu-items"
             }
@@ -257,7 +258,7 @@ class Sidebar extends Component {
           {(this.state.tipo_atual === "administrador" ||
             this.state.tipo_atual === "diretor" ||
             this.state.tipo_atual === "dev") && (
-            <div>
+            <Fragment>
               <li className="nav-item nav-category">
                 <span className="nav-link">
                   <div>Gerenciamento</div>
@@ -359,7 +360,55 @@ class Sidebar extends Component {
                   </div>
                 </Collapse>
               </li>
-            </div>
+              <li
+                className={
+                  this.isPathActive("/permanent-management")
+                    ? "nav-item menu-items active"
+                    : "nav-item menu-items"
+                }
+              >
+                <div
+                  className={
+                    this.state.permanentManagementMenuOpen
+                      ? "nav-link menu-expanded"
+                      : "nav-link"
+                  }
+                  onClick={() =>
+                    this.toggleMenuState("permanentManagementMenuOpen")
+                  }
+                  data-toggle="collapse"
+                >
+                  <span className="menu-icon">
+                    <i className="mdi mdi-account-key"></i>
+                  </span>
+                  <span className="menu-title">
+                    <div>Adm. permanente</div>
+                  </span>
+                  <i className="menu-arrow"></i>
+                </div>
+                <Collapse in={this.state.permanentManagementMenuOpen}>
+                  <div>
+                    <ul className="nav flex-column sub-menu">
+                      <li className="nav-item">
+                        {" "}
+                        <Link
+                          className={
+                            this.isPathActive(
+                              "/permanent-management/category-new"
+                            )
+                              ? "nav-link active"
+                              : "nav-link"
+                          }
+                          to="/permanent-management/category-new"
+                        >
+                          <div>Nova Categoria</div>
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                </Collapse>
+              </li>
+            </Fragment>
           )}
           {this.state.tipo_atual === "dev" && (
             <div>

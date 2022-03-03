@@ -24,6 +24,7 @@ const ProductsListPhotos = lazy(() =>
   import("./management/ProductsListPhotos")
 );
 const ProductsEdit = lazy(() => import("./management/ProductsListEdit"));
+const NewCategory = lazy(() => import("./permanent-management/NewCategory"));
 
 const Login = lazy(() => import("./user-pages/Login"));
 const Register1 = lazy(() => import("./user-pages/Register"));
@@ -71,10 +72,7 @@ class AppRoutes extends Component {
               path="/management/constructions-list-edit/:idConstruction"
               component={ConstructionsEdit}
             />
-            <PrivateRoute
-              path="/development/new-branch"
-              component={NewBranch}
-            />
+
             <PrivateRoute
               path="/management/release-access"
               component={ReleaseAccess}
@@ -87,6 +85,16 @@ class AppRoutes extends Component {
             <PrivateRoute
               path="/management/products-list-edit/:idProd"
               component={ProductsEdit}
+            />
+
+            <PrivateRoute
+              path="/permanent-management/category-new"
+              component={NewCategory}
+            />
+
+            <PrivateRoute
+              path="/development/new-branch"
+              component={NewBranch}
             />
 
             <Route path="/user-pages/login-1" component={Login} />
