@@ -28,6 +28,9 @@ const ListCategory = lazy(() => import("./permanent-management/ListCategory"));
 const NewProductPermanent = lazy(() =>
   import("./permanent-management/NewProductPermanent")
 );
+const ListProductPermanent = lazy(() =>
+  import("./permanent-management/ListProductPermanent")
+);
 
 const NewBranch = lazy(() => import("./dev/NewBranch"));
 const Login = lazy(() => import("./user-pages/Login"));
@@ -92,8 +95,12 @@ class AppRoutes extends Component {
             />
 
             <PrivateRoute
-              path="/permanent-management/category-new"
-              component={NewCategory}
+              path="/permanent-management/product-list"
+              component={ListProductPermanent}
+            />
+            <PrivateRoute
+              path="/permanent-management/product-new"
+              component={NewProductPermanent}
             />
 
             <PrivateRoute
@@ -102,8 +109,8 @@ class AppRoutes extends Component {
             />
 
             <PrivateRoute
-              path="/permanent-management/product-new"
-              component={NewProductPermanent}
+              path="/permanent-management/category-new"
+              component={NewCategory}
             />
 
             <PrivateRoute

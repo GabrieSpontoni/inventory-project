@@ -6,21 +6,20 @@ import "react-toastify/dist/ReactToastify.css";
 import firebase from "firebase/app";
 
 import "./NewProductPermanentForm.css";
-import { TextField, Autocomplete } from "@mui/material";
+import { TextField, Autocomplete, CircularProgress } from "@mui/material";
 
 export default function NewProductForm() {
   const { register, handleSubmit, reset } = useForm();
   const toastId = React.useRef(null);
-  const [value, setValue] = React.useState();
   const [isLoading, setIsLoading] = React.useState(true);
 
   const [user, setUser] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [userID, setUserID] = useState(null);
   const [categories, setCategories] = useState(null);
   const [subcategories, setSubcategories] = useState(null);
-  const [amountUniqueIds, setAmountUniqueIds] = useState(0);
-
-  // const [dataCsv, setDataCsv] = useState(null);
+  const [currentCategory, setCurrentCategory] = useState(null);
+  const [currentSubcategory, setCurrentSubcategory] = useState(null);
+  const [amountUniqueIds, setAmountUniqueIds] = useState(1);
 
   useEffect(() => {
     let isMounted = true;
@@ -35,7 +34,7 @@ export default function NewProductForm() {
             if (isMounted) {
               if (snapshot.exists()) {
                 setUser({ ...snapshot.val() });
-                setUserId(snapshot.key);
+                setUserID(snapshot.key);
               } else {
                 console.log("No data available");
                 setUser({});
@@ -65,8 +64,6 @@ export default function NewProductForm() {
       categoriesRef.on("value", (snapshot) => {
         if (snapshot.exists()) {
           snapshot.forEach((childSnapshot) => {
-            console.log(childSnapshot.val());
-
             categoriesLabels.push({
               label: childSnapshot.val().categoria,
               id: childSnapshot.key,
@@ -83,7 +80,32 @@ export default function NewProductForm() {
   }, [user]);
 
   const onSubmit = (data) => {
-    console.log(data);
+    notify();
+
+    data.category = currentCategory;
+    data.subcategory = currentSubcategory;
+    data.nexsolarCode.length = data.serialNumber.length = amountUniqueIds;
+
+    if (isNaN(parseFloat(data.price))) {
+      dismiss();
+      toast.error("Valor inválido", {
+        position: "top-right",
+        autoClose: 4000,
+        theme: "dark",
+      });
+      return;
+    }
+
+    if (checkDuplicate(data.nexsolarCode)) {
+      dismiss();
+      toast.error("Nexcódigos duplicados", {
+        position: "top-right",
+        autoClose: 4000,
+        theme: "dark",
+      });
+      return;
+    }
+
     const date = new Date();
     const dd = String(date.getDate()).padStart(2, "0");
     const mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -93,7 +115,65 @@ export default function NewProductForm() {
     const minutes = date.getMinutes();
     const hour = date.getHours();
     const time = `${hour}:${minutes}:${seconds}`;
-    console.log(parseFloat(data.price));
+
+    const dbRef = firebase.database().ref();
+    const permanentProductsRef = dbRef.child(
+      `filiais/${user.id_filial}/estoque/produtos_permanentes/`
+    );
+    permanentProductsRef
+      .push({
+        data: today,
+        hora: time,
+        id_usuario: userID,
+        item: data.item,
+        categoria_id: data.category.id,
+        subcategoria_id: data.subcategory.id,
+        quantidade: parseInt(data.amount),
+        valor: parseFloat(data.price),
+        local_compra: data.local,
+        nf: data.nf,
+      })
+      .then((snapshot) => {
+        const idsRef = dbRef.child(
+          `filiais/${user.id_filial}/estoque/produtos_permanentes/${snapshot.key}/identificadores`
+        );
+        for (let i = 0; i < amountUniqueIds; i++) {
+          idsRef.push({
+            serial_number: data.serialNumber[i],
+            nexsolar_code: data.nexsolarCode[i],
+          });
+        }
+
+        const storageRef = firebase.storage().ref();
+        let index = 0;
+        let dataFilesLenght = Array.from(data.files).length;
+        Array.from(data.files).forEach((file) => {
+          storageRef
+            .child(
+              `filiais/${user.id_filial}/produtos_permanentes/${snapshot.key}/${file.name}`
+            )
+            .put(file)
+            .then(function (snapshot) {
+              index = index + 1;
+
+              if (index === dataFilesLenght) {
+                dismiss();
+
+                toast.success(`Dados salvos com sucesso`, {
+                  theme: "dark",
+                  hideProgressBar: false,
+                  autoClose: 2000,
+                });
+                reset();
+              }
+            })
+            .catch(() => {
+              console.log("upload fail");
+              toast.error(`Erro ao salvar arquivo`);
+              dismiss();
+            });
+        });
+      });
 
     toast.clearWaitingQueue();
   };
@@ -116,16 +196,15 @@ export default function NewProductForm() {
   const dismiss = () => toast.dismiss(toastId.current);
 
   const handleGetSubcategories = (value) => {
+    setCurrentCategory(value);
     const subcategoriesLabels = [];
     if (value) {
-      console.log(value);
       Object.keys(value.subcategories).forEach((key) => {
         subcategoriesLabels.push({
           label: value.subcategories[key].subcategoria,
           id: key,
         });
       });
-      console.log(subcategoriesLabels);
     }
 
     setSubcategories(subcategoriesLabels);
@@ -148,6 +227,10 @@ export default function NewProductForm() {
           </ol>
         </nav>
       </div>
+
+      {isLoading && (
+        <CircularProgress style={{ marginLeft: "50%", marginTop: "20%" }} />
+      )}
       {!isLoading && (
         <div className="row">
           <div className="col-12 grid-margin stretch-card">
@@ -203,7 +286,6 @@ export default function NewProductForm() {
                             }}
                             sx={{ input: { color: "white" } }}
                             required
-                            {...register(`category`)}
                           />
                         )}
                       />
@@ -218,6 +300,9 @@ export default function NewProductForm() {
                         disablePortal
                         id="combo-box-demo"
                         options={subcategories || []}
+                        onChange={(event, value) => {
+                          setCurrentSubcategory(value);
+                        }}
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -230,53 +315,14 @@ export default function NewProductForm() {
                             }}
                             sx={{ input: { color: "white" } }}
                             required
-                            {...register(`subcategory`)}
                           />
                         )}
-                      />
-                    </Form.Group>
-
-                    <Form.Group>
-                      <TextField
-                        style={{
-                          width: "100%",
-                          backgroundColor: "#30343c",
-                          borderRadius: "5px",
-                        }}
-                        InputLabelProps={{
-                          style: {
-                            height: "100%",
-                            color: "white",
-                          },
-                        }}
-                        sx={{ input: { color: "white" } }}
-                        label="Código Nexsolar"
-                        {...register("nexsolarCode")}
-                        required
-                      />
-                    </Form.Group>
-                    <Form.Group>
-                      <TextField
-                        style={{
-                          width: "100%",
-                          backgroundColor: "#30343c",
-                          borderRadius: "5px",
-                        }}
-                        InputLabelProps={{
-                          style: {
-                            height: "100%",
-                            color: "white",
-                          },
-                        }}
-                        sx={{ input: { color: "white" } }}
-                        label="Número de Série"
-                        {...register("serialNumber")}
-                        required
                       />
                     </Form.Group>
                     <Form.Group>
                       <TextField
                         type="number"
+                        value={amountUniqueIds}
                         style={{
                           width: "100%",
                           backgroundColor: "#30343c",
@@ -292,11 +338,64 @@ export default function NewProductForm() {
                         label="Quantidade"
                         {...register("amount")}
                         onChange={(event) => {
-                          setAmountUniqueIds(event.target.value);
+                          event.target.value < 1
+                            ? setAmountUniqueIds(1)
+                            : setAmountUniqueIds(event.target.value);
                         }}
                         required
                       />
                     </Form.Group>
+
+                    {Array.from({ length: amountUniqueIds }).map((_, index) => {
+                      return (
+                        <div
+                          key={index}
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-around",
+                          }}
+                        >
+                          <Form.Group>
+                            <TextField
+                              style={{
+                                width: "100%",
+                                backgroundColor: "#30343c",
+                                borderRadius: "5px",
+                              }}
+                              InputLabelProps={{
+                                style: {
+                                  height: "100%",
+                                  color: "white",
+                                },
+                              }}
+                              sx={{ input: { color: "white" } }}
+                              label={`Código Nexsolar ${index + 1}`}
+                              {...register(`nexsolarCode[${index}]`)}
+                              required
+                            />
+                          </Form.Group>
+
+                          <Form.Group>
+                            <TextField
+                              style={{
+                                width: "100%",
+                                backgroundColor: "#30343c",
+                                borderRadius: "5px",
+                              }}
+                              InputLabelProps={{
+                                style: {
+                                  height: "100%",
+                                  color: "white",
+                                },
+                              }}
+                              sx={{ input: { color: "white" } }}
+                              label={`Numero de Série ${index + 1}`}
+                              {...register(`serialNumber[${index}]`)}
+                            />
+                          </Form.Group>
+                        </div>
+                      );
+                    })}
 
                     <Form.Group>
                       <TextField
@@ -318,9 +417,7 @@ export default function NewProductForm() {
                         sx={{ input: { color: "white" } }}
                         label="Valor (R$ 9999.99)"
                         {...register("price")}
-                        onChange={(e) => {
-                          console.log(e.target.value);
-                        }}
+                        required
                       />
                     </Form.Group>
 
@@ -383,6 +480,7 @@ export default function NewProductForm() {
                           accept="image/*"
                           multiple
                           className="form-control"
+                          required
                           {...register("files")}
                         />
                       </label>

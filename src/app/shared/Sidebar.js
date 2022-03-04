@@ -390,18 +390,29 @@ class Sidebar extends Component {
                   <div>
                     <ul className="nav flex-column sub-menu">
                       <li className="nav-item">
-                        {" "}
                         <Link
                           className={
                             this.isPathActive(
-                              "/permanent-management/category-new"
+                              "/permanent-management/product-list"
                             )
                               ? "nav-link active"
                               : "nav-link"
                           }
-                          to="/permanent-management/category-new"
+                          to="/permanent-management/product-list"
                         >
-                          <div>Nova Categoria</div>
+                          <div>Listar Prod permanentes</div>
+                        </Link>
+                        <Link
+                          className={
+                            this.isPathActive(
+                              "/permanent-management/product-new"
+                            )
+                              ? "nav-link active"
+                              : "nav-link"
+                          }
+                          to="/permanent-management/product-new"
+                        >
+                          <div>Novo Prod permanente</div>
                         </Link>
                         <Link
                           className={
@@ -418,14 +429,14 @@ class Sidebar extends Component {
                         <Link
                           className={
                             this.isPathActive(
-                              "/permanent-management/product-new"
+                              "/permanent-management/category-new"
                             )
                               ? "nav-link active"
                               : "nav-link"
                           }
-                          to="/permanent-management/product-new"
+                          to="/permanent-management/category-new"
                         >
-                          <div>Novo Prod permanente</div>
+                          <div>Nova Categoria</div>
                         </Link>
                       </li>
                     </ul>

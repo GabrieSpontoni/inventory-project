@@ -99,7 +99,7 @@ function ListCategoryTable() {
           <div className="col-12 grid-margin">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Obras</h4>
+                <h4 className="card-title">Categorias</h4>
                 <div className="table-responsive">
                   <table className="table">
                     <thead>

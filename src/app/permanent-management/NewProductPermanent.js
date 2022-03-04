@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "../../firebase/config";
 import NewProductPermanentForm from "../components/permanent-management/new-product-permanent/NewProductPermanentForm";
 
-export class NewProduct extends Component {
+export class NewProductPermanent extends Component {
   render() {
     return (
       <div>
@@ -12,4 +12,4 @@ export class NewProduct extends Component {
   }
 }
 
-export default NewProduct;
+export default NewProductPermanent;

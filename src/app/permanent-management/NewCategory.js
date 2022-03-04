@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "../../firebase/config";
 import NewCategoryForm from "../components/permanent-management/new-category/NewCategoryForm";
 
-export class NewProduct extends Component {
+export class NewCategory extends Component {
   render() {
     return (
       <div>
@@ -12,4 +12,4 @@ export class NewProduct extends Component {
   }
 }
 
-export default NewProduct;
+export default NewCategory;
